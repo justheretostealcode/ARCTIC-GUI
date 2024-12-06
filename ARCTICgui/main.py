@@ -1,6 +1,9 @@
 """program entry point"""
 
 import flet as ft
+import os
+
+import pipcontroll.syn as syn
 
 def main(page: ft.Page) -> None:
     """defines the FLET mainpage
@@ -23,6 +26,17 @@ def main(page: ft.Page) -> None:
         settings_container
     )
 
+    
+    page.add(
+        ft.Row(
+            [
+                ft.TextButton('Synthesis', on_click=lambda e: syn.start(f='a|(b&~c)')), # TODO: Replace argument
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+        )
+    )
+
 if __name__ == "__main__":
     print("Start GUI")
     ft.app(main)
+    syn.kill()
