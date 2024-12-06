@@ -1,24 +1,24 @@
 
-import subprocess, os
+import subprocess
+import os
 
-_pid:int|None = None
+_proc:subprocess.Popen|None = None
+_gradlew:str = os.path.join('.', 'gradlew')
 
 def build()->None:
-    global _pid
-    assert _pid is None
+    global _proc
+    assert _proc is None
     os.chdir('ARCTICsyn')
-    p = subprocess.Popen(['./gradlew', 'build'], shell=False)
-    _pid = p.pid
-    p.wait()
-    p = subprocess.Popen(['./gradlew', 'jar'], shell=False)
-    _pid = p.pid
-    p.wait()
+    _proc = subprocess.Popen([_gradlew, 'build'], shell=False)
+    _proc.wait()
+    _proc = subprocess.Popen([_gradlew, 'jar'], shell=False)
+    _proc.wait()
     os.chdir('..')
-    _pid = None
+    _proc = None
 
 def start(*,f:str|None=None, tt:str|None=None, mc:str|None=None, sync:str|None=None, simc:str|None=None)->None:
-    global _pid
-    assert _pid is None
+    global _proc
+    assert _proc is None
     assert (f is None and tt is not None) or (f is not None and tt is None)
 
     args = {
@@ -31,18 +31,18 @@ def start(*,f:str|None=None, tt:str|None=None, mc:str|None=None, sync:str|None=N
     
     os.chdir('ARCTICsyn')
     command= ' '.join(f'{arg} {val}'for arg, val in args.items() if val is not None)
-    p = subprocess.Popen(['./gradlew', 'run', f'--args="{command}"'], shell=False)
-    _pid = p.pid
-    p.wait()
+    _proc = subprocess.Popen([_gradlew, 'run', f'--args="{command}"'], shell=False)
+    _proc.wait()
     os.chdir('..')
-    _pid = None
+    _proc = None
 
 def kill()->None:
-    global _pid
-    assert _pid is not None
+    global _proc
+    if _proc is None:
+        return
     try:
-        os.kill(_pid, 9)
+        os.kill(_proc.pid, 9)
     except OSError:
         pass
     finally:
-        _pid = None
+        _proc = None
