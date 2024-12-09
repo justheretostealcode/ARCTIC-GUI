@@ -1,9 +1,9 @@
 
 import subprocess
-import os
+import os, sys
 
 _proc:subprocess.Popen|None = None
-_gradlew:str = os.path.join('.', 'gradlew')
+_gradlew:str = os.path.join('.', 'gradlew.bat' if sys.platform == 'win32' else 'gradlew')
 
 def build()->None:
     global _proc
