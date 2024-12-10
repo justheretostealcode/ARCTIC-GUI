@@ -54,7 +54,7 @@ def main(page: ft.Page) -> None:
     page.add(
         ft.Row(
             [
-                ft.TextButton('Synthesis', on_click=lambda e: syn.start(f='a|(b&~c)')), # TODO: Replace argument
+                ft.TextButton('Synthesis', on_click=lambda e: syn.start(f='a|(b&~c)')), # TODO: Replace argument with input_expr.value.strip()
             ],
             alignment=ft.MainAxisAlignment.CENTER,
         )
