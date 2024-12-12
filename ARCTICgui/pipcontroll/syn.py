@@ -31,7 +31,7 @@ def start(*,f:str|None=None, tt:str|None=None, mc:str|None=None, sync:str|None=N
     
     os.chdir('ARCTICsyn')
     command= ' '.join(f'{arg} {val}'for arg, val in args.items() if val is not None)
-    _proc = subprocess.Popen([_gradlew, 'run', f'--args="{command}"'], shell=False)
+    _proc = subprocess.Popen([_gradlew, 'run', f'--args={command}'], shell=False)
     _proc.wait()
     os.chdir('..')
     _proc = None
