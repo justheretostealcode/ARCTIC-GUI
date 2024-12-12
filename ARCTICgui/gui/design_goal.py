@@ -1,6 +1,6 @@
 
 import flet as ft
-#  “Logic Circuit Synthesis”, “Manual Design” und “Analysis” und ertelle eine function die sie in eine flet.Tabs classe einfügt. 
+
 class LogicCircuitSynth(ft.Tab):
     def __init__(self):
         super().__init__()
@@ -37,7 +37,7 @@ class Analysis(ft.Tab):
 class DesignGoal(ft.Tabs):
     def __init__(self):
         super().__init__()
-        self.selected_index = 1
+        self.selected_index = 0
         self.animation_duration = 250
         self.tabs = [
             LogicCircuitSynth(),
