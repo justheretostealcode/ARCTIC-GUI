@@ -18,7 +18,7 @@ def main(page: ft.Page) -> None:
     def open_settings(e):
         print("open settings")
 
-    # Create a text field for user input
+    # Create a text field for user input --> in desgin_goal mit strip fct zum rausziehen
     input_expr = ft.TextField(label="Enter Boolean Function", width=200, text_align=ft.TextAlign.CENTER)
 
     def show_truth_table(e):
