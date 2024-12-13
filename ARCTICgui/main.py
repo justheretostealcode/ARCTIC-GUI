@@ -1,10 +1,14 @@
 """program entry point"""
 
+from gui.design_goal import DesignGoal
+from gui.design_view import DesignView
+from gui.pipeline import GDAPipeline
+from gui.analysis_visualizer import AnalysisVisualizer
+
+from Components.container import PageContainer
+from Components.appbar import GUIAppBar
+
 import flet as ft
-import os
-from itertools import product
-import pipcontroll.syn as syn
-import pipcontroll.bool as bool
 
 def main(page: ft.Page) -> None:
     """defines the FLET mainpage
@@ -12,65 +16,49 @@ def main(page: ft.Page) -> None:
     Args:
         page (ft.Page): standard
     """
+
     page.title ="ARCTIC"
     page.window.frameless = False
+    page.theme_mode = ft.ThemeMode.LIGHT
 
-    def open_settings(e):
-        print("open settings")
+    page.appbar = GUIAppBar()
 
-    # Create a text field for user input --> in desgin_goal mit strip fct zum rausziehen
-    input_expr = ft.TextField(label="Enter Boolean Function", width=200, text_align=ft.TextAlign.CENTER)
+    upper_row = ft.Row()
+    lower_row = ft.Row()
 
-    def show_truth_table(e):
-        # Parse and evaluate the user input
-        expr = input_expr.value.strip()
-        if expr:
-            try:
-                #parse the user expression into a truth table
-                truth_table = bool.generate_truth_table_from_expr(expr)
-                table_content = []
-                for row in truth_table:
-                    table_content.append(ft.Text(f"{' | '.join(map(str, row))}"))
-                truth_table_container.content = ft.Column(table_content)
-                page.update()
-            except Exception as ex:
-                truth_table_container.content = ft.Text(f"Error: {str(ex)}")
-                page.update()
-        else:
-            truth_table_container.content = ft.Text("Please enter a valid boolean expression.")
-            page.update()
+    upper_row.expand = True
+    lower_row.expand = True
 
-    settings_btn = ft.IconButton(ft.Icons.SETTINGS, on_click=open_settings)
-    generate_table_btn = ft.ElevatedButton("Generate Truth Table", on_click=show_truth_table)
-    truth_table_container = ft.Container()  # here truth table is displayed
+    design_goal = DesignGoal()
+    design_view = DesignView()
+    gda_pipeline = GDAPipeline()
+    analysis_visualizer =AnalysisVisualizer()
 
-    settings_container = ft.Container(content=settings_btn)
-    settings_container.alignment = ft.alignment.top_right
-    
-    page.add(
-        settings_container
-    )
+    container_top_left = PageContainer()
+    container_top_right = PageContainer()
+    container_bottom_left = PageContainer()
+    container_bottom_right = PageContainer()
+
+    container_top_left.expand = 50
+    container_top_right.expand = 50
+    container_bottom_left.expand = 50
+    container_bottom_right.expand = 50
+
+    container_top_left.content = design_goal
+    container_top_right.content = design_view
+    container_bottom_left.content = gda_pipeline
+    container_bottom_right.content = analysis_visualizer
+
+    upper_row.controls = [container_top_left, container_top_right]
+    lower_row.controls = [container_bottom_left, container_bottom_right]
 
     page.add(
-        ft.Row(
-            [
-                ft.TextButton('Synthesis', on_click=lambda e: syn.start(f='a|(b&~c)')), # TODO: Replace argument with input_expr.value.strip()
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-        )
+        upper_row,
+        lower_row
     )
 
-    
-    # Add the input field and button to the page
-    page.add(
-        ft.Column([
-            input_expr,
-            generate_table_btn,
-            truth_table_container
-        ])
-    )
+    page.update()
+
 
 if __name__ == "__main__":
-    print("Start GUI")
     ft.app(main)
-    syn.kill()

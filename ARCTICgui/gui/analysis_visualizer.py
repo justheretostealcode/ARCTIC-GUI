@@ -2,44 +2,45 @@ import flet as ft
 from Components.tab import PageTab
 from Components.tabs import PageTabs
 
-
-class LogicCircuitSynth(PageTab):
+class TransientBehaviour(PageTab):
     def __init__(self):
         super().__init__()
 
-        self.text="Logic Circuit Synthesis"
+        self.text = "Transient Behaviour"
         self.content = self._contentBuilder()
     
     def _contentBuilder(self) -> ft.Container:
         return ft.Placeholder(color=ft.Colors.random())
 
 
-class ManualDesign(PageTab):
+class SteadyStateBehaviour(PageTab):
     def __init__(self):
         super().__init__()
-        self.text="Manual Design"
+
+        self.text = "Steady State Behaviour"
         self.content = self._contentBuilder()
     
     def _contentBuilder(self) -> ft.Container:
         return ft.Placeholder(color=ft.Colors.random())
 
 
-class Analysis(PageTab):
+class HazardAnalysis(PageTab):
     def __init__(self):
         super().__init__()
-        self.text="Analysis"
+
+        self.text = "Hazard Analysis"
         self.content = self._contentBuilder()
     
     def _contentBuilder(self) -> ft.Container:
-        return ft.Placeholder(color=ft.Colors.random())
+        return ft.Placeholder()
 
 
-class DesignGoal(PageTabs):
+class AnalysisVisualizer(PageTabs):
     def __init__(self):
         super().__init__()
 
         self.tabs = [
-            LogicCircuitSynth(),
-            ManualDesign(),
-            Analysis(),
+            TransientBehaviour(),
+            SteadyStateBehaviour(),
+            HazardAnalysis()
         ]

@@ -1,44 +1,45 @@
 
 import flet as ft
+from Components.tabs import PageTabs
+from Components.tab import PageTab
 
-class CombinedDesignView(ft.Tab):
+class CombinedDesignView(PageTab):
     def __init__(self):
         super().__init__()
-        self.text='Combined View'
-        self.content=ft.Column(
-            spacing=1,
-            controls=[
-                # TODO: add elements here
-            ]
-        )
 
-class PlasmidView(ft.Tab):
+        self.text="Combined View"
+        self.content = self._contentBuilder()
+    
+    def _contentBuilder(self) -> ft.Container:
+        return ft.Placeholder(color=ft.Colors.random())
+
+
+class PlasmidView(PageTabs):
     def __init__(self):
         super().__init__()
-        self.text='Plasid View'
-        self.content=ft.Column(
-            spacing=1,
-            controls=[
-                ft.TextField('No Functionality in tab Manual Design')
-            ]
-        )
 
-class SequenceView(ft.Tab):
+        self.text="Plasid View"
+        self.content = self._contentBuilder()
+    
+    def _contentBuilder(self) -> ft.Container:
+        return ft.Placeholder(color=ft.Colors.random())
+
+
+class SequenceView(PageTab):
     def __init__(self):
         super().__init__()
-        self.text='Sequence View'
-        self.content=ft.Column(
-            spacing=1,
-            controls=[
-                ft.TextField('No Functionality in tab Analysis')
-            ]
-        )
 
-class DesignView(ft.Tabs):
+        self.text="Sequence View"
+        self.content = self._contentBuilder()
+    
+    def _contentBuilder(self) -> ft.Container:
+        return ft.Placeholder(color=ft.Colors.random())
+
+
+class DesignView(PageTabs):
     def __init__(self):
         super().__init__()
-        self.selected_index = 0
-        self.animation_duration = 250
+
         self.tabs = [
             CombinedDesignView(),
             PlasmidView(),
