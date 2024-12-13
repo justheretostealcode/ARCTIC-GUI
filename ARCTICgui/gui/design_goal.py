@@ -1,6 +1,6 @@
 import flet as ft
-from Components.tab import PageTab
-from Components.tabs import PageTabs
+from custom_controls.tab import PageTab
+from custom_controls.tabs import PageTabs
 
 
 class LogicCircuitSynth(PageTab):

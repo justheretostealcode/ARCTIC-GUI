@@ -5,8 +5,8 @@ from gui.design_view import DesignView
 from gui.pipeline import GDAPipeline
 from gui.analysis_visualizer import AnalysisVisualizer
 
-from Components.container import PageContainer
-from Components.appbar import GUIAppBar
+from custom_controls.container import PageContainer
+from custom_controls.appbar import GUIAppBar
 
 import flet as ft
 
