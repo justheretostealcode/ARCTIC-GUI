@@ -29,7 +29,7 @@ def main(page: ft.Page) -> None:
     upper_row.expand = True
     lower_row.expand = True
 
-    design_goal = DesignGoal()
+    design_goal = DesignGoal(page)
     design_view = DesignView()
     gda_pipeline = GDAPipeline()
     analysis_visualizer =AnalysisVisualizer()
