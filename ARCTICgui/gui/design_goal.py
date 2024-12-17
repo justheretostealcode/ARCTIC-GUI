@@ -41,9 +41,9 @@ class LogicCircuitSynth(PageTab):
 
 
         self.content = ft.Column([
-            input_expr,
-            generate_table_btn,
-            truth_table_container,
+            input_expr, #input for boolean function
+            generate_table_btn,  #button to generate truth table based on input
+            truth_table_container, #the container for the generated truth table
             ft.TextButton('Synthesis', on_click=lambda e: syn.start(f='a|(b&~c)')), # TODO: Replace argument with input_expr.value.strip()
         ])
 
