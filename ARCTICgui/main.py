@@ -11,12 +11,13 @@ from custom_controls.appbar import GUIAppBar
 import flet as ft
 
 def main(page: ft.Page) -> None:
-    """defines the FLET mainpage
+    """Entry point for the Flet program
 
     Args:
         page (ft.Page): standard
     """
 
+    #General flet.page settings
     page.title ="ARCTIC"
     page.window.frameless = False
     page.theme_mode = ft.ThemeMode.LIGHT

@@ -1,7 +1,9 @@
+""" File containing classes related to custom container controls"""
 import flet as ft
 
 class PageContainer(ft.Container):
-    def __init__(self):
+    """ Custom flet.Page class for the 4 general GUI sections"""
+    def __init__(self) -> None:
         super().__init__()
 
         self.expand = True

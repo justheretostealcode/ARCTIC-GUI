@@ -1,19 +1,27 @@
+""" File containing classes related to the design_goal tabs"""
 import flet as ft
 from custom_controls.tab import PageTab
 from custom_controls.tabs import PageTabs
 
 import pipcontrol.boolean_function as bf
+import pipcontrol.syn as syn
 
 
 class LogicCircuitSynth(PageTab):
-    def __init__(self, page: ft.Page):
+    """Class representing the flet.tab related to the LogicCircuitSynth"""
+    def __init__(self, page: ft.Page) -> None:
         super().__init__()
 
         self.page = page
         self.text="Logic Circuit Synthesis"
-        self.contentBuilder()
-    
-    def contentBuilder(self) -> ft.Container:
+        self.content_builder()
+
+    def content_builder(self) -> ft.Column:
+        """Generic method to build the content of the LogicCircuitSynth class
+
+        Returns:
+            ft.Container: Column with LogicCircuitSynth controls
+        """
         # Create a text field for user input --> in desgin_goal mit strip fct zum rausziehen
         input_expr = ft.TextField(label="Enter Boolean Function", width=200, text_align=ft.TextAlign.CENTER)
 
@@ -44,30 +52,43 @@ class LogicCircuitSynth(PageTab):
             input_expr,
             generate_table_btn,
             truth_table_container,
-            ft.TextButton('Synthesis', on_click=lambda e: syn.start(f='a|(b&~c)')), # TODO: Replace argument with input_expr.value.strip()
+            ft.TextButton('Synthesis', on_click=lambda e: syn.start(f='a|(b&~c)')),
+            # TODO: Replace argument with input_expr.value.strip()
         ])
 
 class ManualDesign(PageTab):
-    def __init__(self, page: ft.Page):
+    """Class representing the flet.tab related to the ManualDesign"""
+    def __init__(self, page: ft.Page) -> None:
         super().__init__()
         self.text="Manual Design"
-        self.content = self._contentBuilder()
-    
-    def _contentBuilder(self) -> ft.Container:
+        self.content = self.content_builder()
+
+    def content_builder(self) -> ft.Column:
+        """Generic method to build the content of the ManualDesign class
+        Returns:
+            ft.Column: Column with ManualDesign controls
+        """
         return ft.Placeholder(color=ft.Colors.random())
 
 
 class Analysis(PageTab):
-    def __init__(self, page: ft.Page):
+    """Class representing the flet.tab related to the Analysis"""
+    def __init__(self, page: ft.Page) -> None:
         super().__init__()
         self.text="Analysis"
-        self.content = self._contentBuilder()
-    
-    def _contentBuilder(self) -> ft.Container:
+        self.content = self.content_builder()
+
+    def content_builder(self) -> ft.Column:
+        """Generic method to build the content of the Analysis class
+
+        Returns:
+            ft.Column: Column with Analysis controls
+        """
         return ft.Placeholder(color=ft.Colors.random())
 
 
 class DesignGoal(PageTabs):
+    """Class representing the flet.tabs related to the DesignGoal"""
     def __init__(self, page: ft.Page):
         super().__init__()
 
