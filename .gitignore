@@ -2,4 +2,5 @@
 __pycache__/ # if you set the environment variable PYTHONDONTWRITEBYTECODE to 1 this folders would be generated anymore
 .pylintrc
 ARCTICsyn/energy-eval-variants
+ARCTICgui/energy-eval-variants
 ARCTICsyn/arctic.log

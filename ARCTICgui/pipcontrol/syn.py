@@ -2,6 +2,10 @@
 import subprocess
 import os, sys
 
+MAP_CONF = os.path.join('..', 'ARCTICgui', 'map.config')
+SYN_CONF = os.path.join('..', 'ARCTICgui', 'syn.config')
+SIM_CONF = os.path.join('..', 'ARCTICgui', 'sim.config')
+
 _proc:subprocess.Popen|None = None
 _gradlew:str = os.path.join('.', 'gradlew.bat' if sys.platform == 'win32' else 'gradlew')
 
@@ -16,7 +20,7 @@ def build()->None:
     os.chdir('..')
     _proc = None
 
-def start(*,f:str|None=None, tt:str|None=None, mc:str|None=None, sync:str|None=None, simc:str|None=None)->None:
+def start(*,f:str|None=None, tt:str|None=None, mc:str=MAP_CONF, sync:str=SYN_CONF, simc:str=SIM_CONF)->None:
     global _proc
     assert _proc is None
     assert (f is None and tt is not None) or (f is not None and tt is None)
