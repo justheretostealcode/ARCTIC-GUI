@@ -48,11 +48,22 @@ class LogicCircuitSynth(PageTab):
         truth_table_container = ft.Container()  # here truth table is displayed
 
 
+        def start_synth(e:ft.ControlEvent):
+            if not isinstance((button:=e.control), ft.TextButton):
+                return
+            if button.text != 'Synthesis':
+                return
+            button.text = 'Running syn&tm'
+            button.update()
+            syn.start(f=input_expr.value.strip())
+            button.text = 'Synthesis'
+            button.update()
+        
         self.content = ft.Column([
             input_expr, #input for boolean function
             generate_table_btn,  #button to generate truth table based on input
             truth_table_container, #the container for the generated truth table
-            ft.TextButton('Synthesis', on_click=lambda e: syn.start(f='a|(b&~c)')), # TODO: Replace argument with input_expr.value.strip()
+            ft.TextButton('Synthesis', on_click=start_synth), 
         ])
 
 class ManualDesign(PageTab):
