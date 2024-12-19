@@ -1,5 +1,7 @@
 """program entry point"""
 
+from pipcontrol import syn
+
 from gui.design_goal import DesignGoal
 from gui.design_view import DesignView
 from gui.pipeline import GDAPipeline
@@ -60,6 +62,6 @@ def main(page: ft.Page) -> None:
 
     page.update()
 
-
 if __name__ == "__main__":
     ft.app(main)
+    syn.kill()
