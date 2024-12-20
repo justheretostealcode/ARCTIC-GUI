@@ -45,7 +45,10 @@ def kill()->None:
     if _proc is None:
         return
     try:
-        os.kill(_proc.pid, 9)
+        if sys.platform == 'win32':
+            subprocess.call(['TaskKill', '/t', '/f', '/pid', str(_proc.pid)])
+        else:
+            subprocess.call(["kill", "-9", str(_proc.pid)])    
     except OSError:
         pass
     finally:
