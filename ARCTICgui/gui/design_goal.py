@@ -2,6 +2,7 @@
 import flet as ft
 from custom_controls.tab import PageTab
 from custom_controls.tabs import PageTabs
+from data.data_storage import storage as st
 
 import pipcontrol.boolean_function as bf
 import pipcontrol.syn as syn
@@ -22,8 +23,12 @@ class LogicCircuitSynth(PageTab):
         Returns:
             ft.Container: Column with LogicCircuitSynth controls
         """
+
+        def textbox_changed(e):
+            st.bool_func = e.control.value
+
         # Create a text field for user input --> in desgin_goal mit strip fct zum rausziehen
-        input_expr = ft.TextField(label="Enter Boolean Function", width=200, text_align=ft.TextAlign.CENTER)
+        input_expr = ft.TextField(label="Enter Boolean Function", width=200, text_align=ft.TextAlign.CENTER, on_submit=textbox_changed)
 
         def show_truth_table(e):
             # Parse and evaluate the user input
