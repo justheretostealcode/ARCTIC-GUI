@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/ # if you set the environment variable PYTHONDONTWRITEBYTECODE to 1 this folders would be generated anymore
+# if you set the environment variable PYTHONDONTWRITEBYTECODE to 1 this folders would be generated anymore
+__pycache__/
 .pylintrc
 ARCTICsyn/energy-eval-variants
 ARCTICgui/energy-eval-variants
