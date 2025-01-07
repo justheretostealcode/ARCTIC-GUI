@@ -25,10 +25,10 @@ class LogicCircuitSynth(PageTab):
         """
 
         def textbox_changed(e):
-            st.bool_func = e.control.value
+            st.bool_func = e.control.value.strip()
 
         # Create a text field for user input --> in desgin_goal mit strip fct zum rausziehen
-        input_expr = ft.TextField(label="Enter Boolean Function", width=200, text_align=ft.TextAlign.CENTER, on_submit=textbox_changed)
+        input_expr = ft.TextField(label="Enter Boolean Function", width=200, text_align=ft.TextAlign.CENTER, on_change=textbox_changed)
 
         def show_truth_table(e):
             # Parse and evaluate the user input
@@ -60,7 +60,7 @@ class LogicCircuitSynth(PageTab):
                 return
             button.text = 'Running syn&tm'
             button.update()
-            syn.start(f=input_expr.value.strip())
+            syn.start(f=st.bool_func)
             button.text = 'Synthesis'
             button.update()
         
