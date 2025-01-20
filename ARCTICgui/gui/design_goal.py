@@ -9,12 +9,14 @@ import pipcontrol.boolean_function as bf
 import pipcontrol.syn as syn
 
 
+
+
 class LogicCircuitSynth(PageTab):
     """Class representing the flet.tab related to the LogicCircuitSynth"""
-    def __init__(self, page: ft.Page) -> None:
+    def __init__(self) -> None:
         super().__init__()
 
-        self.page = page
+        self.page = ft.Page
         self.text="Logic Circuit Synthesis"
         self.content = self.content_builder()
 
@@ -61,7 +63,7 @@ class LogicCircuitSynth(PageTab):
         def on_dropdown_change(e):
             #Update the selected file display when an option is chosen.
             selected_file_display.value = f"Selected library: {e.control.value}"
-            page.update()
+            self.page.update()
 
         # genetic gate library dropdown
         path_to_gen_lib = os.path.join('ARCTICsim', 'thermo_libs', 'evaluation', 'dirichlet')
@@ -137,7 +139,7 @@ class LogicCircuitSynth(PageTab):
 
 class ManualDesign(PageTab):
     """Class representing the flet.tab related to the ManualDesign"""
-    def __init__(self, page: ft.Page) -> None:
+    def __init__(self) -> None:
         super().__init__()
         self.text="Manual Design"
         self.content = self.content_builder()
@@ -152,7 +154,7 @@ class ManualDesign(PageTab):
 
 class Analysis(PageTab):
     """Class representing the flet.tab related to the Analysis"""
-    def __init__(self, page: ft.Page) -> None:
+    def __init__(self) -> None:
         super().__init__()
         self.text="Analysis"
         self.content = self.content_builder()
@@ -168,11 +170,11 @@ class Analysis(PageTab):
 
 class DesignGoal(PageTabs):
     """Class representing the flet.tabs related to the DesignGoal"""
-    def __init__(self, page: ft.Page):
+    def __init__(self):
         super().__init__()
 
         self.tabs = [
-            LogicCircuitSynth(page),
-            ManualDesign(page),
-            Analysis(page),
+            LogicCircuitSynth(),
+            ManualDesign(),
+            Analysis(),
         ]
