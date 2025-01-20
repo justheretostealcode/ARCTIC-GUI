@@ -67,7 +67,7 @@ class LogicCircuitSynth(PageTab):
         genetic_gate_libraries_dropdown = ft.Dropdown(
             width=300,
             height=35,
-            options=[ft.dropdown.Option(genetic_gate_library) for genetic_gate_library in os.listdir('D:\Studies\Modules\Bachelor Praktikum\BP Project Workspace\ARCTIC-GUI\ARCTIC-GUI\ARCTICsim\\thermo_libs\evaluation\dirichlet')],
+            options=[ft.dropdown.Option(genetic_gate_library) for genetic_gate_library in os.listdir(os.path.join('ARCTICsim', 'thermo_libs', 'evaluation', 'dirichlet'))],
             on_change=on_dropdown_change
         )
 
