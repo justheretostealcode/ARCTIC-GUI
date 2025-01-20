@@ -2,6 +2,7 @@
 import flet as ft
 from custom_controls.tab import PageTab
 from custom_controls.tabs import PageTabs
+import os
 from data.data_storage import storage as st
 
 import pipcontrol.boolean_function as bf
@@ -52,6 +53,35 @@ class LogicCircuitSynth(PageTab):
         generate_table_btn = ft.ElevatedButton("Generate Truth Table", on_click=show_truth_table)
         truth_table_container = ft.Container()  # here truth table is displayed
 
+        
+        
+        # CODE TO BE ADDED
+        selected_file_display = ft.Text("Select a library:", size=14, color=ft.colors.BLUE_700)
+        # Dropdown to select a file
+        def on_dropdown_change(e):
+            #Update the selected file display when an option is chosen.
+            selected_file_display.value = f"Selected library: {e.control.value}"
+            page.update()
+
+        # genetic gate library dropdown
+        genetic_gate_libraries_dropdown = ft.Dropdown(
+            width=300,
+            height=35,
+            options=[ft.dropdown.Option(genetic_gate_library) for genetic_gate_library in os.listdir('D:\Studies\Modules\Bachelor Praktikum\BP Project Workspace\ARCTIC-GUI\ARCTIC-GUI\ARCTICsim\\thermo_libs\evaluation\dirichlet')],
+            on_change=on_dropdown_change
+        )
+
+        gglibrary_container = ft.Container(
+            content=ft.Column([
+            genetic_gate_libraries_dropdown,
+            selected_file_display  # Display the selected file
+        ]),
+            alignment=ft.alignment.top_right,
+            padding=10,
+        )
+        
+        # END
+
 
         def start_synth(e:ft.ControlEvent):
             if not isinstance((button:=e.control), ft.TextButton):
@@ -68,8 +98,14 @@ class LogicCircuitSynth(PageTab):
             input_expr, #input for boolean function
             generate_table_btn,  #button to generate truth table based on input
             truth_table_container, #the container for the generated truth table
-            ft.TextButton('Synthesis', on_click=start_synth), 
+            ft.TextButton('Synthesis', on_click=start_synth),
+            gglibrary_container #ft.Text("Select a FILE: "),
         ])
+
+
+
+
+
 
 class ManualDesign(PageTab):
     """Class representing the flet.tab related to the ManualDesign"""
