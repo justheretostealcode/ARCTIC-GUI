@@ -7,6 +7,7 @@ from data.data_storage import storage as st
 
 import pipcontrol.boolean_function as bf
 import pipcontrol.syn as syn
+import sympy    
 
 
 class LogicCircuitSynth(PageTab):
@@ -49,8 +50,39 @@ class LogicCircuitSynth(PageTab):
             else:
                 truth_table_container.content = ft.Text("Please enter a valid boolean expression.")
                 self.page.update()
+        
+        def show_input_sensors_dropdown(e):
+            # Parse and evaluate the user input
+            expr = input_expr.value.strip()
+            if expr:
+                try:
+                    expression = sympy.sympify(expr)
+                    variables = sorted(expression.atoms(sympy.Symbol), key=lambda x: str(x))
+                    dropdowns = []
+                    for var in variables:
+                        dropdown = ft.Dropdown(
+                            # width= 30, #TODO relative!!
+                            label=str(var),
+                            options=[
+                                ft.dropdown.Option("Lac"),
+                                ft.dropdown.Option("Tet"),
+                                ft.dropdown.Option("Tac"),
+                                ft.dropdown.Option("Ph")
+                            ],
+                        )
+                        dropdowns.append(dropdown)
+                    input_sensor_container.content = ft.Row(dropdowns)
+                    self.page.update()
+                except Exception as ex:
+                    input_sensor_container.content = ft.Text(f"Error: {str(ex)}")
+                    self.page.update()
+            else:
+                input_sensor_container.content = ft.Text("Please enter a valid boolean expression.")
+                self.page.update()
 
+        enter_and_choose_input_btn = ft.ElevatedButton("Enter to choose Input Sensors", on_click=show_input_sensors_dropdown)
         generate_table_btn = ft.ElevatedButton("Generate Truth Table", on_click=show_truth_table)
+        input_sensor_container = ft.Container()  # here input sensor dropdowns are is displayed
         truth_table_container = ft.Container()  # here truth table is displayed
 
         
@@ -96,8 +128,10 @@ class LogicCircuitSynth(PageTab):
         
         self.content = ft.Column([
             input_expr, #input for boolean function
+            enter_and_choose_input_btn, #enter boolean expression and choose input sensors from dropdown
             generate_table_btn,  #button to generate truth table based on input
             truth_table_container, #the container for the generated truth table
+            input_sensor_container,#the container for the input sensor selection
             ft.TextButton('Synthesis', on_click=start_synth),
             gglibrary_container #ft.Text("Select a FILE: "),
         ])
