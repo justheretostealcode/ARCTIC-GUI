@@ -10,14 +10,16 @@ import pipcontrol.syn as syn
 import sympy    
 
 
+
+
 class LogicCircuitSynth(PageTab):
     """Class representing the flet.tab related to the LogicCircuitSynth"""
-    def __init__(self, page: ft.Page) -> None:
+    def __init__(self) -> None:
         super().__init__()
 
-        self.page = page
+        self.page = ft.Page
         self.text="Logic Circuit Synthesis"
-        self.content_builder()
+        self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:
         """Generic method to build the content of the LogicCircuitSynth class
@@ -93,26 +95,47 @@ class LogicCircuitSynth(PageTab):
         def on_dropdown_change(e):
             #Update the selected file display when an option is chosen.
             selected_file_display.value = f"Selected library: {e.control.value}"
-            page.update()
+            self.page.update()
 
         # genetic gate library dropdown
+        path_to_gen_lib = os.path.join('ARCTICsim', 'thermo_libs', 'evaluation', 'dirichlet')
         genetic_gate_libraries_dropdown = ft.Dropdown(
             width=300,
             height=35,
-            options=[ft.dropdown.Option(genetic_gate_library) for genetic_gate_library in os.listdir(os.path.join('ARCTICsim', 'thermo_libs', 'evaluation', 'dirichlet'))],
+            options=[ft.dropdown.Option(genetic_gate_library) for genetic_gate_library in os.listdir(path_to_gen_lib)],
             on_change=on_dropdown_change
         )
+
+        #Generate Image in GUI for every activation curve
+
 
         gglibrary_container = ft.Container(
             content=ft.Column([
             genetic_gate_libraries_dropdown,
             selected_file_display  # Display the selected file
         ]),
-            alignment=ft.alignment.top_right,
-            padding=10,
         )
+
+        #Todo: get Diagrams from valid path
+        placeholder_path =  os.path.join('ARCTICsim', 'gate_libs', 'plots_id_cytometry_01')
+
+        images = ft.GridView(
+        expand=1,
+        runs_count=5,
+        max_extent=150,
+        child_aspect_ratio=1.0,
+        spacing=5,
+        run_spacing=5,
+    )
         
-        # END
+        for filename in os.listdir(placeholder_path):
+            images.controls.append(
+                ft.Image(
+                    src=os.path.join(placeholder_path, filename),
+                    width=200,
+                    height=200
+                )
+            )
 
 
         def start_synth(e:ft.ControlEvent):
@@ -126,6 +149,7 @@ class LogicCircuitSynth(PageTab):
             button.text = 'Synthesis'
             button.update()
         
+<<<<<<< HEAD
         self.content = ft.Column([
             input_expr, #input for boolean function
             enter_and_choose_input_btn, #enter boolean expression and choose input sensors from dropdown
@@ -135,15 +159,31 @@ class LogicCircuitSynth(PageTab):
             ft.TextButton('Synthesis', on_click=start_synth),
             gglibrary_container #ft.Text("Select a FILE: "),
         ])
+=======
+        #left side
+        main_left_column = ft.Column([input_expr, #input for boolean function
+            generate_table_btn,  #button to generate truth table based on input
+            truth_table_container, #the container for the generated truth table
+            ft.TextButton('Synthesis', on_click=start_synth)
+            ])
+        
+        #right side
+        main_right_column = ft.Column([gglibrary_container, #ft.Text("Select a FILE: "),
+            images]
+        )
+>>>>>>> 55a88f71e4311530281c89d6f48c425f00cde699
 
+        main_left_column.expand = True
+        main_right_column.expand = True
 
+        return ft.Row([main_left_column, main_right_column])
 
 
 
 
 class ManualDesign(PageTab):
     """Class representing the flet.tab related to the ManualDesign"""
-    def __init__(self, page: ft.Page) -> None:
+    def __init__(self) -> None:
         super().__init__()
         self.text="Manual Design"
         self.content = self.content_builder()
@@ -158,7 +198,7 @@ class ManualDesign(PageTab):
 
 class Analysis(PageTab):
     """Class representing the flet.tab related to the Analysis"""
-    def __init__(self, page: ft.Page) -> None:
+    def __init__(self) -> None:
         super().__init__()
         self.text="Analysis"
         self.content = self.content_builder()
@@ -174,11 +214,11 @@ class Analysis(PageTab):
 
 class DesignGoal(PageTabs):
     """Class representing the flet.tabs related to the DesignGoal"""
-    def __init__(self, page: ft.Page):
+    def __init__(self):
         super().__init__()
 
         self.tabs = [
-            LogicCircuitSynth(page),
-            ManualDesign(page),
-            Analysis(page),
+            LogicCircuitSynth(),
+            ManualDesign(),
+            Analysis(),
         ]
