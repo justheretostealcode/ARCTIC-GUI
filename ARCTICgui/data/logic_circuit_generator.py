@@ -17,7 +17,7 @@ class Edge(TypedDict):
     outs:list[tuple[int, int]]
     posX:int
 
-type rgb = tuple[int, int, int]
+rgb = tuple[int, int, int]
 
 test_data = '''{
   "truthtable" : "11010000",
