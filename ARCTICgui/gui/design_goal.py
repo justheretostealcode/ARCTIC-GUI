@@ -149,20 +149,11 @@ class LogicCircuitSynth(PageTab):
             button.text = 'Synthesis'
             button.update()
         
-<<<<<<< HEAD
-        self.content = ft.Column([
-            input_expr, #input for boolean function
-            enter_and_choose_input_btn, #enter boolean expression and choose input sensors from dropdown
-            generate_table_btn,  #button to generate truth table based on input
-            truth_table_container, #the container for the generated truth table
-            input_sensor_container,#the container for the input sensor selection
-            ft.TextButton('Synthesis', on_click=start_synth),
-            gglibrary_container #ft.Text("Select a FILE: "),
-        ])
-=======
         #left side
         main_left_column = ft.Column([input_expr, #input for boolean function
+            enter_and_choose_input_btn, #enter boolean expression and choose input sensors from dropdown
             generate_table_btn,  #button to generate truth table based on input
+            input_sensor_container,#the container for the input sensor selection
             truth_table_container, #the container for the generated truth table
             ft.TextButton('Synthesis', on_click=start_synth)
             ])
@@ -171,7 +162,6 @@ class LogicCircuitSynth(PageTab):
         main_right_column = ft.Column([gglibrary_container, #ft.Text("Select a FILE: "),
             images]
         )
->>>>>>> 55a88f71e4311530281c89d6f48c425f00cde699
 
         main_left_column.expand = True
         main_right_column.expand = True
