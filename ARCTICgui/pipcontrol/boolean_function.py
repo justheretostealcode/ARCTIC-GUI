@@ -11,8 +11,11 @@ def generate_truth_table_from_expr(expr):
     # Generate all combinations of truth values for the variables
     truth_combinations = list(product([False, True], repeat=len(variables)))
 
+    #let the header be the titles
+    header = [str(var) for var in variables] + [str(expr)]
+
     # Evaluate the expression for each combination
-    truth_table = []
+    truth_table = [header]  # Start the table with the header row
     for combination in truth_combinations:
         evaluation = {str(var): val for var, val in zip(variables, combination)}
         result = expression.subs(evaluation)

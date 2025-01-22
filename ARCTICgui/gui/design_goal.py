@@ -34,6 +34,32 @@ class LogicCircuitSynth(PageTab):
         # Create a text field for user input --> in desgin_goal mit strip fct zum rausziehen
         input_expr = ft.TextField(label="Enter Boolean Function", width=200, text_align=ft.TextAlign.CENTER, on_change=textbox_changed)
 
+        #trying out alert dialogue
+        def handle_close(e):
+            self.page.close(bool_info_window)
+        
+        bool_info_content_column = ft.Column([
+            ft.Text("Enter the boolean function with any variables of up to three."),
+            ft.Text("Use the common operands:"),
+            ft.Text("- AND (&) - for logical conjunction"),
+            ft.Text("- OR (|) - for logical disjunction"),
+            ft.Text("- NOT (~) - for logical negation"),
+            ft.Text("- XOR (^) - for exclusive disjunction"),
+            ft.Text("- Implication (~a|b) - for logical implication")
+        ])
+
+        bool_info_window = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Information"),
+            #content= bool_info_content_column, 
+            content = ft.Text("Enter the boolean function with any variables of up to three and the common operands: AND (&), OR (|), NOT (~), XOR (^), Implication (~ a| b)."),
+            actions=[
+                ft.TextButton("Close", on_click=handle_close),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+            #on_dismiss=lambda e: self.page.add(ft.Text("Modal dialog dismissed"),),
+        )
+
         def show_truth_table(e):
             # Parse and evaluate the user input
             expr = input_expr.value.strip()
@@ -44,13 +70,13 @@ class LogicCircuitSynth(PageTab):
                     table_content = []
                     for row in truth_table:
                         table_content.append(ft.Text(f"{' | '.join(map(str, row))}"))
-                    truth_table_container.content = ft.Column(table_content)
+                    input_sensor_container.content = ft.Column(table_content)
                     self.page.update()
                 except Exception as ex:
-                    truth_table_container.content = ft.Text(f"Error: {str(ex)}")
+                    input_sensor_container.content = ft.Text(f"Error: {str(ex)}")
                     self.page.update()
             else:
-                truth_table_container.content = ft.Text("Please enter a valid boolean expression.")
+                input_sensor_container.content = ft.Text("Please enter a valid boolean expression.")
                 self.page.update()
         
         def show_input_sensors_dropdown(e):
@@ -63,7 +89,8 @@ class LogicCircuitSynth(PageTab):
                     dropdowns = []
                     for var in variables:
                         dropdown = ft.Dropdown(
-                            # width= 30, #TODO relative!!
+                            width= 60, #TODO relative!!
+                            #width=main_left_column.width*(1/len(variables)),
                             label=str(var),
                             options=[
                                 ft.dropdown.Option("Lac"),
@@ -82,12 +109,10 @@ class LogicCircuitSynth(PageTab):
                 input_sensor_container.content = ft.Text("Please enter a valid boolean expression.")
                 self.page.update()
 
-        enter_and_choose_input_btn = ft.ElevatedButton("Enter to choose Input Sensors", on_click=show_input_sensors_dropdown)
-        generate_table_btn = ft.ElevatedButton("Generate Truth Table", on_click=show_truth_table)
+        enter_and_choose_input_btn = ft.ElevatedButton("Choose Input Sensors", on_click=show_input_sensors_dropdown)
+        generate_table_btn = ft.ElevatedButton("Truth Table", on_click=show_truth_table)
         input_sensor_container = ft.Container()  # here input sensor dropdowns are is displayed
         truth_table_container = ft.Container()  # here truth table is displayed
-
-        
         
         # CODE TO BE ADDED
         selected_file_display = ft.Text("Select a library:", size=14, color=ft.colors.BLUE_700)
@@ -150,18 +175,25 @@ class LogicCircuitSynth(PageTab):
             button.update()
         
         #left side
-        main_left_column = ft.Column([input_expr, #input for boolean function
-            enter_and_choose_input_btn, #enter boolean expression and choose input sensors from dropdown
-            generate_table_btn,  #button to generate truth table based on input
+        main_left_column = ft.Column(
+            [ft.Row([input_expr, #input for boolean function
+            ft.IconButton(icon=ft.Icons.INFO_OUTLINE_ROUNDED, on_click=lambda e: self.page.open(bool_info_window))]),
+            ft.Row([enter_and_choose_input_btn, #enter boolean expression and choose input sensors from dropdown
+            generate_table_btn]),  #button to generate truth table based on input
             input_sensor_container,#the container for the input sensor selection
             truth_table_container, #the container for the generated truth table
             ft.TextButton('Synthesis', on_click=start_synth)
             ])
         
+
         #right side
         main_right_column = ft.Column([gglibrary_container, #ft.Text("Select a FILE: "),
             images]
         )
+
+        #so that content doesn't overflow, but is scrollable
+        main_left_column.scroll = ft.ScrollMode.ALWAYS #to hide scrollbar, exchange ALWAYS for AUTO
+        main_right_column.scroll = ft.ScrollMode.ALWAYS
 
         main_left_column.expand = True
         main_right_column.expand = True
