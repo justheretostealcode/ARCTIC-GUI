@@ -89,7 +89,7 @@ def _draw(draw:ImageDraw, node:Node, size:int, fill:rgb, outline:rgb, background
     funs = {'INP':_in,'NOT':_not, 'NOR':_nor, 'OUT':_out, 'BYP':lambda draw, pos, size, fill, ol, bg:None}
     funs[node['type'][:3]](draw, node['__pos'], size, fill, outline, background)
 
-def gen(data:str, color:dict[str, tuple[int, int, int]|str])->Image:
+def gen(data:str, color:dict[str, tuple[int, int, int]|str])->Image.Image:
     graph = json.loads(data)['graph']
     match graph['version']:
         case "1":
@@ -103,7 +103,7 @@ SIZE = 10
 DEFCOLOR = 'white'
 WIDTH = 2
 
-def _v1(graph:list[dict[str, str]], colorMap:dict[str, tuple[int, int, int]|str])->Image:
+def _v1(graph:list[dict[str, str]], colorMap:dict[str, tuple[int, int, int]|str])->Image.Image:
     # restructure nodes
     nodes:dict[str,  node] = {node['id']:{'type':node['type'], 'sources':[], 'targets':[]} for node in graph['nodes']}
     # add edges to node
@@ -198,6 +198,6 @@ def _v1(graph:list[dict[str, str]], colorMap:dict[str, tuple[int, int, int]|str]
         draw.line((posX, minY, posX, maxY), fill=(0, 0, 0), width=WIDTH)
     return img
 
-from collections import defaultdict
-gen(test_data, {}).show()
+if __name__ == '__main__':
+    gen(test_data, {}).show()
 
