@@ -97,9 +97,9 @@ def gen(data:str, color:dict[str, tuple[int, int, int]|str])->Image.Image:
         case _:
             raise Exception("unknown graph version")
 
-V_SPACING = 5
+V_SPACING = 20
 H_SPACING = 10
-SIZE = 10
+SIZE = 5
 DEFCOLOR = 'white'
 WIDTH = 2
 
