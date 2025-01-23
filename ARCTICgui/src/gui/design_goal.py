@@ -26,7 +26,7 @@ class LogicCircuitSynth(PageTab):
         Returns:
             ft.Container: Column with LogicCircuitSynth controls
         """
-
+        
         def textbox_changed(e):
             st.bool_func = e.control.value.strip()
 

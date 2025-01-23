@@ -200,4 +200,3 @@ def _v1(graph:list[dict[str, str]], colorMap:dict[str, tuple[int, int, int]|str]
 
 if __name__ == '__main__':
     gen(test_data, {}).show()
-

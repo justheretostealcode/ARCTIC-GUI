@@ -23,6 +23,7 @@ class CombinedDesignView(PageTab):
         Returns:
             ft.Column: Column with CombinedDesignView controls
         """
+        
         self.LogicCircuit = ft.Image(
             src=os.path.join('ARCTICgui', 'data', 'empty.jpeg'),
             width=200,
