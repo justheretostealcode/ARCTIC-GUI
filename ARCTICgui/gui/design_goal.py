@@ -182,7 +182,7 @@ class LogicCircuitSynth(PageTab):
             generate_table_btn]),  #button to generate truth table based on input
             input_sensor_container,#the container for the input sensor selection
             truth_table_container, #the container for the generated truth table
-            ft.TextButton('Synthesis', on_click=start_synth)
+            ft.Row([ft.TextButton('Synthesis', on_click=start_synth), ft.IconButton(icon=ft.Icons.STOP, on_click=syn.kill_stop)]),
             ])
         
 
