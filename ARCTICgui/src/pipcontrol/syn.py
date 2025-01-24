@@ -67,3 +67,6 @@ def kill()->None:
         pass
     finally:
         _proc = None
+
+def kill_stop(e) ->None:
+    kill()
