@@ -25,7 +25,7 @@ class CombinedDesignView(PageTab):
         """
         
         self.LogicCircuit = ft.Image(
-            src=os.path.join('ARCTICgui', 'data', 'empty.jpeg'),
+            src=os.path.join('ARCTICgui', 'empty.jpeg'),
             width=200,
             height=200,
         )
@@ -41,14 +41,17 @@ class CombinedDesignView(PageTab):
         self.Selections.options.clear()
         tmp=data_storage.images.ids()
         self.Selections.options.extend([ft.dropdown.Option(item) for item in tmp])
-        self.Selections.value = tmp[0]
+        self.Selections.value = tmp[0] if len(tmp)>1 else ''
         self.Selections.update()
         self.on_click(None)
     def on_click(self, _):
-        if self.Selections.value not in data_storage.images.ids():
+        if self.Selections.value == '':
+            self.LogicCircuit.src = os.path.join('ARCTICgui', 'empty.jpeg')
+        elif self.Selections.value not in data_storage.images.ids():
             raise Exception(f'unknown value "{self.Selections.value}"') # should be imposable
-        ipf = data_storage.images[self.Selections.value]
-        self.LogicCircuit.src = ipf
+        else:
+            ipf = data_storage.images[self.Selections.value]
+            self.LogicCircuit.src = ipf
         self.LogicCircuit.update()
 
 class PlasmidView(PageTab):
