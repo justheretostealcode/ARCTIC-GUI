@@ -1,12 +1,18 @@
 """ File containing classes related to the design_view tabs"""
 import flet as ft
+import os
+
 from custom_controls.tabs import PageTabs
 from custom_controls.tab import PageTab
+from data import data_storage
+
 
 class CombinedDesignView(PageTab):
     """Class representing the flet.tab related to the CombinedDesignView"""
     def __init__(self) -> None:
         super().__init__()
+
+        data_storage.images.register(self.dataUpdate)
 
         self.text="Combined View"
         self.content = self.content_builder()
@@ -17,8 +23,36 @@ class CombinedDesignView(PageTab):
         Returns:
             ft.Column: Column with CombinedDesignView controls
         """
-        return ft.Placeholder(color=ft.Colors.random())
-
+        
+        self.LogicCircuit = ft.Image(
+            src=os.path.join('ARCTICgui', 'empty.jpeg'),
+            width=200,
+            height=200,
+        )
+        self.Selections=ft.Dropdown(
+            on_change=self.on_click
+        )
+        controls = [
+            self.Selections,
+            self.LogicCircuit,
+        ]
+        return ft.Column(controls=controls)
+    def dataUpdate(self):
+        self.Selections.options.clear()
+        tmp=data_storage.images.ids()
+        self.Selections.options.extend([ft.dropdown.Option(item) for item in tmp])
+        self.Selections.value = tmp[0] if len(tmp)>1 else ''
+        self.Selections.update()
+        self.on_click(None)
+    def on_click(self, _):
+        if self.Selections.value == '':
+            self.LogicCircuit.src = os.path.join('ARCTICgui', 'empty.jpeg')
+        elif self.Selections.value not in data_storage.images.ids():
+            raise Exception(f'unknown value "{self.Selections.value}"') # should be imposable
+        else:
+            ipf = data_storage.images[self.Selections.value]
+            self.LogicCircuit.src = ipf
+        self.LogicCircuit.update()
 
 class PlasmidView(PageTab):
     """Class representing the flet.tab related to the PlasmidView"""
