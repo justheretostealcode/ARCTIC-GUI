@@ -24,6 +24,9 @@ class Test(unittest.TestCase):
         self.assertEqual(result, not_a)
 
         #Gewuenschtes verhalten fuer XOR operator einfuegen
+        result = boolean_function.generate_truth_table_from_expr("c^a")
+        c_xor_a = [['c', 'a', 'c^a'], [0, 0, 0], [0, 1, 1], [1, 0, 1], [1, 1, 0]]
+        self.assertEqual(result, c_xor_a)
         
         #Test broken Inputs
         self.assertRaises(Exception, boolean_function.generate_truth_table_from_expr, "a b")
