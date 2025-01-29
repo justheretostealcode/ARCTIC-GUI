@@ -336,7 +336,7 @@ def gen(data:str, colorMap:dict[str, rgb])->Image.Image:
 
     raise Exception(f"unknown graph version '{graph['version']}'")
 
-def getNodes(graph:list[dict[str, str]])->dict[str, Node]:
+def getNodes(graph:dict[str, list[dict[str, str]]])->dict[str, Node]:
     '''
     graph:
         a graph element of the json logic circuit
