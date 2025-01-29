@@ -12,6 +12,9 @@ _proc:subprocess.Popen|None = None
 _gradlew:str = os.path.join('.', 'gradlew.bat' if sys.platform == 'win32' else 'gradlew')
 
 def build()->None:
+    '''
+    This function builds ARCTICsyn with gradle
+    '''
     global _proc
     assert _proc is None
     os.chdir('ARCTICsyn')
@@ -23,6 +26,27 @@ def build()->None:
     _proc = None
 
 def start(*,f:str|None=None, tt:str|None=None, mc:str=MAP_CONF, sync:str=SYN_CONF, simc:str=SIM_CONF)->list[str]:
+    '''
+    f:
+        is a boolean function using the variables a, b & c and the operators ~, & and |
+    tt:
+        a truth table as string of 8 1's or 0's
+        a  10101010
+        b  11001100
+        c  11110000
+        tt 10011001
+    mc:
+        path to map.config for ARCTICsyn
+    sync:
+        path to syn.config for ARCTICsyn
+    simc:
+        path to sim.config for ARCTICsyn
+    
+    starts is a process that runs synthesis if no other process exists
+    
+    return:
+        a list of paths in the output dictionary of new files
+    '''
     global _proc
     assert _proc is None
     assert (f is None and tt is not None) or (f is not None and tt is None)
@@ -55,6 +79,9 @@ def start(*,f:str|None=None, tt:str|None=None, mc:str=MAP_CONF, sync:str=SYN_CON
     return [fp[3:] for fp in new_files if fp not in old_files]
 
 def kill()->None:
+    '''
+    kills a synthesis process if one exists
+    '''
     global _proc
     if _proc is None:
         return
