@@ -10,6 +10,7 @@ class DataStorage():
     """
     bool_func: str = field(default='')
     last_result:list[str] = field(default_factory=list)
+    pipeline_steps_active = {}
 
 storage = DataStorage()
 

@@ -34,7 +34,7 @@ def main(page: ft.Page) -> None:
 
     design_goal = DesignGoal()
     design_view = DesignView()
-    gda_pipeline = GDAPipeline()
+    gda_pipeline = GDAPipeline(page)
     analysis_visualizer =AnalysisVisualizer()
 
     container_top_left = PageContainer()
