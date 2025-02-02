@@ -29,11 +29,8 @@ class PipelineContainer(ft.Container):
 
     def content_builder(self):
 
-        def on_switch_change(e, name:str):
-            print(f"switched {name}")
-            
+        def on_switch_change(e, name:str):      
             storage.pipeline_steps_active[self.title] = switch.value
-            print(storage.pipeline_steps_active)
 
         switch = ft.Switch(
             value=False,
