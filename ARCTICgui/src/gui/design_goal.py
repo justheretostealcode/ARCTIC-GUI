@@ -115,14 +115,21 @@ class LogicCircuitSynth(PageTab):
         
         # CODE TO BE ADDED
         selected_file_display = ft.Text("Select a library:", size=14, color=ft.colors.BLUE_700)
-        # Dropdown to select a file
+        
+        path_to_gen_lib = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs")
+
         def on_dropdown_change(e):
-            #Update the selected file display when an option is chosen.
-            selected_file_display.value = f"Selected library: {e.control.value}"
-            self.page.update()
+            selected_library = e.control.value
+            if selected_library:
+                try:
+                    library_path = '../' + os.path.join(path_to_gen_lib, selected_library)
+                    data_storage.config_manager.update_config('map', 'LIBRARY', library_path)
+                    selected_file_display.value = f"Selected library: {selected_library}"
+                    self.page.update()
+                except ValueError as err:
+                    print(f"Error setting library path: {err}")
 
         # genetic gate library dropdown
-        path_to_gen_lib = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs")
         genetic_gate_libraries_dropdown = ft.Dropdown(
             width=300,
             height=35,

@@ -4,6 +4,8 @@ from typing import Callable
 from PIL.Image import Image
 import image_generator
 import image_generator.logic_circuit
+import os
+
 @dataclass
 class DataStorage():
     """class to store information persistent across the program"
@@ -42,3 +44,73 @@ class ImageDB():
             fun()
 
 images = ImageDB()
+
+@dataclass
+class ConfigManager:
+    """Simple config manager"""
+    _current_configs: dict = field(default_factory=dict)
+    _config_files: dict = field(default_factory=dict)
+
+    def __post_init__(self):
+        self._load_configs()
+
+    def _load_configs(self):
+        """Load configurations from files"""
+        config_files = {
+            'map': 'map.config',
+            'sim': 'sim.config',
+            'syn': 'syn.config'
+        }
+        
+        current_dir = os.path.dirname(os.path.dirname(__file__))
+        arctic_gui_dir = os.path.dirname(current_dir)
+        
+        for config_name, filename in config_files.items():
+            path = os.path.join(arctic_gui_dir, filename)
+            self._config_files[config_name] = path
+            
+            if os.path.exists(path):
+                config_content = {}
+                with open(path, 'r') as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith('#'): # Ignore comments and empty lines
+                            key, value = line.split('=', 1)
+                            config_content[key.strip()] = value.strip()
+                self._current_configs[config_name] = config_content
+            else:
+                print(f"Warning: Config file not found at {path}")
+
+    def update_config(self, config_name: str, key: str, value: str) -> None:
+        """Update config value and write to file"""
+        if config_name not in self._current_configs:
+            raise ValueError(f"Unknown config: {config_name}")
+        
+        self._current_configs[config_name][key] = value
+        self._write_config_to_file(config_name)
+
+    def _write_config_to_file(self, config_name: str) -> None:
+        """Write current configuration to file"""
+        config_path = self._config_files[config_name]
+        config = self._current_configs[config_name]
+        
+        with open(config_path, 'r') as f:
+            lines = f.readlines()
+
+        new_lines = []
+        for line in lines:
+            if line.strip() and not line.strip().startswith('#'):
+                key = line.split('=')[0].strip()
+                if key in config:
+                    new_lines.append(f"{key}={config[key]}\n")
+                    continue
+            new_lines.append(line)
+
+        with open(config_path, 'w') as f:
+            f.writelines(new_lines)
+
+    def get_config(self, config_name: str, key: str) -> str:
+        """Get current value for a config key"""
+        return self._current_configs.get(config_name, {}).get(key)
+
+config_manager = ConfigManager()
