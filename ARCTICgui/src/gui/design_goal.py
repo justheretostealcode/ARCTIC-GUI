@@ -195,7 +195,7 @@ class LogicCircuitSynth(PageTab):
             width=300,
             height=35,
             text_size=13,
-            content_padding=ft.padding.only(top=2, left=5, right=5, bottom=2),  # Меньше вертикальных отступов
+            content_padding=ft.padding.only(top=2, left=5, right=5, bottom=2),
             border_color=ft.colors.BLUE_400,
             focused_border_color=ft.colors.BLUE_ACCENT,
             focused_border_width=2,
