@@ -139,13 +139,14 @@ class LogicCircuitSynth(PageTab):
                         options = [
                             ft.dropdown.Option(
                                 key=device_id,
-                                text=f"{info['name']}" # uncomment if need more info in the dropdown but for short only the name ({device_id})"
+                                '''uncomment if need more info in the dropdown but for short only the name'''
+                                text=f"{info['name']}" # ({device_id})"
                             )
                             for device_id, info in st.input_devices.items()
                         ]
                         
                         dropdown = ft.Dropdown(
-                            width=70,
+                            width=65,
                             height=35,
                             label=str(var),
                             options=options,
