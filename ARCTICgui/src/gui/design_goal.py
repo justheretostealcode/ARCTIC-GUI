@@ -149,6 +149,7 @@ class LogicCircuitSynth(PageTab):
 
         #Todo: get Diagrams from valid path
         placeholder_path =  os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs", "figures_eight-state_det-var_2024-04-04_Monotonicity")
+
         images = ft.GridView(
         expand=1,
         runs_count=5,
