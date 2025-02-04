@@ -1,6 +1,6 @@
 """file to hold the DataStorage class"""
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Any
+from typing import Callable
 from PIL.Image import Image
 import image_generator
 import image_generator.logic_circuit
@@ -10,11 +10,11 @@ import os
 class DataStorage():
     """class to store information persistent across the program"""
     bool_func: str = field(default='')
-    last_result: List[str] = field(default_factory=list)
-    pipeline_steps_active: Dict[str, Any] = field(default_factory=dict)
-    input_devices: Dict[str, Dict[str, Any]] = field(default_factory=dict)
-    output_devices: Dict[str, Dict[str, Any]] = field(default_factory=dict)
-    not_nor2_devices: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    last_result: list[str] = field(default_factory=list)
+    pipeline_steps_active: dict[str, any] = field(default_factory=dict)
+    input_devices: dict[str, dict[str, any]] = field(default_factory=dict)
+    output_devices: dict[str, dict[str, any]] = field(default_factory=dict)
+    not_nor2_devices: dict[str, dict[str, any]] = field(default_factory=dict)
 
     def clear_devices(self) -> None:
         """Clear all device dictionaries"""
