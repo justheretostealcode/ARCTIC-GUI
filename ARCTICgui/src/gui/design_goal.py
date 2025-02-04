@@ -139,18 +139,27 @@ class LogicCircuitSynth(PageTab):
                         options = [
                             ft.dropdown.Option(
                                 key=device_id,
-                                text=f"{info['name']} ({device_id})"
+                                text=f"{info['name']}" # uncomment if need more info in the dropdown but for short only the name ({device_id})"
                             )
                             for device_id, info in st.input_devices.items()
                         ]
                         
                         dropdown = ft.Dropdown(
-                            width=60,
+                            width=70,
+                            height=35,
                             label=str(var),
-                            options=options
+                            options=options,
+                            text_size=14,
+                            content_padding=ft.padding.only(left=10, right=20),
+                            border_radius=5,
                         )
                         dropdowns.append(dropdown)
-                    input_sensor_container.content = ft.Row(dropdowns)
+                    
+                    input_sensor_container.content = ft.Row(
+                        controls=dropdowns,
+                        spacing=15,
+                        alignment=ft.MainAxisAlignment.START,
+                    )
                     self.page.update()
                 except Exception as ex:
                     input_sensor_container.content = ft.Text(f"Error: {str(ex)}")
@@ -185,7 +194,21 @@ class LogicCircuitSynth(PageTab):
         genetic_gate_libraries_dropdown = ft.Dropdown(
             width=300,
             height=35,
-            options=[ft.dropdown.Option(genetic_gate_library) for genetic_gate_library in os.listdir(path_to_gen_lib)],
+            text_size=13,
+            content_padding=ft.padding.only(top=2, left=5, right=5, bottom=2),  # Меньше вертикальных отступов
+            border_color=ft.colors.BLUE_400,
+            focused_border_color=ft.colors.BLUE_ACCENT,
+            focused_border_width=2,
+            options=[
+                ft.dropdown.Option(
+                    genetic_gate_library,
+                    text_style=ft.TextStyle(
+                        size=13,
+                        weight=ft.FontWeight.W_500, 
+                    )
+                ) 
+                for genetic_gate_library in os.listdir(path_to_gen_lib)
+            ],
             on_change=on_dropdown_change
         )
 

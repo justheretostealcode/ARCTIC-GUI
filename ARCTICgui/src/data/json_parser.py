@@ -65,7 +65,7 @@ def update_storage_with_devices(json_path: str) -> None:
             'color': device.get('color'),
             'regulator': device.get('regulator')
         }
-        
+
         primitive_id = device.get('primitive_identifier')
         if isinstance(primitive_id, list):
             if 'INPUT' in primitive_id:
