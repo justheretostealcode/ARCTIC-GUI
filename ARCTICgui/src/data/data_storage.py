@@ -2,6 +2,8 @@
 from dataclasses import dataclass, field
 from typing import Callable
 from PIL.Image import Image
+import image_generator
+import image_generator.logic_circuit
 
 @dataclass
 class DataStorage():
@@ -12,8 +14,8 @@ class DataStorage():
         if cls._instance is None:
             cls._instance = super(DataStorage, cls).__new__(cls)
             # Initialize default values here
-            cls._instance.bool_func = ''
-            cls._instance.last_result = []
+            cls._instance.bool_func: str = field(default='')
+            cls._instance.last_result:list[str] = field(default_factory=list)
             cls._instance.pipeline_steps_active = {}
             cls._instance.input_devices = {}
             cls._instance.output_devices = {}
@@ -38,8 +40,14 @@ class ImageDB():
     def register(self, hook:Callable[[], None])->None:
         self._hooks.append(hook)
     def __getitem__(self, imgID:str)->str:
-        # Simplified version for testing
-        return self._images[imgID]
+        img = self._images[imgID]
+        if img.endswith('.json'):
+            with open(img, 'r') as file:
+                path = img[:-4]+'jpeg'
+                image:Image = image_generator.logic_circuit.gen(file.read(), {})
+                image.save(path)
+                img = path
+        return img
     def __setitem__(self, imgID:str, img:str)->None:
         self._images[imgID] = img
     def __delitem__(self, imgID:str)->str:
