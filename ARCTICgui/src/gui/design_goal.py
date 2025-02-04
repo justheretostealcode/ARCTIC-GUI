@@ -122,7 +122,7 @@ class LogicCircuitSynth(PageTab):
             self.page.update()
 
         # genetic gate library dropdown
-        path_to_gen_lib = os.path.join('ARCTICsim', 'thermo_libs', 'evaluation', 'dirichlet')
+        path_to_gen_lib = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs")
         genetic_gate_libraries_dropdown = ft.Dropdown(
             width=300,
             height=35,
@@ -141,7 +141,7 @@ class LogicCircuitSynth(PageTab):
         )
 
         #Todo: get Diagrams from valid path
-        placeholder_path =  os.path.join('ARCTICsim', 'gate_libs', 'plots_id_cytometry_01')
+        placeholder_path =  os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs", "figures_eight-state_det-var_2024-04-04_Monotonicity")
 
         images = ft.GridView(
         expand=1,
