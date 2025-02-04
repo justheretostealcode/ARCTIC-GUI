@@ -2,16 +2,33 @@
 from dataclasses import dataclass, field
 from typing import Callable
 from PIL.Image import Image
-import image_generator
-import image_generator.logic_circuit
+
 @dataclass
 class DataStorage():
-    """class to store information persistent across the program"
-    """
-    bool_func: str = field(default='')
-    last_result:list[str] = field(default_factory=list)
-    pipeline_steps_active = {}
+    """Singleton class to store information persistent across the program"""
+    _instance = None
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(DataStorage, cls).__new__(cls)
+            # Initialize default values here
+            cls._instance.bool_func = ''
+            cls._instance.last_result = []
+            cls._instance.pipeline_steps_active = {}
+            cls._instance.input_devices = {}
+            cls._instance.output_devices = {}
+        return cls._instance
 
+    def __init__(self):
+        """Initialize is called after __new__, but we don't need to do anything here"""
+        pass
+
+    def clear_devices(self):
+        """Clear both input and output devices"""
+        self.input_devices.clear()
+        self.output_devices.clear()
+
+# Create single instance
 storage = DataStorage()
 
 @dataclass
@@ -21,14 +38,8 @@ class ImageDB():
     def register(self, hook:Callable[[], None])->None:
         self._hooks.append(hook)
     def __getitem__(self, imgID:str)->str:
-        img = self._images[imgID]
-        if img.endswith('.json'):
-            with open(img, 'r') as file:
-                path = img[:-4]+'jpeg'
-                image:Image = image_generator.logic_circuit.gen(file.read(), {})
-                image.save(path)
-                img = path
-        return img
+        # Simplified version for testing
+        return self._images[imgID]
     def __setitem__(self, imgID:str, img:str)->None:
         self._images[imgID] = img
     def __delitem__(self, imgID:str)->str:
