@@ -128,4 +128,3 @@ class ConfigManager:
         return self._current_configs.get(config_name, {}).get(key)
 
 config_manager = ConfigManager()
-del ConfigManager
