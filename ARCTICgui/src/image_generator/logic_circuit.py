@@ -351,21 +351,17 @@ def getNodes(graph:dict[str, list[dict[str, str]]])->dict[str, Node]:
         nodes[edge['target']]['sources'].append(edge['source'])
         nodes[edge['source']]['targets'].append(edge['target'])
     
-    #TODO: ask AG if that is correct like that
     # replace OUTPUT_OR2 nodes
     for nodeID, node in list(nodes.items()):
         if not node['type'].startswith('OUTPUT_OR2'):
             continue
         gateNode = node.copy()
-        gateNode['sources'] = [nodeID+'_NOT']
-        nodes[nodeID+'_OUTPUT'] = gateNode
-        notNode = node.copy()
-        notNode['sources'] = [nodeID]
-        notNode['targets'] = [nodeID+'_OUTPUT']
-        notNode['type'] = 'NOT'
-        nodes[nodeID+'_NOT'] = notNode
-        node['type'] = 'NOR2'
-        node['targets'] = [nodeID+'_NOT']
+        gateNode['sources'] = [node['sources'][1]]
+        nodes[gateNode['sources'][0]]['targets'].remove(nodeID)
+        nodes[gateNode['sources'][0]]['targets'].append(nodeID+'2')
+        node['sources'] = [node['sources'][0]]
+        nodes[nodeID+'2'] = gateNode
+        break
     
     return nodes
 
@@ -413,6 +409,64 @@ def getRankNodes(nodes:dict[str,  Node])->list[list[str]]:
                 newRankIds.append(bypassID)
                 nodes[oldID]['targets'] = [bypassID]+[nid for nid in nodes[oldID]['targets'] if nid not in unranked]
         rankedNodes.append(newRankIds)
+    
+    # move all outputs to the last rank
+    outputs:list[str] = []
+    for i, rank in enumerate(rankedNodes[:-1]):
+        for output in outputs:
+            rank.append(f"BYPASS_{i}_"+output)
+            for sid in nodes[output]['sources']:
+                nodes[sid]['targets'].remove(output)
+                nodes[sid]['targets'].append(rank[-1])
+            nodes[rank[-1]] = {
+                'type': 'BYPASS',
+                'sources':nodes[output]['sources'],
+                'targets':[output],
+            }
+            nodes[output]['sources'] = [rank[-1]]
+        for j in range(len(rank)):
+            nid = rank[j]
+            if nodes[nid]['type'].startswith('OUTPUT'):
+                outputs.append(nid)
+                rank.append(f"BYPASS_{i}_"+nid)
+                rank.remove(nid)
+                for sid in nodes[nid]['sources']:
+                    nodes[sid]['targets'].remove(nid)
+                    nodes[sid]['targets'].append(rank[-1])
+                nodes[rank[-1]] = {
+                    'type': 'BYPASS',
+                    'sources':nodes[nid]['sources'],
+                    'targets':[nid],
+                }
+                nodes[nid]['sources'] = [rank[-1]]
+    for nid in outputs:
+        rankedNodes[-1].append(nid)
+
+    # eliminate parallel bypasses
+    for rank in rankedNodes:
+        bypasses = [nid for nid in rank if nodes[nid]['type'] == 'BYPASS']
+        # can't have parallel bypasses if there are not at least 2
+        if len(bypasses) < 2: 
+            continue
+        sources = [nodes[nid]['sources'][0] for nid in bypasses]
+        # can't have parallel bypasses if there are as many sources as bypasses
+        if len(set(sources)) == len(bypasses):
+            continue
+        for i, (nid, src) in enumerate(zip(bypasses, sources)):
+            # if src hasn't bean seen before skip the bypass
+            if src not in sources[:i]:
+                continue
+            # replace the sources of the bypasses targets
+            targets = nodes[nid]['targets']
+            for tid in targets:
+                idx = nodes[tid]['sources'].index(nid)
+                del nodes[tid]['sources'][idx] 
+                nodes[tid]['sources'].append(bypasses[sources.index(src)])
+            # replace the target of the bypasses source
+            nodes[src]["targets"].remove(nid)
+            nodes[src]["targets"]+= targets
+            del nodes[nid]
+            rank.remove(nid)
     return rankedNodes
 
 def getRankBoxes(nodes:dict[str,  Node], rankedNodes:list[list[str]])->list[tuple[int, int]]:

@@ -98,11 +98,10 @@ class Test(unittest.TestCase):
             'nodes':[{'id':'a', 'type':'INPUT'}, {'id':'nor1', 'type':'NOR2'}, {'id':'out', 'type':'OUTPUT_OR2'}],
             'edges':[{'source':'a', 'target':'nor1'}, {'source':'a', 'target':'nor1'}, {'source':'nor1', 'target':'out'}, {'source':'nor1', 'target':'out'}],
         }),{
-            'a':{'type':'INPUT', 'sources':[], 'targets':['nor1', 'nor1']},
-            'nor1':{'type':'NOR2', 'sources':['a', 'a'], 'targets':['out', 'out']},
-            'out':{'type':'NOR2', 'sources':['nor1', 'nor1'], 'targets':['out_NOT']},
-            'out_NOT':{'type':'NOT', 'sources':['out'], 'targets':['out_OUTPUT']},
-            'out_OUTPUT':{'type':'OUTPUT_OR2', 'sources':['out_NOT'], 'targets':[]},
+            'a': {'type': 'INPUT', 'sources': [], 'targets': ['nor1', 'nor1']},
+            'nor1': {'type': 'NOR2', 'sources': ['a', 'a'], 'targets': ['out', 'out2']},
+            'out': {'type': 'OUTPUT_OR2', 'sources': ['nor1'], 'targets': []},
+            'out2': {'type': 'OUTPUT_OR2', 'sources': ['nor1'], 'targets': []}
         })
     def test_getRankNodes(self)->None:
         self.assertEqual(logic_circuit.getRankNodes({}), [])
@@ -118,7 +117,7 @@ class Test(unittest.TestCase):
             'out':{'type':'OUTPUT', 'sources':['nor1'], 'targets':[]},
         }), [['a'], ['not1', 'BYPASS_a'], ['nor1'], ['out']])
         self.assertTrue('BYPASS_a' in nodes)
-        self.assertEqual(nodes['a'], {'type':'INPUT', 'sources':[], 'targets':['not1', 'BYPASS_a']})
+        self.assertEqual(nodes['a'], {'type':'INPUT', 'sources':[], 'targets':['BYPASS_a', 'not1']})
         self.assertEqual(nodes['BYPASS_a'], {'type':'BYPASS', 'sources':['a'], 'targets':['nor1']})
         self.assertEqual(nodes['nor1'], {'type':'NOR2', 'sources':['not1', 'BYPASS_a'], 'targets':['out']})
         self.assertEqual(logic_circuit.getRankNodes({
