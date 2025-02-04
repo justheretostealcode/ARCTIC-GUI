@@ -6,6 +6,7 @@ import os
 from custom_controls.tab import PageTab
 from custom_controls.tabs import PageTabs
 from data.data_storage import storage as st
+from data.json_parser import update_storage_with_devices
 import pipcontrol.boolean_function as bf
 import pipcontrol.syn as syn
 
@@ -79,6 +80,53 @@ class LogicCircuitSynth(PageTab):
                 self.page.update()
         
         def show_input_sensors_dropdown(e):
+            # First parse the current library
+            current_lib = genetic_gate_libraries_dropdown.value
+            if not current_lib:
+                self.page.show_snack_bar(
+                    ft.SnackBar(content=ft.Text("Please select a gate library first"))
+                )
+                return
+                
+            json_path = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs", current_lib)
+            
+            try:
+                update_storage_with_devices(json_path)
+                
+                if len(st.input_devices) == 0:
+                    self.page.show_snack_bar(
+                        ft.SnackBar(content=ft.Text("No input devices found in the library"))
+                    )
+                    return
+                
+                # Show success message with device count
+                self.page.show_snack_bar(
+                    ft.SnackBar(
+                        content=ft.Text(f"Successfully found {len(st.input_devices)} input devices"),
+                        bgcolor=ft.colors.GREEN_700,
+                    )
+                )
+                    
+            except Exception as ex:
+                print(f"Error parsing library: {str(ex)}") # Only errors go to terminal
+                def close_dialog(e):
+                    self.page.dialog.open = False
+                    self.page.update()
+                
+                error_dialog = ft.AlertDialog(
+                    modal=True,
+                    title=ft.Text("Error"),
+                    content=ft.Text(f"Error parsing library: {str(ex)}"),
+                    actions=[
+                        ft.TextButton("OK", on_click=close_dialog),
+                    ],
+                    actions_alignment=ft.MainAxisAlignment.END,
+                )
+                self.page.dialog = error_dialog
+                error_dialog.open = True
+                self.page.update()
+                return
+
             # Parse and evaluate the user input
             expr = input_expr.value.strip()
             if expr:
@@ -87,16 +135,19 @@ class LogicCircuitSynth(PageTab):
                     variables = sorted(expression.atoms(sympy.Symbol), key=lambda x: str(x))
                     dropdowns = []
                     for var in variables:
+                        # Create dropdown options from actual input devices
+                        options = [
+                            ft.dropdown.Option(
+                                key=device_id,
+                                text=f"{info['name']} ({device_id})"
+                            )
+                            for device_id, info in st.input_devices.items()
+                        ]
+                        
                         dropdown = ft.Dropdown(
-                            width= 60, #TODO relative!!
-                            #width=main_left_column.width*(1/len(variables)),
+                            width=60,
                             label=str(var),
-                            options=[
-                                ft.dropdown.Option("Lac"),
-                                ft.dropdown.Option("Tet"),
-                                ft.dropdown.Option("Tac"),
-                                ft.dropdown.Option("Ph")
-                            ],
+                            options=options
                         )
                         dropdowns.append(dropdown)
                     input_sensor_container.content = ft.Row(dropdowns)
@@ -122,7 +173,8 @@ class LogicCircuitSynth(PageTab):
             selected_library = e.control.value
             if selected_library:
                 try:
-                    library_path = '../' + os.path.join(path_to_gen_lib, selected_library)
+                    # Use os.path.join and then convert to forward slashes
+                    library_path = '../' + os.path.join(path_to_gen_lib, selected_library).replace('\\', '/')
                     data_storage.config_manager.update_config('map', 'LIBRARY', library_path)
                     selected_file_display.value = f"Selected library: {selected_library}"
                     self.page.update()
@@ -148,7 +200,7 @@ class LogicCircuitSynth(PageTab):
         )
 
         #Todo: get Diagrams from valid path
-        placeholder_path =  os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs", "figures_eight-state_det-var_2024-04-04_Monotonicity")
+        placeholder_path = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs", "figures_eight-state_det-var_2024-04-04_Monotonicity")
 
         images = ft.GridView(
         expand=1,
