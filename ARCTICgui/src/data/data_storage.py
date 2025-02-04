@@ -5,7 +5,6 @@ from PIL.Image import Image
 import image_generator
 import image_generator.logic_circuit
 import os
-from copy import deepcopy
 
 @dataclass
 class DataStorage():

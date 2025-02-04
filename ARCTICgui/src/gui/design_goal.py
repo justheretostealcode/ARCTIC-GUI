@@ -115,7 +115,7 @@ class LogicCircuitSynth(PageTab):
         
         # CODE TO BE ADDED
         selected_file_display = ft.Text("Select a library:", size=14, color=ft.colors.BLUE_700)
-        # Dropdown to select a file
+        
         path_to_gen_lib = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs")
 
         def on_dropdown_change(e):
