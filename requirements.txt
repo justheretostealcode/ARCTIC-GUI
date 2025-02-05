@@ -1,0 +1,15 @@
+autograd==1.7.0
+Cython==3.0.11
+deprecated==1.2.18
+flet==0.26.0
+gvgen==1.0
+matplotlib==3.10.0
+numpy==2.2.2
+Pillow==11.1.0
+reportlab==4.3.0
+scipy==1.15.1
+seaborn==0.13.2
+setuptools==75.6.0
+svglib==1.5.1
+svgutils==0.3.4
+sympy==1.13.3
