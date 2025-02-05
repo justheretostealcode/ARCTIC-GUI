@@ -61,22 +61,46 @@ class LogicCircuitSynth(PageTab):
         )
 
         def show_truth_table(e):
-            # Parse and evaluate the user input
             expr = input_expr.value.strip()
-            if expr:
-                try:
-                    #parse the user expression into a truth table
-                    truth_table = bf.generate_truth_table_from_expr(expr)
-                    table_content = []
-                    for row in truth_table:
-                        table_content.append(ft.Text(f"{' | '.join(map(str, row))}"))
-                    input_sensor_container.content = ft.Column(table_content)
-                    self.page.update()
-                except Exception as ex:
-                    input_sensor_container.content = ft.Text(f"Error: {str(ex)}")
-                    self.page.update()
-            else:
+            if not expr:
                 input_sensor_container.content = ft.Text("Please enter a valid boolean expression.")
+                self.page.update()
+                return
+
+            try:
+                truth_table = bf.generate_truth_table_from_expr(expr)
+                if not truth_table:
+                    return
+
+                # Get variable names from first row
+                headers = [str(col) for col in truth_table[0][:-1]]  # All but last column
+                headers.append("Output")  # Last column is output
+
+                # Create DataTable
+                table = ft.DataTable(
+                    column_spacing=15, 
+                    columns=[ft.DataColumn(ft.Text(header, size=14, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER)) for header in headers],
+                    rows=[
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(
+                                    ft.Container(
+                                        ft.Text(str(int(cell)), size=14, text_align=ft.TextAlign.CENTER),
+                                        alignment=ft.alignment.center,
+                                        bgcolor=ft.colors.SURFACE_VARIANT if i == len(row) - 1 else None  # Gray background for the last column (function result)
+                                    )
+                                ) for i, cell in enumerate(row)
+                            ]
+                        ) for row in truth_table[1:]
+                    ],
+                )
+
+                input_sensor_container.content = ft.Container(content=table, padding=5)
+                self.page.update()
+
+
+            except Exception as ex:
+                input_sensor_container.content = ft.Text(f"Error: {str(ex)}")
                 self.page.update()
         
         def show_input_sensors_dropdown(e):

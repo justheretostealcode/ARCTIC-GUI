@@ -1,12 +1,11 @@
 """Module for parsing gate library JSON files and extracting device information"""
 
 import json
-from typing import List, Dict, Any
 from .data_storage import storage  # Use relative import
 
 def find_devices_by_primitive(json_path: str, 
-                            primitives: List[str], 
-                            fields_to_extract: List[str]) -> List[Dict[str, Any]]:
+                            primitives: list[str], 
+                            fields_to_extract: list[str]) -> list[dict[str, any]]:
     """Generic function to find devices with specific primitive identifiers"""
     try:
         # Try different encodings

@@ -5,3 +5,5 @@ __pycache__/
 ARCTICsyn/energy-eval-variants
 ARCTICgui/energy-eval-variants
 ARCTICsyn/arctic.log
+venv/
+.vscode/
