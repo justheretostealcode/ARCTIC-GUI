@@ -6,6 +6,7 @@ import os
 from custom_controls.tab import PageTab
 from custom_controls.tabs import PageTabs
 from data.data_storage import storage as st
+from data.json_parser import update_storage_with_devices
 import pipcontrol.boolean_function as bf
 import pipcontrol.syn as syn
 
@@ -60,25 +61,96 @@ class LogicCircuitSynth(PageTab):
         )
 
         def show_truth_table(e):
-            # Parse and evaluate the user input
             expr = input_expr.value.strip()
-            if expr:
-                try:
-                    #parse the user expression into a truth table
-                    truth_table = bf.generate_truth_table_from_expr(expr)
-                    table_content = []
-                    for row in truth_table:
-                        table_content.append(ft.Text(f"{' | '.join(map(str, row))}"))
-                    input_sensor_container.content = ft.Column(table_content)
-                    self.page.update()
-                except Exception as ex:
-                    input_sensor_container.content = ft.Text(f"Error: {str(ex)}")
-                    self.page.update()
-            else:
+            if not expr:
                 input_sensor_container.content = ft.Text("Please enter a valid boolean expression.")
+                self.page.update()
+                return
+
+            try:
+                truth_table = bf.generate_truth_table_from_expr(expr)
+                if not truth_table:
+                    return
+
+                # Get variable names from first row
+                headers = [str(col) for col in truth_table[0][:-1]]  # All but last column
+                headers.append("Output")  # Last column is output
+
+                # Create DataTable
+                table = ft.DataTable(
+                    column_spacing=15, 
+                    columns=[ft.DataColumn(ft.Text(header, size=14, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER)) for header in headers],
+                    rows=[
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(
+                                    ft.Container(
+                                        ft.Text(str(int(cell)), size=14, text_align=ft.TextAlign.CENTER),
+                                        alignment=ft.alignment.center,
+                                        bgcolor=ft.colors.SURFACE_VARIANT if i == len(row) - 1 else None  # Gray background for the last column (function result)
+                                    )
+                                ) for i, cell in enumerate(row)
+                            ]
+                        ) for row in truth_table[1:]
+                    ],
+                )
+
+                input_sensor_container.content = ft.Container(content=table, padding=5)
+                self.page.update()
+
+
+            except Exception as ex:
+                input_sensor_container.content = ft.Text(f"Error: {str(ex)}")
                 self.page.update()
         
         def show_input_sensors_dropdown(e):
+            # First parse the current library
+            current_lib = genetic_gate_libraries_dropdown.value
+            if not current_lib:
+                self.page.show_snack_bar(
+                    ft.SnackBar(content=ft.Text("Please select a gate library first"))
+                )
+                return
+                
+            json_path = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs", current_lib)
+            
+            try:
+                update_storage_with_devices(json_path)
+                
+                if len(st.input_devices) == 0:
+                    self.page.show_snack_bar(
+                        ft.SnackBar(content=ft.Text("No input devices found in the library"))
+                    )
+                    return
+                
+                # Show success message with device count
+                self.page.show_snack_bar(
+                    ft.SnackBar(
+                        content=ft.Text(f"Successfully found {len(st.input_devices)} input devices"),
+                        bgcolor=ft.colors.GREEN_700,
+                    )
+                )
+                    
+            except Exception as ex:
+                print(f"Error parsing library: {str(ex)}") # Only errors go to terminal
+                def close_dialog(e):
+                    self.page.dialog.open = False
+                    self.page.update()
+                
+                error_dialog = ft.AlertDialog(
+                    modal=True,
+                    title=ft.Text("Error"),
+                    content=ft.Text(f"Error parsing library: {str(ex)}"),
+                    actions=[
+                        ft.TextButton("OK", on_click=close_dialog),
+                    ],
+                    actions_alignment=ft.MainAxisAlignment.END,
+                )
+                self.page.dialog = error_dialog
+                error_dialog.open = True
+                self.page.update()
+                return
+
             # Parse and evaluate the user input
             expr = input_expr.value.strip()
             if expr:
@@ -87,19 +159,31 @@ class LogicCircuitSynth(PageTab):
                     variables = sorted(expression.atoms(sympy.Symbol), key=lambda x: str(x))
                     dropdowns = []
                     for var in variables:
+                        # Create dropdown options from actual input devices
+                        options = [
+                            ft.dropdown.Option(
+                                key=device_id,
+                                text=f"{info['name']}" # uncomment if need more info in the dropdown but for short only the name ({device_id})"
+                            )
+                            for device_id, info in st.input_devices.items()
+                        ]
+                        
                         dropdown = ft.Dropdown(
-                            width= 60, #TODO relative!!
-                            #width=main_left_column.width*(1/len(variables)),
+                            width=65,
+                            height=35,
                             label=str(var),
-                            options=[
-                                ft.dropdown.Option("Lac"),
-                                ft.dropdown.Option("Tet"),
-                                ft.dropdown.Option("Tac"),
-                                ft.dropdown.Option("Ph")
-                            ],
+                            options=options,
+                            text_size=14,
+                            content_padding=ft.padding.only(left=10, right=20),
+                            border_radius=5,
                         )
                         dropdowns.append(dropdown)
-                    input_sensor_container.content = ft.Row(dropdowns)
+                    
+                    input_sensor_container.content = ft.Row(
+                        controls=dropdowns,
+                        spacing=15,
+                        alignment=ft.MainAxisAlignment.START,
+                    )
                     self.page.update()
                 except Exception as ex:
                     input_sensor_container.content = ft.Text(f"Error: {str(ex)}")
@@ -122,7 +206,8 @@ class LogicCircuitSynth(PageTab):
             selected_library = e.control.value
             if selected_library:
                 try:
-                    library_path = '../' + os.path.join(path_to_gen_lib, selected_library)
+                    # Use os.path.join and then convert to forward slashes
+                    library_path = '../' + os.path.join(path_to_gen_lib, selected_library).replace('\\', '/')
                     data_storage.config_manager.update_config('map', 'LIBRARY', library_path)
                     selected_file_display.value = f"Selected library: {selected_library}"
                     self.page.update()
@@ -133,7 +218,21 @@ class LogicCircuitSynth(PageTab):
         genetic_gate_libraries_dropdown = ft.Dropdown(
             width=300,
             height=35,
-            options=[ft.dropdown.Option(genetic_gate_library) for genetic_gate_library in os.listdir(path_to_gen_lib)],
+            text_size=13,
+            content_padding=ft.padding.only(top=2, left=5, right=5, bottom=2),
+            border_color=ft.colors.BLUE_400,
+            focused_border_color=ft.colors.BLUE_ACCENT,
+            focused_border_width=2,
+            options=[
+                ft.dropdown.Option(
+                    genetic_gate_library,
+                    text_style=ft.TextStyle(
+                        size=13,
+                        weight=ft.FontWeight.W_500, 
+                    )
+                ) 
+                for genetic_gate_library in os.listdir(path_to_gen_lib)
+            ],
             on_change=on_dropdown_change
         )
 
@@ -148,7 +247,7 @@ class LogicCircuitSynth(PageTab):
         )
 
         #Todo: get Diagrams from valid path
-        placeholder_path =  os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs", "figures_eight-state_det-var_2024-04-04_Monotonicity")
+        placeholder_path = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs", "figures_eight-state_det-var_2024-04-04_Monotonicity")
 
         images = ft.GridView(
         expand=1,

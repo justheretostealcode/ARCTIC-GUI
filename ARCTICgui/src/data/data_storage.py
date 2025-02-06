@@ -8,13 +8,22 @@ import os
 
 @dataclass
 class DataStorage():
-    """class to store information persistent across the program"
-    """
+    """class to store information persistent across the program"""
     bool_func: str = field(default='')
-    last_result:list[str] = field(default_factory=list)
-    pipeline_steps_active = {}
+    last_result: list[str] = field(default_factory=list)
+    pipeline_steps_active: dict[str, any] = field(default_factory=dict)
+    input_devices: dict[str, dict[str, any]] = field(default_factory=dict)
+    output_devices: dict[str, dict[str, any]] = field(default_factory=dict)
+    not_nor2_devices: dict[str, dict[str, any]] = field(default_factory=dict)
+
+    def clear_devices(self) -> None:
+        """Clear all device dictionaries"""
+        self.input_devices.clear()
+        self.output_devices.clear()
+        self.not_nor2_devices.clear()
 
 storage = DataStorage()
+del DataStorage
 
 @dataclass
 class ImageDB():
@@ -44,6 +53,7 @@ class ImageDB():
             fun()
 
 images = ImageDB()
+del ImageDB
 
 @dataclass
 class ConfigManager:
@@ -86,6 +96,10 @@ class ConfigManager:
         if config_name not in self._current_configs:
             raise ValueError(f"Unknown config: {config_name}")
         
+        # Convert backslashes to forward slashes for paths
+        if key == 'LIBRARY':
+            value = value.replace('\\', '/')
+        
         self._current_configs[config_name][key] = value
         self._write_config_to_file(config_name)
 
@@ -114,3 +128,4 @@ class ConfigManager:
         return self._current_configs.get(config_name, {}).get(key)
 
 config_manager = ConfigManager()
+del ConfigManager
