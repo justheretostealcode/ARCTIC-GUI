@@ -70,10 +70,10 @@ def update_storage_with_devices(json_path: str) -> None:
             if 'INPUT' in primitive_id:
                 storage.input_devices[device_id] = device_info
 
-            ''' Assuming OUTPUT_OR2 and OUTPUT_BUFFER are paired '''
+            # Assuming OUTPUT_OR2 and OUTPUT_BUFFER are paired
             if any(x in primitive_id for x in ['OUTPUT_OR2', 'OUTPUT_BUFFER']):
                 storage.output_devices[device_id] = device_info
 
-            ''' Assuming NOT and NOR2 are paired '''
+            # Assuming NOT and NOR2 are paired
             if any(x in primitive_id for x in ['NOT', 'NOR2']):
                 storage.not_nor2_devices[device_id] = device_info
