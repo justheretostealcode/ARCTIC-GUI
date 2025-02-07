@@ -2,9 +2,9 @@ from itertools import product
 import sympy
 
 def generate_truth_table_from_expr(expr):
+    expr = re.sub(r'(\w+)\s*\^\s*(\w+)', r'Xor(\1, \2)', expr)
     # Parse the boolean expression
     expression = sympy.sympify(expr)
-
     # Find all symbols (variables) in the expression
     variables = sorted(expression.atoms(sympy.Symbol), key=lambda x: str(x))
 

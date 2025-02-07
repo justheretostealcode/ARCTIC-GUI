@@ -51,8 +51,8 @@ class LogicCircuitSynth(PageTab):
         bool_info_window = ft.AlertDialog(
             modal=True,
             title=ft.Text("Information"),
-            #content= bool_info_content_column, 
-            content = ft.Text("Enter the boolean function with any variables of up to three and the common operands: AND (&), OR (|), NOT (~), XOR (^), Implication (~ a| b)."),
+            content = ft.Text("Enter the boolean function with any variables of up to three and the common operands:\n AND (&), OR (|), NOT (~), XOR (^), Implication (~ a| b).\n The operands can also be used in written format, such as And(a,b), Or(a,b), Not(a,b) and Xor(a,b)."),
+            # content = ft.Text("Enter the boolean function with any variables of up to three and the common operands:\n AND (& or And(a,b)), OR (| or Or(a,b)), NOT (~ or Not(a,b)), XOR (^ or Xor(a,b)), Implication (~ a| b)."),
             actions=[
                 ft.TextButton("Close", on_click=handle_close),
             ],
