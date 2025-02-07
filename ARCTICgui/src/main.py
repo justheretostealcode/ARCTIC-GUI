@@ -4,7 +4,7 @@ from pipcontrol import syn
 
 from gui.design_goal import DesignGoal
 from gui.design_view import DesignView
-from gui.pipeline import GDAPipeline
+from gui.pipeline_view import GDAPipeline
 from gui.analysis_visualizer import AnalysisVisualizer
 
 from custom_controls.container import PageContainer
@@ -23,6 +23,9 @@ def main(page: ft.Page) -> None:
     page.title ="ARCTIC"
     page.window.frameless = False
     page.theme_mode = ft.ThemeMode.LIGHT
+
+    page.window.width = 1280
+    page.window.height = 720
 
     page.appbar = GUIAppBar()
 
@@ -44,7 +47,7 @@ def main(page: ft.Page) -> None:
 
     container_top_left.expand = 50
     container_top_right.expand = 50
-    container_bottom_left.expand = 50
+    container_bottom_left.expand = 70
     container_bottom_right.expand = 50
 
     container_top_left.content = design_goal

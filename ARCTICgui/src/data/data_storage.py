@@ -1,10 +1,10 @@
 """file to hold the DataStorage class"""
 from dataclasses import dataclass, field
 from typing import Callable
+import os
 from PIL.Image import Image
 import image_generator
 import image_generator.logic_circuit
-import os
 
 @dataclass
 class DataStorage():
@@ -23,7 +23,6 @@ class DataStorage():
         self.not_nor2_devices.clear()
 
 storage = DataStorage()
-del DataStorage
 
 @dataclass
 class ImageDB():

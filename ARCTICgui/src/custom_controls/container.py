@@ -12,7 +12,7 @@ class PageContainer(ft.Container):
 
 class PipelineContainer(ft.Container):
     """Custom flet.Container class for the tiles making up the pipeline"""
-    def __init__(self, page:ft.Page, title:str, left:int, top:int) -> None:
+    def __init__(self, page:ft.Page, title:str, left:int, top:int, order:int = -1) -> None:
         super().__init__()
         self.page = page
         self.left = left
@@ -20,17 +20,18 @@ class PipelineContainer(ft.Container):
         self.border_radius=10
         self.title = title
         self.content = self.content_builder()
-        self.width = int(page.height / 6)
-        self.height = int(page.height / 6)
+        self.width = int(page.width / 9)
+        self.height = int(page.height / 9)
         self.border_radius = 10
         self.border = ft.border.all(4, ft.Colors.BLACK)
         self.bgcolor = ft.Colors.BLUE
+        self.order = order
 
 
-    def content_builder(self):
-
+    def content_builder(self) -> ft.Container:
+        """Generic method to build the content for the Pipeline container"""
         def on_switch_change(e):      
-            storage.pipeline_steps_active[self.title] = switch.value
+            storage.pipeline_steps_active[self.title] = (self.order, switch.value)
 
         switch = ft.Switch(
             value=False,

@@ -28,14 +28,14 @@ class LogicCircuitSynth(PageTab):
             ft.Container: Column with LogicCircuitSynth controls
         """
         
-        def textbox_changed(e):
+        def textbox_changed(e:ft.ControlEvent) -> None:
             st.bool_func = e.control.value.strip()
 
         # Create a text field for user input --> in desgin_goal mit strip fct zum rausziehen
         input_expr = ft.TextField(label="Enter Boolean Function", width=200, text_align=ft.TextAlign.CENTER, on_change=textbox_changed)
 
         #trying out alert dialogue
-        def handle_close(e):
+        def handle_close(e:ft.ControlEvent):
             self.page.close(bool_info_window)
         
         bool_info_content_column = ft.Column([
@@ -257,7 +257,7 @@ class LogicCircuitSynth(PageTab):
         spacing=5,
         run_spacing=5,
     )
-        
+
         for filename in os.listdir(placeholder_path):
             images.controls.append(
                 ft.Image(
@@ -269,20 +269,23 @@ class LogicCircuitSynth(PageTab):
 
 
         def start_synth(e:ft.ControlEvent):
-            if not isinstance((button:=e.control), ft.TextButton):
-                return
+
+            button = e.control
+
             if button.text != 'Synthesis':
                 return
+            
+            
             button.text = 'Running syn&tm'
             button.update()
-            data_storage.images.clear()
-            for path in syn.start(f=st.bool_func):
-                imgid = '.'.join(os.path.basename(path).split('.')[:-1])
-                data_storage.images[imgid] = path
-            data_storage.images.update()
+
+            syn.start_synth()
+
             button.text = 'Synthesis'
             button.update()
-        
+
+            
+
         #left side
         main_left_column = ft.Column(
             [ft.Row([input_expr, #input for boolean function
