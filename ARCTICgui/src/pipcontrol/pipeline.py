@@ -5,11 +5,15 @@ from data.data_storage import DataStorage, storage as st
 import flet as ft
 import pipcontrol.syn as syn
 
+
 class Pipeline():
     """Class to execute the Pipeline logic"""
 
+
     def __init__(self, data_storage: DataStorage):
         self.data_storage = data_storage
+        self.data_storage.pipeline_is_running = False
+
 
     def _start_synth(self, e:ft.ControlEvent) -> None:
         """Method to start the synthesis
@@ -22,15 +26,6 @@ class Pipeline():
 
     def _start_pipeline_thread(self, e:ft.ControlEvent) -> None:
         """Method to start a seperate thread for the pipeline to avoid stalling the primary thread with the UI"""
-
-        #Prevent clicking the button multiple times
-        button = e.control
-
-        if button.text != 'Pipeline':
-            return
-
-        button.text = 'Running Pipeline'
-        button.update()
 
         #sort pipeline steps in order specified by the pipelinewidgets in widget_builder.py
         sorted_pipeline_steps = sorted(self.data_storage.pipeline_steps_active.items(), key=lambda el: el[1][0] if (el[1][0] != -1) else maxsize)
@@ -69,9 +64,7 @@ class Pipeline():
                     case _:
                         pass
 
-        #return button to initial name
-        button.text = 'Pipeline'
-        button.update()
+        self.data_storage.pipeline_is_running = False
 
 
     def stop_pipeline(self, e: ft.ControlEvent) -> None:
@@ -84,8 +77,19 @@ class Pipeline():
 
 
     def start_pipeline(self, e: ft.ControlEvent) -> None:
-        """Method to start the Pipeline from a different thread"""
+        """Method to start the Pipeline from a different thread
 
+        Args:
+            e (ft.ControlEvent): event starting the Pipeline
+        """
+
+        if self.data_storage.pipeline_is_running:
+            e.page.show_snack_bar(
+                    ft.SnackBar(content=ft.Text("Pipeline already started."))
+                )
+            return
+
+        self.data_storage.pipeline_is_running = True    
         pipline_thread = Thread(target=self._start_pipeline_thread, args=[e])
 
         try:
@@ -95,10 +99,6 @@ class Pipeline():
             e.page.show_snack_bar(
                     ft.SnackBar(content=ft.Text("Error During pipeline execution."))
                 )
-
-        button = e.control
-        button.text = 'Pipeline'
-        button.update()
 
 
 class SynthesisError(Exception):
