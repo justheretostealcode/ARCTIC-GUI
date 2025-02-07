@@ -177,6 +177,7 @@ class LogicCircuitSynth(PageTab):
                             content_padding=ft.padding.only(left=10, right=20),
                             border_radius=5,
                         )
+                        
                         dropdowns.append(dropdown)
                     
                     input_sensor_container.content = ft.Row(
@@ -233,11 +234,11 @@ class LogicCircuitSynth(PageTab):
                 ) 
                 for genetic_gate_library in os.listdir(path_to_gen_lib)
             ],
-            on_change=on_dropdown_change
+            on_change=on_dropdown_change,
+            value=os.path.basename(data_storage.config_manager.get_config('map', 'LIBRARY')),
         )
-
+        
         #Generate Image in GUI for every activation curve
-
 
         gglibrary_container = ft.Container(
             content=ft.Column([
