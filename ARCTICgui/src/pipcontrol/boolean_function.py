@@ -1,5 +1,6 @@
 from itertools import product
 import sympy
+import re
 
 def generate_truth_table_from_expr(expr):
     expr = re.sub(r'(\w+)\s*\^\s*(\w+)', r'Xor(\1, \2)', expr)
