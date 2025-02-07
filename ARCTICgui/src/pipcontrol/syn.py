@@ -2,7 +2,9 @@
 import subprocess
 import os, sys, glob
 
-from data.data_storage import storage as st
+from data.data_storage import storage, images
+import flet as ft
+
 
 MAP_CONF = os.path.join('..', 'ARCTICgui', 'map.config')
 SYN_CONF = os.path.join('..', 'ARCTICgui', 'syn.config')
@@ -95,5 +97,19 @@ def kill()->None:
     finally:
         _proc = None
 
-def kill_stop(e) ->None:
+def kill_stop(e:ft.ControlEvent) ->None:
+    '''Method to kill the synthesis when triggered by an event
+
+    Args:
+        e (ft.ControlEvent): Event calling the method
+    '''
     kill()
+
+
+def start_synth() -> None:
+    '''Method to start the synthesis'''
+    images.clear()
+    for path in start(f=storage.bool_func):
+        imgid = '.'.join(os.path.basename(path).split('.')[:-1])
+        images[imgid] = path
+    images.update()

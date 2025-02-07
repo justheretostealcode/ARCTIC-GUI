@@ -33,39 +33,6 @@ class Test(unittest.TestCase):
         self.assertRaises(Exception, boolean_function.generate_truth_table_from_expr, "a b")
         self.assertRaises(Exception, boolean_function.generate_truth_table_from_expr, "a,b")
 
-    def test_not_connection(self) -> None:
-        pass
-
-    def test_nor_connections(self) -> None:
-        pass
-
-    def test_in_connections(self) -> None:
-        pass
-
-    def test_out_connections(self) -> None:
-        pass
-
-    def test_connections(self) -> None:
-        pass
-    
-    def test_not_box(self) -> None:
-        pass
-
-    def _nor_box(self) -> None:
-        pass
-
-    def test_in_box(self) -> None:
-        pass
-
-    def test_out_box(self) -> None:
-        pass
-
-    def test_box(self) -> None:
-        pass
-
-    def test_nor(self) -> None:
-        pass
-
     def test_LogicCircuitSynth_can_start(self) -> None:
         test_obj = LogicCircuitSynth()
     
@@ -129,4 +96,3 @@ class Test(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-    

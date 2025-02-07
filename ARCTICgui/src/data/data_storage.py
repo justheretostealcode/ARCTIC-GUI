@@ -1,10 +1,10 @@
 """file to hold the DataStorage class"""
 from dataclasses import dataclass, field
 from typing import Callable
+import os
 from PIL.Image import Image
 import image_generator
 import image_generator.logic_circuit
-import os
 
 @dataclass
 class DataStorage():
@@ -15,6 +15,7 @@ class DataStorage():
     input_devices: dict[str, dict[str, any]] = field(default_factory=dict)
     output_devices: dict[str, dict[str, any]] = field(default_factory=dict)
     not_nor2_devices: dict[str, dict[str, any]] = field(default_factory=dict)
+    pipeline_is_running: bool = field(default_factory=bool)
 
     def clear_devices(self) -> None:
         """Clear all device dictionaries"""
@@ -23,7 +24,6 @@ class DataStorage():
         self.not_nor2_devices.clear()
 
 storage = DataStorage()
-del DataStorage
 
 @dataclass
 class ImageDB():
