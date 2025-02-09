@@ -13,6 +13,7 @@ def widget_builder(page: ft.Page) -> ft.Stack:
         ft.Stack: Stack with Elements
     """
 
+    #Names for the widgets should not be changed, since the name is used to identify widgets inside Pipeline
     widget1 = container.PipelineContainer(page, "Context", 10, 90, 1)
     widget2 = container.PipelineContainer(page, "Logic Synthesis", 160, 90, 2)
     widget3 = container.PipelineContainer(page, "Tech. Mapping", 310, 10, 3)

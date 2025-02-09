@@ -5,6 +5,7 @@ import os
 from custom_controls.tabs import PageTabs
 from custom_controls.tab import PageTab
 from data import data_storage
+from data.data_storage import storage
 
 
 class CombinedDesignView(PageTab):
@@ -14,7 +15,7 @@ class CombinedDesignView(PageTab):
 
         data_storage.images.register(self.dataUpdate)
 
-        self.text="Combined View"
+        self.text= storage.dictionary["Hazard_Analysis"]
         self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:
@@ -48,7 +49,7 @@ class CombinedDesignView(PageTab):
         if self.Selections.value == '':
             self.LogicCircuit.src = os.path.join('ARCTICgui', 'empty.jpeg')
         elif self.Selections.value not in data_storage.images.ids():
-            raise Exception(f'unknown value "{self.Selections.value}"') # should be imposable
+            raise Exception(f'{storage.dictionary["unknown_value"]}: "{self.Selections.value}"') # should be imposable
         else:
             ipf = data_storage.images[self.Selections.value]
             self.LogicCircuit.src = ipf
@@ -59,7 +60,7 @@ class PlasmidView(PageTab):
     def __init__(self) -> None:
         super().__init__()
 
-        self.text="Plasmid View"
+        self.text = storage.dictionary["Plasmid_View"]
         self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:
@@ -76,7 +77,7 @@ class SequenceView(PageTab):
     def __init__(self) -> None:
         super().__init__()
 
-        self.text="Sequence View"
+        self.text=storage.dictionary["Sequence_View"]
         self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:
@@ -93,7 +94,7 @@ class ProtocolView(PageTab):
     def __init__(self) -> None:
         super().__init__()
 
-        self.text = "Protocol View"
+        self.text = storage.dictionary["Protocol_View"]
         self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:

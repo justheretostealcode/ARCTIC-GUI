@@ -16,6 +16,7 @@ class DataStorage():
     output_devices: dict[str, dict[str, any]] = field(default_factory=dict)
     not_nor2_devices: dict[str, dict[str, any]] = field(default_factory=dict)
     pipeline_is_running: bool = field(default_factory=bool)
+    dictionary: dict[str, str] = field(default_factory=dict)
 
     def clear_devices(self) -> None:
         """Clear all device dictionaries"""
@@ -64,30 +65,40 @@ class ConfigManager:
     def __post_init__(self):
         self._load_configs()
 
+    def _load_config(self, path: str) -> None:
+        """Loads
+
+        Args:
+            path (str): path to config file
+        """
+        config_content = {}
+        with open(path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#'): # Ignore comments and empty lines
+                    key, value = line.split('=', 1)
+                    config_content[key.strip()] = value.strip()
+        return config_content
+
     def _load_configs(self):
         """Load configurations from files"""
         config_files = {
             'map': 'map.config',
             'sim': 'sim.config',
-            'syn': 'syn.config'
+            'syn': 'syn.config',
+            'gui': 'gui.config'
         }
-        
+
         current_dir = os.path.dirname(os.path.dirname(__file__))
         arctic_gui_dir = os.path.dirname(current_dir)
-        
+
         for config_name, filename in config_files.items():
             path = os.path.join(arctic_gui_dir, filename)
             self._config_files[config_name] = path
-            
+
             if os.path.exists(path):
-                config_content = {}
-                with open(path, 'r') as f:
-                    for line in f:
-                        line = line.strip()
-                        if line and not line.startswith('#'): # Ignore comments and empty lines
-                            key, value = line.split('=', 1)
-                            config_content[key.strip()] = value.strip()
-                self._current_configs[config_name] = config_content
+                self._current_configs[config_name] = self._load_config(path)
+
             else:
                 print(f"Warning: Config file not found at {path}")
 
@@ -95,11 +106,11 @@ class ConfigManager:
         """Update config value and write to file"""
         if config_name not in self._current_configs:
             raise ValueError(f"Unknown config: {config_name}")
-        
+
         # Convert backslashes to forward slashes for paths
         if key == 'LIBRARY':
             value = value.replace('\\', '/')
-        
+
         self._current_configs[config_name][key] = value
         self._write_config_to_file(config_name)
 
@@ -107,7 +118,7 @@ class ConfigManager:
         """Write current configuration to file"""
         config_path = self._config_files[config_name]
         config = self._current_configs[config_name]
-        
+
         with open(config_path, 'r') as f:
             lines = f.readlines()
 
@@ -127,5 +138,20 @@ class ConfigManager:
         """Get current value for a config key"""
         return self._current_configs.get(config_name, {}).get(key)
 
+    def load_language_dictionary(self, path: str) -> dict:
+        """Load language pack
+
+        Args:
+            path (str): path to dictionary
+
+        Returns:
+            dict: dictionary holding the language
+        """
+
+        return self._load_config(path)
+
+
 config_manager = ConfigManager()
 del ConfigManager
+
+storage.dictionary = config_manager.load_language_dictionary(config_manager.get_config('gui', 'LANGUAGE_PATH'))

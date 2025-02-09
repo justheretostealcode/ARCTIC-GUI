@@ -5,7 +5,7 @@ import os
 
 from custom_controls.tab import PageTab
 from custom_controls.tabs import PageTabs
-from data.data_storage import storage as st
+from data.data_storage import storage
 from data.json_parser import update_storage_with_devices
 import pipcontrol.boolean_function as bf
 import pipcontrol.syn as syn
@@ -18,7 +18,7 @@ class LogicCircuitSynth(PageTab):
         super().__init__()
 
         self.page = ft.Page
-        self.text="Logic Circuit Synthesis"
+        self.text= storage.dictionary["Logic_Circuit_Synthesis"]
         self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:
@@ -29,32 +29,32 @@ class LogicCircuitSynth(PageTab):
         """
         
         def textbox_changed(e:ft.ControlEvent) -> None:
-            st.bool_func = e.control.value.strip()
+            storage.bool_func = e.control.value.strip()
 
         # Create a text field for user input --> in desgin_goal mit strip fct zum rausziehen
-        input_expr = ft.TextField(label="Enter Boolean Function", width=200, text_align=ft.TextAlign.CENTER, on_change=textbox_changed)
+        input_expr = ft.TextField(label=storage.dictionary["Enter_Boolean_Function"], width=200, text_align=ft.TextAlign.CENTER, on_change=textbox_changed)
 
         #trying out alert dialogue
         def handle_close(e:ft.ControlEvent):
             self.page.close(bool_info_window)
         
         bool_info_content_column = ft.Column([
-            ft.Text("Enter the boolean function with any variables of up to three."),
-            ft.Text("Use the common operands:"),
-            ft.Text("- AND (&) - for logical conjunction"),
-            ft.Text("- OR (|) - for logical disjunction"),
-            ft.Text("- NOT (~) - for logical negation"),
-            ft.Text("- XOR (^) - for exclusive disjunction"),
-            ft.Text("- Implication (~a|b) - for logical implication")
+            ft.Text(storage.dictionary["Enter_the_boolean_function"]),
+            ft.Text(storage.dictionary["Use_the_common_operands"]),
+            ft.Text(storage.dictionary["AND_logical_conjunction"]),
+            ft.Text(storage.dictionary["OR_logical_conjunction"]),
+            ft.Text(storage.dictionary["NOT_logical_conjunction"]),
+            ft.Text(storage.dictionary["XOR_logical_conjunction"]),
+            ft.Text(storage.dictionary["IMPL_logical_conjunction"])
         ])
 
         bool_info_window = ft.AlertDialog(
             modal=True,
-            title=ft.Text("Information"),
-            content = ft.Text("Enter the boolean function with any variables of up to three and the common operands:\n AND (&), OR (|), NOT (~), XOR (^), Implication (~ a| b).\n The operands can also be used in written format, such as And(a,b), Or(a,b), Not(a,b) and Xor(a,b)."),
+            title=ft.Text(storage.dictionary["Information"]),
+            content = ft.Text(storage.dictionary["Enter_bool"] + "\n" + storage.dictionary["operant_list"]  + ". \n" +  storage.dictionary["operands_written_format"]),
             # content = ft.Text("Enter the boolean function with any variables of up to three and the common operands:\n AND (& or And(a,b)), OR (| or Or(a,b)), NOT (~ or Not(a,b)), XOR (^ or Xor(a,b)), Implication (~ a| b)."),
             actions=[
-                ft.TextButton("Close", on_click=handle_close),
+                ft.TextButton(storage.dictionary["Close"], on_click=handle_close),
             ],
             actions_alignment=ft.MainAxisAlignment.END,
             #on_dismiss=lambda e: self.page.add(ft.Text("Modal dialog dismissed"),),
@@ -63,7 +63,7 @@ class LogicCircuitSynth(PageTab):
         def show_truth_table(e):
             expr = input_expr.value.strip()
             if not expr:
-                input_sensor_container.content = ft.Text("Please enter a valid boolean expression.")
+                input_sensor_container.content = ft.Text(storage.dictionary["Please_enter_valid_bool"])
                 self.page.update()
                 return
 
@@ -74,7 +74,7 @@ class LogicCircuitSynth(PageTab):
 
                 # Get variable names from first row
                 headers = [str(col) for col in truth_table[0][:-1]]  # All but last column
-                headers.append("Output")  # Last column is output
+                headers.append(storage.dictionary["Output"])  # Last column is output
 
                 # Create DataTable
                 table = ft.DataTable(
@@ -100,7 +100,7 @@ class LogicCircuitSynth(PageTab):
 
 
             except Exception as ex:
-                input_sensor_container.content = ft.Text(f"Error: {str(ex)}")
+                input_sensor_container.content = ft.Text(f"{storage.dictionary["Error"]}: {str(ex)}")
                 self.page.update()
         
         def show_input_sensors_dropdown(e):
@@ -108,7 +108,7 @@ class LogicCircuitSynth(PageTab):
             current_lib = genetic_gate_libraries_dropdown.value
             if not current_lib:
                 self.page.show_snack_bar(
-                    ft.SnackBar(content=ft.Text("Please select a gate library first"))
+                    ft.SnackBar(content=ft.Text(storage.dictionary["Please_select_lib"]))
                 )
                 return
                 
@@ -117,32 +117,32 @@ class LogicCircuitSynth(PageTab):
             try:
                 update_storage_with_devices(json_path)
                 
-                if len(st.input_devices) == 0:
+                if len(storage.input_devices) == 0:
                     self.page.show_snack_bar(
-                        ft.SnackBar(content=ft.Text("No input devices found in the library"))
+                        ft.SnackBar(content=ft.Text(storage.dictionary["No_input_dev"]))
                     )
                     return
                 
                 # Show success message with device count
                 self.page.show_snack_bar(
                     ft.SnackBar(
-                        content=ft.Text(f"Successfully found {len(st.input_devices)} input devices"),
+                        content=ft.Text(f"{storage.dictionary["Successfully_found"]} {len(storage.input_devices)} {storage.dictionary["input_devices"]}"),
                         bgcolor=ft.colors.GREEN_700,
                     )
                 )
                     
             except Exception as ex:
-                print(f"Error parsing library: {str(ex)}") # Only errors go to terminal
+                print(f"{storage.dictionary["Error_parsing_library"]}: {str(ex)}") # Only errors go to terminal
                 def close_dialog(e):
                     self.page.dialog.open = False
                     self.page.update()
                 
                 error_dialog = ft.AlertDialog(
                     modal=True,
-                    title=ft.Text("Error"),
-                    content=ft.Text(f"Error parsing library: {str(ex)}"),
+                    title=ft.Text(storage.dictionary["Error"]),
+                    content=ft.Text(f"{storage.dictionary["Error_parsing_library"]}: {str(ex)}"),
                     actions=[
-                        ft.TextButton("OK", on_click=close_dialog),
+                        ft.TextButton(storage.dictionary["OK"], on_click=close_dialog),
                     ],
                     actions_alignment=ft.MainAxisAlignment.END,
                 )
@@ -165,7 +165,7 @@ class LogicCircuitSynth(PageTab):
                                 key=device_id,
                                 text=f"{info['name']}" # uncomment if need more info in the dropdown but for short only the name ({device_id})"
                             )
-                            for device_id, info in st.input_devices.items()
+                            for device_id, info in storage.input_devices.items()
                         ]
                         
                         dropdown = ft.Dropdown(
@@ -187,19 +187,19 @@ class LogicCircuitSynth(PageTab):
                     )
                     self.page.update()
                 except Exception as ex:
-                    input_sensor_container.content = ft.Text(f"Error: {str(ex)}")
+                    input_sensor_container.content = ft.Text(f"{storage.dictionary["Error"]}: {str(ex)}")
                     self.page.update()
             else:
-                input_sensor_container.content = ft.Text("Please enter a valid boolean expression.")
+                input_sensor_container.content = ft.Text(storage.dictionary["Please_enter_valid_bool"])
                 self.page.update()
 
-        enter_and_choose_input_btn = ft.ElevatedButton("Choose Input Sensors", on_click=show_input_sensors_dropdown)
-        generate_table_btn = ft.ElevatedButton("Truth Table", on_click=show_truth_table)
+        enter_and_choose_input_btn = ft.ElevatedButton(storage.dictionary["Choose_Input_Sensors"], on_click=show_input_sensors_dropdown)
+        generate_table_btn = ft.ElevatedButton(storage.dictionary["Truth_table"], on_click=show_truth_table)
         input_sensor_container = ft.Container()  # here input sensor dropdowns are is displayed
         truth_table_container = ft.Container()  # here truth table is displayed
         
         # CODE TO BE ADDED
-        selected_file_display = ft.Text("Select a library:", size=14, color=ft.colors.BLUE_700)
+        selected_file_display = ft.Text(storage.dictionary["Select_a_library"], size=14, color=ft.colors.BLUE_700)
         
         path_to_gen_lib = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs")
 
@@ -210,10 +210,10 @@ class LogicCircuitSynth(PageTab):
                     # Use os.path.join and then convert to forward slashes
                     library_path = '../' + os.path.join(path_to_gen_lib, selected_library).replace('\\', '/')
                     data_storage.config_manager.update_config('map', 'LIBRARY', library_path)
-                    selected_file_display.value = f"Selected library: {selected_library}"
+                    selected_file_display.value = f"{storage.dictionary["Selected_library"]}: {selected_library}"
                     self.page.update()
                 except ValueError as err:
-                    print(f"Error setting library path: {err}")
+                    print(f"{storage.dictionary["Error_setting_library_path"]}: {err}")
 
         # genetic gate library dropdown
         genetic_gate_libraries_dropdown = ft.Dropdown(
@@ -273,16 +273,16 @@ class LogicCircuitSynth(PageTab):
 
             button = e.control
 
-            if button.text != 'Synthesis':
+            if button.text != storage.dictionary["Synthesis"]:
                 return
             
             
-            button.text = 'Running syn&tm'
+            button.text = storage.dictionary["Running_syn&tm"]
             button.update()
 
             syn.start_synth()
 
-            button.text = 'Synthesis'
+            button.text = storage.dictionary["Synthesis"]
             button.update()
 
             
@@ -295,7 +295,7 @@ class LogicCircuitSynth(PageTab):
             generate_table_btn]),  #button to generate truth table based on input
             input_sensor_container,#the container for the input sensor selection
             truth_table_container, #the container for the generated truth table
-            ft.Row([ft.TextButton('Synthesis', on_click=start_synth), ft.IconButton(icon=ft.Icons.STOP, on_click=syn.kill_stop)]),
+            ft.Row([ft.TextButton(storage.dictionary["Synthesis"], on_click=start_synth), ft.IconButton(icon=ft.Icons.STOP, on_click=syn.kill_stop)]),
             ])
         
 
@@ -320,7 +320,7 @@ class ManualDesign(PageTab):
     """Class representing the flet.tab related to the ManualDesign"""
     def __init__(self) -> None:
         super().__init__()
-        self.text="Manual Design"
+        self.text= storage.dictionary["Manual_Design"]
         self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:
@@ -335,7 +335,7 @@ class Analysis(PageTab):
     """Class representing the flet.tab related to the Analysis"""
     def __init__(self) -> None:
         super().__init__()
-        self.text="Analysis"
+        self.text= storage.dictionary["Analysis"]
         self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:

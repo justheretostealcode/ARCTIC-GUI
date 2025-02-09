@@ -6,6 +6,7 @@ from gui.design_goal import DesignGoal
 from gui.design_view import DesignView
 from gui.pipeline_view import GDAPipeline
 from gui.analysis_visualizer import AnalysisVisualizer
+from data.data_storage import storage, config_manager
 
 from custom_controls.container import PageContainer
 from custom_controls.appbar import GUIAppBar
@@ -20,12 +21,12 @@ def main(page: ft.Page) -> None:
     """
 
     #General flet.page settings
-    page.title ="ARCTIC"
+    page.title = storage.dictionary["PAGE_TITLE"]
     page.window.frameless = False
     page.theme_mode = ft.ThemeMode.LIGHT
 
-    page.window.width = 1280
-    page.window.height = 720
+    page.window.width = config_manager.get_config("gui", "START_WIDTH")
+    page.window.height = config_manager.get_config("gui", "START_HEIGHT")
 
     page.appbar = GUIAppBar()
 

@@ -2,13 +2,14 @@
 import flet as ft
 from custom_controls.tab import PageTab
 from custom_controls.tabs import PageTabs
+from data.data_storage import storage
 
 class TransientBehaviour(PageTab):
     """Class representing the Container related to the TransientBehaviour"""
     def __init__(self) -> None:
         super().__init__()
 
-        self.text = "Transient Behaviour"
+        self.text = storage.dictionary["Transient_Behaviour"]
         self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:
@@ -25,7 +26,7 @@ class SteadyStateBehaviour(PageTab):
     def __init__(self) -> None:
         super().__init__()
 
-        self.text = "Steady State Behaviour"
+        self.text = storage.dictionary["Steady_State_Behaviour"]
         self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:
@@ -42,7 +43,7 @@ class HazardAnalysis(PageTab):
     def __init__(self) -> None:
         super().__init__()
 
-        self.text = "Hazard Analysis"
+        self.text = storage.dictionary["Hazard_Analysis"]
         self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:
