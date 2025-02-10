@@ -66,9 +66,9 @@ class Test(unittest.TestCase):
             'edges':[{'source':'a', 'target':'nor1'}, {'source':'a', 'target':'nor1'}, {'source':'nor1', 'target':'out'}, {'source':'nor1', 'target':'out'}],
         }),{
             'a': {'type': 'INPUT', 'sources': [], 'targets': ['nor1', 'nor1']},
-            'nor1': {'type': 'NOR2', 'sources': ['a', 'a'], 'targets': ['out', 'out2']},
-            'out': {'type': 'OUTPUT_OR2', 'sources': ['nor1'], 'targets': []},
-            'out2': {'type': 'OUTPUT_OR2', 'sources': ['nor1'], 'targets': []}
+            'nor1': {'type': 'NOR2', 'sources': ['a', 'a'], 'targets': ['OR2', 'OR2']},
+            'OR2': {'type': 'OR2', 'sources': ['nor1', 'nor1'], 'targets': ['out']},
+            'out': {'type': 'OUTPUT_BUFFER', 'sources': ['OR2'], 'targets': []}
         })
     def test_getRankNodes(self)->None:
         self.assertEqual(logic_circuit.getRankNodes({}), [])
