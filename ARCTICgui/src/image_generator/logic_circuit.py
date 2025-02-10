@@ -468,8 +468,8 @@ def getRankNodes(nodes:dict[str,  Node])->list[list[str]]:
                 for nodeID in nodes[oldID]['targets']:
                     if nodeID not in unranked:
                         continue
-                    index = nodes[nodeID]['sources'].index(oldID)
-                    nodes[nodeID]['sources'][index] = bypassID
+                    nodes[nodeID]['sources'].remove(oldID)
+                    nodes[nodeID]['sources'].append(bypassID)
                 nodes[bypassID] = {'type':'BYPASS', 'sources':[oldID], 'targets':[ nid for nid in nodes[oldID]['targets']if nid in unranked]}
                 newRankIds.append(bypassID)
                 nodes[oldID]['targets'] = [bypassID]+[nid for nid in nodes[oldID]['targets'] if nid not in unranked]
