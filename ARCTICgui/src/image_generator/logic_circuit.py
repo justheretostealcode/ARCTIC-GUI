@@ -63,6 +63,20 @@ def _nor_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
     x = 4*size*cos(pi/6)
     y = 8*size*sin(pi/6)
     return [(pos[0]+x, pos[1]+8*size-y), (pos[0]+x, pos[1]+8*size+y)]
+def _or2_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        a list of input points of the circuit element
+    '''
+    from math import pi, sin, cos
+    x = 4*size*cos(pi/6)
+    y = 8*size*sin(pi/6)
+    return [(pos[0]+x, pos[1]+8*size-y), (pos[0]+x, pos[1]+8*size+y)]
 def _in_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
     '''
     pos:
@@ -97,7 +111,7 @@ def _inputs(node:Node, size:int)->list[tuple[int, int]]:
     return:
         a list of input points of the circuit element
     '''
-    funs = {'INP':_in_inputs,'NOT':_not_inputs, 'NOR':_nor_inputs, 'OUT':_out_inputs, 'BYP':lambda pos, size:[pos]}
+    funs = {'INP':_in_inputs,'NOT':_not_inputs, 'NOR':_nor_inputs, 'OUT':_out_inputs, 'OR2':_or2_inputs, 'BYP':lambda pos, size:[pos]}
     return funs[node['type'][:3]](node['__pos'], size)
 
 def _not_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
@@ -122,6 +136,17 @@ def _nor_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
         the output point of the circuit element
     '''
     return (pos[0]+18*size, pos[1]+8*size)
+def _or2_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        the output point of the circuit element
+    '''
+    return (pos[0]+16*size, pos[1]+8*size)
 def _in_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
     '''
     pos:
@@ -156,7 +181,7 @@ def _outputs(node:Node, size:int)->tuple[int, int]|None:
     return:
         the output point of the circuit element
     '''
-    funs = {'INP':_in_outputs,'NOT':_not_outputs, 'NOR':_nor_outputs, 'OUT':_out_outputs, 'BYP':lambda pos, size:pos}
+    funs = {'INP':_in_outputs,'NOT':_not_outputs, 'NOR':_nor_outputs, 'OUT':_out_outputs, 'OR2':_or2_outputs, 'BYP':lambda pos, size:pos}
     return funs[node['type'][:3]](node['__pos'], size)
 
 def _not_box(size:int)->tuple[int, int]:
@@ -177,6 +202,15 @@ def _nor_box(size:int)->tuple[int, int]:
         A tuple of the size of the box enclosing the circuit element (x axis, y axis)
     '''
     return 18*size, 16*size
+def _or2_box(size:int)->tuple[int, int]:
+    '''
+    size: 
+        A scaling factor
+        
+    return:
+        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
+    '''
+    return 16*size, 16*size
 def _in_box(size:int)->tuple[int, int]:
     '''
     size: 
@@ -203,7 +237,7 @@ def _box(node:Node, size:int)->tuple[int, int]:
     return:
         A tuple of the size of the box enclosing the circuit element (x axis, y axis)
     '''
-    funs = {'INP':_in_box,'NOT':_not_box, 'NOR':_nor_box, 'OUT':_out_box, 'BYP':lambda size:(0, 0)}
+    funs = {'INP':_in_box,'NOT':_not_box, 'NOR':_nor_box, 'OUT':_out_box, 'OR2':_or2_box, 'BYP':lambda size:(0, 0)}
     return funs[node['type'][:3]](size)
 
 def _not_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb)->None:
@@ -250,6 +284,34 @@ def _nor_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outli
     draw.chord(box, start=-45, end=45, outline=None, fill=background, width=WIDTH)
     draw.arc(box, start=-45, end=45, fill=outline, width=WIDTH)
     draw.ellipse((pos[0]+16*size, pos[1]+7*size, pos[0]+18*size, pos[1]+9*size), outline=outline, fill=fill, width=WIDTH)
+def _or2_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb)->None:
+    '''
+    draw:
+        the interface of the Image objet that is drawn on.
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+    fill:
+        fill color
+    
+    draws the circuit element to the Image.
+    '''
+    from math import sin, cos, pi
+    draw.polygon((pos, (pos[0]+16*size, pos[1]+8*size), (pos[0], pos[1]+16*size), pos), outline=fill, fill=fill, width=WIDTH)
+    x = 16*size/sin(pi/3)
+    y = 8*size/(1-cos(pi/3))
+    box = (pos[0]-x, pos[1], pos[0]+x, pos[1]+2*y)
+    draw.chord(box, start=270, end=330, outline=None, fill=fill, width=WIDTH)
+    draw.arc(box, start=270, end=330, fill=outline, width=WIDTH)
+    box = (pos[0]-x, pos[1]-2*y+16*size, pos[0]+x, pos[1]+16*size)
+    draw.chord(box, start=30, end=90, outline=None, fill=fill, width=WIDTH)
+    draw.arc(box, start=30, end=90, fill=outline, width=WIDTH)
+    x = 4*size/(1-cos(pi/4))
+    y = 8*size/sin(pi/4)
+    box = (pos[0]+4*size-2*x, pos[1]-y+8*size, pos[0]+4*size, pos[1]+y+8*size)
+    draw.chord(box, start=-45, end=45, outline=None, fill=background, width=WIDTH)
+    draw.arc(box, start=-45, end=45, fill=outline, width=WIDTH)
 def _in_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb)->None:
     '''
     draw:
@@ -291,7 +353,7 @@ def _draw(draw:ImageDraw, node:Node, size:int, fill:rgb, outline:rgb, background
     
     draws the circuit element to the Image.
     '''
-    funs = {'INP':_in_draw,'NOT':_not_draw, 'NOR':_nor_draw, 'OUT':_out_draw, 'BYP':lambda draw, pos, size, fill, ol, bg:None}
+    funs = {'INP':_in_draw,'NOT':_not_draw, 'NOR':_nor_draw, 'OUT':_out_draw, 'OR2':_or2_draw, 'BYP':lambda draw, pos, size, fill, ol, bg:None}
     funs[node['type'][:3]](draw, node['__pos'], size, fill, outline, background)
 
 V_SPACING = 20
@@ -356,13 +418,16 @@ def getNodes(graph:dict[str, list[dict[str, str]]])->dict[str, Node]:
         if not node['type'].startswith('OUTPUT_OR2'):
             continue
         gateNode = node.copy()
-        gateNode['sources'] = [node['sources'][1]]
-        nodes[gateNode['sources'][0]]['targets'].remove(nodeID)
-        nodes[gateNode['sources'][0]]['targets'].append(nodeID+'2')
-        node['sources'] = [node['sources'][0]]
-        nodes[nodeID+'2'] = gateNode
+        gateNode['type'] = 'OR2'
+        node['type'] = 'OUTPUT_BUFFER'
+        gateNode['targets'] = [nodeID]
+        gateNode['sources'] = node['sources']
+        node['sources'] = ['OR2']
+        for sid in gateNode['sources']:
+            nodes[sid]['targets'].remove(nodeID)
+            nodes[sid]['targets'].append('OR2')
+        nodes['OR2'] = gateNode
         break
-    
     return nodes
 
 def getRankNodes(nodes:dict[str,  Node])->list[list[str]]:
