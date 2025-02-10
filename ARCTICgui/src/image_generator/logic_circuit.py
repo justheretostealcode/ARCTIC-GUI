@@ -668,4 +668,10 @@ def drawImage(imgSize:tuple[int,int], nodes:list[Node], edges:dict[str,Edge], co
 # run test
 
 if __name__ == '__main__':
-    gen(test_data, {}).show()
+    gen(test_data, {
+        'a' : 'red',
+        "OUTPUT_OR2_3" : "yellow",
+        "NOR2_2" : "navy",
+        "NOT_1" : "olive",
+        'b' : 'blue',
+    }).show()
