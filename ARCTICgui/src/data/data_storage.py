@@ -37,7 +37,7 @@ class ImageDB():
         if img.endswith('.json'):
             with open(img, 'r') as file:
                 path = img[:-4]+'jpeg'
-                image:Image = image_generator.logic_circuit.gen(file.read(), {})
+                image:Image = image_generator.logic_circuit.gen(file.read(), '{}')
                 image.save(path)
                 img = path
         return img
