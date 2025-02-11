@@ -4,6 +4,8 @@ from PIL.ImageDraw import ImageDraw, Draw
 import json
 from typing import TypedDict, TypeAlias
 
+from data import data_storage
+
 # costume types
 
 rgb:TypeAlias = tuple[int, int, int]|str
@@ -348,7 +350,7 @@ WIDTH = 3
 
 # generator functions
 
-def gen(data:str, colorMap:dict[str, rgb])->Image.Image:
+def gen(structure:str, assignment:str)->Image.Image:
     '''
     data:
         the data of an json file describing a logic circuit
@@ -359,7 +361,8 @@ def gen(data:str, colorMap:dict[str, rgb])->Image.Image:
         a diagram of the logic circuit described in the data argument as PLI Image object 
     '''
     
-    graph = json.loads(data)['graph']
+    graph:dict[str,dict[str,str]] = json.loads(structure)['graph']
+    gateLibMap:dict[str,str] = json.loads(assignment)
     if graph['version'] == "1":
         # restructure nodes
         nodes:dict[str,  Node] = getNodes(graph)
@@ -376,7 +379,12 @@ def gen(data:str, colorMap:dict[str, rgb])->Image.Image:
         
         width, hight = getImageSize(nodes, rankedNodes, rankBoxes)
         
-        
+        def col2col(col:str)->tuple[int, int, int]:
+            return tuple(eval('0x'+col[2*i:2*i+2]) for i in range(3))
+        def dev2col(dev:str)->tuple[int, int, int]:
+            col = data_storage.storage.not_nor2_devices.get(dev, {'color':'FFFFFF'})['color']
+            return col2col(col)
+        colorMap = {nodeID:dev2col('device_'+device) for nodeID, device in gateLibMap.items()}
         # make img and draw objects with appropriate size
         return drawImage((width, hight), nodes, edges, colorMap)
 
@@ -649,13 +657,10 @@ def drawImage(imgSize:tuple[int,int], nodes:list[Node], edges:dict[str,Edge], co
         draw.line([(posX, minY), (posX, maxY)], fill='black', width=WIDTH)
     return img
 
-# run test
+# run test 
+# $ python3 -i ARCTICgui/src/
+# >>> from image_generator import logic_circuit; logic_circuit.main()
 
-if __name__ == '__main__':
-    gen(test_data, {
-        'a' : 'red',
-        "OUTPUT_OR2_3" : "yellow",
-        "NOR2_2" : "navy",
-        "NOT_1" : "olive",
-        'b' : 'blue',
-    }).show()
+def main():
+    from . import test_data
+    gen(test_data.structure, test_data.assignment).show()

@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 import os
 from PIL.Image import Image
-import image_generator
+from . import json_parser
 import image_generator.logic_circuit
 
 @dataclass
@@ -155,3 +155,5 @@ config_manager = ConfigManager()
 del ConfigManager
 
 storage.dictionary = config_manager.load_language_dictionary(config_manager.get_config('gui', 'LANGUAGE_PATH'))
+
+json_parser.update_storage_with_devices(config_manager.get_config('map', 'LIBRARY')[1:])
