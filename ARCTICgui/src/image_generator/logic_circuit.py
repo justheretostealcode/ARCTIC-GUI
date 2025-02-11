@@ -20,22 +20,6 @@ class Edge(TypedDict):
     outs:list[tuple[int, int]]
     posX:int
 
-# test datagateNode
-
-test_data = '''
-{
-  "truthtable" : "1110",
-  "gate_truthtables" : {
-    "b" : "1010",
-    "OUTPUT_OR2_3" : "1110",
-    "NOR2_2" : "0100",
-    "NOT_1" : "0011",
-    "a" : "1100"
-  },
-  "graph" : {"creator":"JGraphT JSON Exporter","version":"1","nodes":[{"id":"NOT_1","type":"NOT"},{"id":"a","type":"INPUT"},{"id":"NOR2_2","type":"NOR2"},{"id":"b","type":"INPUT"},{"id":"OUTPUT_OR2_3","type":"OUTPUT_OR2"}],"edges":[{"id":"1","source":"a","target":"NOT_1","variable":"x"},{"id":"2","source":"NOT_1","target":"NOR2_2","variable":"x"},{"id":"3","source":"b","target":"NOR2_2","variable":"y"},{"id":"4","source":"NOR2_2","target":"OUTPUT_OR2_3","variable":"x"},{"id":"5","source":"b","target":"OUTPUT_OR2_3","variable":"y"}]}
-}
-'''
-
 # utilities for drawing
 
 def _not_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
