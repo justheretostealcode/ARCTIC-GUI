@@ -35,71 +35,6 @@ def _not_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
         a list of input points of the circuit element
     '''
     return [(pos[0], pos[1]+4*size)]
-def _nor_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
-    '''
-    pos:
-        the position of the top left point of the box in witch the element is drawn in.
-    size: 
-        A scaling factor
-        
-    return:
-        a list of input points of the circuit element
-    '''
-    from math import pi, sin, cos
-    x = 4*size*cos(pi/6)
-    y = 8*size*sin(pi/6)
-    return [(pos[0]+x, pos[1]+8*size-y), (pos[0]+x, pos[1]+8*size+y)]
-def _or2_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
-    '''
-    pos:
-        the position of the top left point of the box in witch the element is drawn in.
-    size: 
-        A scaling factor
-        
-    return:
-        a list of input points of the circuit element
-    '''
-    from math import pi, sin, cos
-    x = 4*size*cos(pi/6)
-    y = 8*size*sin(pi/6)
-    return [(pos[0]+x, pos[1]+8*size-y), (pos[0]+x, pos[1]+8*size+y)]
-def _in_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
-    '''
-    pos:
-        the position of the top left point of the box in witch the element is drawn in.
-    size: 
-        A scaling factor
-        
-    return:
-        a list of input points of the circuit element
-    '''
-    return []
-def _out_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
-    '''
-    pos:
-        the position of the top left point of the box in witch the element is drawn in.
-    size: 
-        A scaling factor
-        
-    return:
-        a list of input points of the circuit element
-    '''
-    return [(pos[0], pos[1]+4*size)]
-def _inputs(node:Node, size:int)->list[tuple[int, int]]:
-    '''
-    node:
-        the node that
-    pos:
-        the position of the top left point of the box in witch the element is drawn in.
-    size: 
-        A scaling factor
-        
-    return:
-        a list of input points of the circuit element
-    '''
-    funs = {'INP':_in_inputs,'NOT':_not_inputs, 'NOR':_nor_inputs, 'OUT':_out_inputs, 'OR2':_or2_inputs, 'BYP':lambda pos, size:[pos]}
-    return funs[node['type'][:3]](node['__pos'], size)
-
 def _not_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
     '''
     pos:
@@ -111,65 +46,6 @@ def _not_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
         the output point of the circuit element
     '''
     return (pos[0]+10*size, pos[1]+4*size)
-def _nor_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
-    '''
-    pos:
-        the position of the top left point of the box in witch the element is drawn in.
-    size: 
-        A scaling factor
-        
-    return:
-        the output point of the circuit element
-    '''
-    return (pos[0]+18*size, pos[1]+8*size)
-def _or2_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
-    '''
-    pos:
-        the position of the top left point of the box in witch the element is drawn in.
-    size: 
-        A scaling factor
-        
-    return:
-        the output point of the circuit element
-    '''
-    return (pos[0]+16*size, pos[1]+8*size)
-def _in_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
-    '''
-    pos:
-        the position of the top left point of the box in witch the element is drawn in.
-    size: 
-        A scaling factor
-        
-    return:
-        the output point of the circuit element
-    '''
-    return (pos[0]+16*size, pos[1]+4*size)
-def _out_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
-    '''
-    pos:
-        the position of the top left point of the box in witch the element is drawn in.
-    size: 
-        A scaling factor
-        
-    return:
-        the output point of the circuit element
-    '''
-    return None
-def _outputs(node:Node, size:int)->tuple[int, int]|None:
-    '''
-    node:
-        the node that
-    pos:
-        the position of the top left point of the box in witch the element is drawn in.
-    size: 
-        A scaling factor
-        
-    return:
-        the output point of the circuit element
-    '''
-    funs = {'INP':_in_outputs,'NOT':_not_outputs, 'NOR':_nor_outputs, 'OUT':_out_outputs, 'OR2':_or2_outputs, 'BYP':lambda pos, size:pos}
-    return funs[node['type'][:3]](node['__pos'], size)
-
 def _not_box(size:int)->tuple[int, int]:
     '''
     size: 
@@ -179,54 +55,7 @@ def _not_box(size:int)->tuple[int, int]:
         A tuple of the size of the box enclosing the circuit element (x axis, y axis)
     '''
     return 10*size, 8*size
-def _nor_box(size:int)->tuple[int, int]:
-    '''
-    size: 
-        A scaling factor
-        
-    return:
-        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
-    '''
-    return 18*size, 16*size
-def _or2_box(size:int)->tuple[int, int]:
-    '''
-    size: 
-        A scaling factor
-        
-    return:
-        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
-    '''
-    return 16*size, 16*size
-def _in_box(size:int)->tuple[int, int]:
-    '''
-    size: 
-        A scaling factor
-        
-    return:
-        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
-    '''
-    return 16*size, 8*size
-def _out_box(size:int)->tuple[int, int]:
-    '''
-    size: 
-        A scaling factor
-        
-    return:
-        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
-    '''
-    return 16*size, 8*size
-def _box(node:Node, size:int)->tuple[int, int]:
-    '''
-    size: 
-        A scaling factor
-        
-    return:
-        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
-    '''
-    funs = {'INP':_in_box,'NOT':_not_box, 'NOR':_nor_box, 'OUT':_out_box, 'OR2':_or2_box, 'BYP':lambda size:(0, 0)}
-    return funs[node['type'][:3]](size)
-
-def _not_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb)->None:
+def _not_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb, label:str)->None:
     '''
     draw:
         the interface of the Image objet that is drawn on.
@@ -241,7 +70,42 @@ def _not_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outli
     '''
     draw.polygon((pos, (pos[0]+8*size, pos[1]+4*size), (pos[0], pos[1]+8*size), pos), outline=outline, fill=fill, width=WIDTH)
     draw.ellipse((pos[0]+8*size, pos[1]+3*size, pos[0]+10*size, pos[1]+5*size), outline=outline, fill=fill, width=WIDTH)
-def _nor_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb)->None:
+
+def _nor_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        a list of input points of the circuit element
+    '''
+    from math import pi, sin, cos
+    x = 4*size*cos(pi/6)
+    y = 8*size*sin(pi/6)
+    return [(pos[0]+x, pos[1]+8*size-y), (pos[0]+x, pos[1]+8*size+y)]
+def _nor_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        the output point of the circuit element
+    '''
+    return (pos[0]+18*size, pos[1]+8*size)
+def _nor_box(size:int)->tuple[int, int]:
+    '''
+    size: 
+        A scaling factor
+        
+    return:
+        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
+    '''
+    return 18*size, 16*size
+def _nor_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb, label:str)->None:
     '''
     draw:
         the interface of the Image objet that is drawn on.
@@ -270,7 +134,42 @@ def _nor_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outli
     draw.chord(box, start=-45, end=45, outline=None, fill=background, width=WIDTH)
     draw.arc(box, start=-45, end=45, fill=outline, width=WIDTH)
     draw.ellipse((pos[0]+16*size, pos[1]+7*size, pos[0]+18*size, pos[1]+9*size), outline=outline, fill=fill, width=WIDTH)
-def _or2_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb)->None:
+
+def _or2_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        a list of input points of the circuit element
+    '''
+    from math import pi, sin, cos
+    x = 4*size*cos(pi/6)
+    y = 8*size*sin(pi/6)
+    return [(pos[0]+x, pos[1]+8*size-y), (pos[0]+x, pos[1]+8*size+y)]
+def _or2_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        the output point of the circuit element
+    '''
+    return (pos[0]+16*size, pos[1]+8*size)
+def _or2_box(size:int)->tuple[int, int]:
+    '''
+    size: 
+        A scaling factor
+        
+    return:
+        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
+    '''
+    return 16*size, 16*size
+def _or2_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb, label:str)->None:
     '''
     draw:
         the interface of the Image objet that is drawn on.
@@ -298,7 +197,39 @@ def _or2_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outli
     box = (pos[0]+4*size-2*x, pos[1]-y+8*size, pos[0]+4*size, pos[1]+y+8*size)
     draw.chord(box, start=-45, end=45, outline=None, fill=background, width=WIDTH)
     draw.arc(box, start=-45, end=45, fill=outline, width=WIDTH)
-def _in_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb)->None:
+
+def _in_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        a list of input points of the circuit element
+    '''
+    return []
+def _in_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        the output point of the circuit element
+    '''
+    return (pos[0]+16*size, pos[1]+4*size)
+def _in_box(size:int)->tuple[int, int]:
+    '''
+    size: 
+        A scaling factor
+        
+    return:
+        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
+    '''
+    return 16*size, 8*size
+def _in_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb, label:str)->None:
     '''
     draw:
         the interface of the Image objet that is drawn on.
@@ -312,7 +243,40 @@ def _in_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outlin
     draws the circuit element to the Image.
     '''
     draw.polygon((pos, (pos[0]+12*size, pos[1]), (pos[0]+16*size, pos[1]+4*size), (pos[0]+12*size, pos[1]+8*size), (pos[0], pos[1]+8*size), pos), outline=outline, fill=fill, width=WIDTH)
-def _out_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb)->None:
+    draw.text((pos[0]+2*size, pos[1]+2*size), label, outline, font_size=3*size)
+
+def _out_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        a list of input points of the circuit element
+    '''
+    return [(pos[0], pos[1]+4*size)]
+def _out_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        the output point of the circuit element
+    '''
+    return None
+def _out_box(size:int)->tuple[int, int]:
+    '''
+    size: 
+        A scaling factor
+        
+    return:
+        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
+    '''
+    return 16*size, 8*size
+def _out_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb, label:str)->None:
     '''
     draw:
         the interface of the Image objet that is drawn on.
@@ -326,7 +290,40 @@ def _out_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outli
     draws the circuit element to the Image.
     '''
     draw.polygon(((pos[0], pos[1]+4*size), (pos[0]+4*size, pos[1]), (pos[0]+16*size, pos[1]), (pos[0]+16*size, pos[1]+8*size), (pos[0]+4*size, pos[1]+8*size), (pos[0], pos[1]+4*size)), outline=outline, fill=fill, width=WIDTH)
-def _draw(draw:ImageDraw, node:Node, size:int, fill:rgb, outline:rgb, background:rgb)->None:
+    draw.text((pos[0]+6*size, pos[1]+2*size), label, outline, font_size=3*size)
+
+def _byp_inputs(pos:tuple[float, float], size:int)->list[tuple[int, int]]:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        a list of input points of the circuit element
+    '''
+    return [pos]
+def _byp_outputs(pos:tuple[float, float], size:int)->tuple[int, int]|None:
+    '''
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        the output point of the circuit element
+    '''
+    return pos
+def _byp_box(size:int)->tuple[int, int]:
+    '''
+    size: 
+        A scaling factor
+        
+    return:
+        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
+    '''
+    return -2*size, -2*size
+def _byp_draw(draw:ImageDraw, pos:tuple[float, float], size:int, fill:rgb, outline:rgb, background:rgb, label:str)->None:
     '''
     draw:
         the interface of the Image objet that is drawn on.
@@ -339,8 +336,62 @@ def _draw(draw:ImageDraw, node:Node, size:int, fill:rgb, outline:rgb, background
     
     draws the circuit element to the Image.
     '''
-    funs = {'INP':_in_draw,'NOT':_not_draw, 'NOR':_nor_draw, 'OUT':_out_draw, 'OR2':_or2_draw, 'BYP':lambda draw, pos, size, fill, ol, bg:None}
-    funs[node['type'][:3]](draw, node['__pos'], size, fill, outline, background)
+    pass
+
+def _inputs(node:Node, size:int)->list[tuple[int, int]]:
+    '''
+    node:
+        the node that
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        a list of input points of the circuit element
+    '''
+    funs = {'INP':_in_inputs,'NOT':_not_inputs, 'NOR':_nor_inputs, 'OUT':_out_inputs, 'OR2':_or2_inputs, 'BYP':_byp_inputs}
+    return funs[node['type'][:3]](node['__pos'], size)
+def _outputs(node:Node, size:int)->tuple[int, int]|None:
+    '''
+    node:
+        the node that
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+        
+    return:
+        the output point of the circuit element
+    '''
+    funs = {'INP':_in_outputs,'NOT':_not_outputs, 'NOR':_nor_outputs, 'OUT':_out_outputs, 'OR2':_or2_outputs, 'BYP':_byp_outputs}
+    return funs[node['type'][:3]](node['__pos'], size)
+def _box(node:Node, size:int)->tuple[int, int]:
+    '''
+    size: 
+        A scaling factor
+        
+    return:
+        A tuple of the size of the box enclosing the circuit element (x axis, y axis)
+    '''
+    funs = {'INP':_in_box,'NOT':_not_box, 'NOR':_nor_box, 'OUT':_out_box, 'OR2':_or2_box, 'BYP':_byp_box}
+    return funs[node['type'][:3]](size)
+def _draw(draw:ImageDraw, node:Node, size:int, fill:rgb, outline:rgb, background:rgb, labels:str)->None:
+    '''
+    draw:
+        the interface of the Image objet that is drawn on.
+    pos:
+        the position of the top left point of the box in witch the element is drawn in.
+    size: 
+        A scaling factor
+    fill:
+        fill color
+    
+    draws the circuit element to the Image.
+    '''
+    funs = {'INP':_in_draw,'NOT':_not_draw, 'NOR':_nor_draw, 'OUT':_out_draw, 'OR2':_or2_draw, 'BYP':_byp_draw}
+    funs[node['type'][:3]](draw, node['__pos'], size, fill, outline, background, labels)
+
 
 V_SPACING = 20
 H_SPACING = 10
@@ -386,7 +437,7 @@ def gen(structure:str, assignment:str)->Image.Image:
             return col2col(col)
         colorMap = {nodeID:dev2col('device_'+device) for nodeID, device in gateLibMap.items()}
         # make img and draw objects with appropriate size
-        return drawImage((width, hight), nodes, edges, colorMap)
+        return drawImage((width, hight), nodes, edges, colorMap, gateLibMap)
 
     raise Exception(f"unknown graph version '{graph['version']}'")
 
@@ -524,6 +575,19 @@ def getRankNodes(nodes:dict[str,  Node])->list[list[str]]:
             nodes[src]["targets"]+= targets
             del nodes[nid]
             rank.remove(nid)
+    
+    # reorder gates targeting bypass
+    
+    for rank in rankedNodes[1:-1]:
+        for nodeID in rank.copy():
+            for tid in nodes[nodeID]['targets']:
+                if nodes[tid]['type'] == 'BYPASS':
+                    rank.remove(nodeID)
+                    rank.append(nodeID)
+    
+    order = sum((nodes[nid]['sources'] for nid in rankedNodes[1]), start=[])
+    rankedNodes[0].sort(key=order.index)
+    
     return rankedNodes
 
 def getRankBoxes(nodes:dict[str,  Node], rankedNodes:list[list[str]])->list[tuple[int, int]]:
@@ -625,7 +689,7 @@ def getImageSize(nodes:dict[str,  Node], rankedNodes:list[list[str]], rankBoxes:
             x+= H_SPACING
     return x, max(y for _, y in rankBoxes)+2*V_SPACING
 
-def drawImage(imgSize:tuple[int,int], nodes:list[Node], edges:dict[str,Edge], colorMap:dict[str, rgb]):
+def drawImage(imgSize:tuple[int,int], nodes:list[Node], edges:dict[str,Edge], colorMap:dict[str, rgb], labelMap:dict[str, str]):
     '''
     imgSize:
         width and hight if the image
@@ -643,7 +707,7 @@ def drawImage(imgSize:tuple[int,int], nodes:list[Node], edges:dict[str,Edge], co
     draw = Draw(img)
     # draw nodes
     for nodeID, node in nodes.items():
-        _draw(draw, node, SIZE, colorMap.get(nodeID, DEFCOLOR) , 'black', 'white')
+        _draw(draw, node, SIZE, colorMap.get(nodeID, DEFCOLOR) , 'black', 'white', labelMap.get(nodeID, ''))
 
     # draw edges
     for edge in edges.values():
