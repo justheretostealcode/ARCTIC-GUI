@@ -1,23 +1,19 @@
 """ File containing classes related to the design_goal tabs"""
 import flet as ft
-import sympy    
-import os
 
 from custom_controls.tab import PageTab
 from custom_controls.tabs import PageTabs
 from data.data_storage import storage
-from data.json_parser import update_storage_with_devices
-import pipcontrol.boolean_function as bf
-import pipcontrol.syn as syn
-
-from data import data_storage
+from boolean_input import input_expr_builder
+from boolean_input import input_sensor_builder
+from gate_library_selection import genetic_gate_library_builder
 
 class LogicCircuitSynth(PageTab):
     """Class representing the flet.tab related to the LogicCircuitSynth"""
-    def __init__(self) -> None:
+    def __init__(self, page) -> None:
         super().__init__()
 
-        self.page = ft.Page
+        self.page = page
         self.text= storage.dictionary["Logic_Circuit_Synthesis"]
         self.content = self.content_builder()
 
@@ -27,293 +23,32 @@ class LogicCircuitSynth(PageTab):
         Returns:
             ft.Container: Column with LogicCircuitSynth controls
         """
-        
-        def textbox_changed(e:ft.ControlEvent) -> None:
-            storage.bool_func = e.control.value.strip()
 
-        # Create a text field for user input --> in desgin_goal mit strip fct zum rausziehen
-        input_expr = ft.TextField(label=storage.dictionary["Enter_Boolean_Function"], width=200, text_align=ft.TextAlign.CENTER, on_change=textbox_changed)
-
-        #trying out alert dialogue
-        def handle_close(e:ft.ControlEvent):
-            self.page.close(bool_info_window)
-        
-        bool_info_content_column = ft.Column([
-            ft.Text(storage.dictionary["Enter_the_boolean_function"]),
-            ft.Text(storage.dictionary["Use_the_common_operands"]),
-            ft.Text(storage.dictionary["AND_logical_conjunction"]),
-            ft.Text(storage.dictionary["OR_logical_conjunction"]),
-            ft.Text(storage.dictionary["NOT_logical_conjunction"]),
-            ft.Text(storage.dictionary["XOR_logical_conjunction"]),
-            ft.Text(storage.dictionary["IMPL_logical_conjunction"])
-        ])
-
-        bool_info_window = ft.AlertDialog(
-            modal=True,
-            title=ft.Text(storage.dictionary["Information"]),
-            content = ft.Text(storage.dictionary["Enter_bool"] + "\n" + storage.dictionary["operant_list"]  + ". \n" +  storage.dictionary["operands_written_format"]),
-            # content = ft.Text("Enter the boolean function with any variables of up to three and the common operands:\n AND (& or And(a,b)), OR (| or Or(a,b)), NOT (~ or Not(a,b)), XOR (^ or Xor(a,b)), Implication (~ a| b)."),
-            actions=[
-                ft.TextButton(storage.dictionary["Close"], on_click=handle_close),
-            ],
-            actions_alignment=ft.MainAxisAlignment.END,
-            #on_dismiss=lambda e: self.page.add(ft.Text("Modal dialog dismissed"),),
-        )
-
-        def show_truth_table(e):
-            expr = input_expr.value.strip()
-            if not expr:
-                input_sensor_container.content = ft.Text(storage.dictionary["Please_enter_valid_bool"])
-                self.page.update()
-                return
-
-            try:
-                truth_table = bf.generate_truth_table_from_expr(expr)
-                if not truth_table:
-                    return
-
-                # Get variable names from first row
-                headers = [str(col) for col in truth_table[0][:-1]]  # All but last column
-                headers.append(storage.dictionary["Output"])  # Last column is output
-
-                # Create DataTable
-                table = ft.DataTable(
-                    column_spacing=15, 
-                    columns=[ft.DataColumn(ft.Text(header, size=14, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER)) for header in headers],
-                    rows=[
-                        ft.DataRow(
-                            cells=[
-                                ft.DataCell(
-                                    ft.Container(
-                                        ft.Text(str(int(cell)), size=14, text_align=ft.TextAlign.CENTER),
-                                        alignment=ft.alignment.center,
-                                        bgcolor=ft.colors.SURFACE_VARIANT if i == len(row) - 1 else None  # Gray background for the last column (function result)
-                                    )
-                                ) for i, cell in enumerate(row)
-                            ]
-                        ) for row in truth_table[1:]
-                    ],
-                )
-
-                input_sensor_container.content = ft.Container(content=table, padding=5)
-                self.page.update()
-
-
-            except Exception as ex:
-                input_sensor_container.content = ft.Text(f"{storage.dictionary["Error"]}: {str(ex)}")
-                self.page.update()
-        
-        def show_input_sensors_dropdown(e):
-            # First parse the current library
-            current_lib = genetic_gate_libraries_dropdown.value
-            if not current_lib:
-                self.page.show_snack_bar(
-                    ft.SnackBar(content=ft.Text(storage.dictionary["Please_select_lib"]))
-                )
-                return
-                
-            json_path = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs", current_lib)
-            
-            try:
-                update_storage_with_devices(json_path)
-                
-                if len(storage.input_devices) == 0:
-                    self.page.show_snack_bar(
-                        ft.SnackBar(content=ft.Text(storage.dictionary["No_input_dev"]))
-                    )
-                    return
-                
-                # Show success message with device count
-                self.page.show_snack_bar(
-                    ft.SnackBar(
-                        content=ft.Text(f"{storage.dictionary["Successfully_found"]} {len(storage.input_devices)} {storage.dictionary["input_devices"]}"),
-                        bgcolor=ft.colors.GREEN_700,
-                    )
-                )
-                    
-            except Exception as ex:
-                print(f"{storage.dictionary["Error_parsing_library"]}: {str(ex)}") # Only errors go to terminal
-                def close_dialog(e):
-                    self.page.dialog.open = False
-                    self.page.update()
-                
-                error_dialog = ft.AlertDialog(
-                    modal=True,
-                    title=ft.Text(storage.dictionary["Error"]),
-                    content=ft.Text(f"{storage.dictionary["Error_parsing_library"]}: {str(ex)}"),
-                    actions=[
-                        ft.TextButton(storage.dictionary["OK"], on_click=close_dialog),
-                    ],
-                    actions_alignment=ft.MainAxisAlignment.END,
-                )
-                self.page.dialog = error_dialog
-                error_dialog.open = True
-                self.page.update()
-                return
-
-            # Parse and evaluate the user input
-            expr = input_expr.value.strip()
-            if expr:
-                try:
-                    expression = sympy.sympify(expr)
-                    variables = sorted(expression.atoms(sympy.Symbol), key=lambda x: str(x))
-                    dropdowns = []
-                    for var in variables:
-                        # Create dropdown options from actual input devices
-                        options = [
-                            ft.dropdown.Option(
-                                key=device_id,
-                                text=f"{info['name']}" # uncomment if need more info in the dropdown but for short only the name ({device_id})"
-                            )
-                            for device_id, info in storage.input_devices.items()
-                        ]
-                        
-                        dropdown = ft.Dropdown(
-                            width=65,
-                            height=35,
-                            label=str(var),
-                            options=options,
-                            text_size=14,
-                            content_padding=ft.padding.only(left=10, right=20),
-                            border_radius=5,
-                        )
-                        
-                        dropdowns.append(dropdown)
-                    
-                    input_sensor_container.content = ft.Row(
-                        controls=dropdowns,
-                        spacing=15,
-                        alignment=ft.MainAxisAlignment.START,
-                    )
-                    self.page.update()
-                except Exception as ex:
-                    input_sensor_container.content = ft.Text(f"{storage.dictionary["Error"]}: {str(ex)}")
-                    self.page.update()
-            else:
-                input_sensor_container.content = ft.Text(storage.dictionary["Please_enter_valid_bool"])
-                self.page.update()
-
-        enter_and_choose_input_btn = ft.ElevatedButton(storage.dictionary["Choose_Input_Sensors"], on_click=show_input_sensors_dropdown)
-        generate_table_btn = ft.ElevatedButton(storage.dictionary["Truth_table"], on_click=show_truth_table)
-        input_sensor_container = ft.Container()  # here input sensor dropdowns are is displayed
-        truth_table_container = ft.Container()  # here truth table is displayed
-        
-        # CODE TO BE ADDED
-        selected_file_display = ft.Text(storage.dictionary["Select_a_library"], size=14, color=ft.colors.BLUE_700)
-        
-        path_to_gen_lib = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs")
-
-        def on_dropdown_change(e):
-            selected_library = e.control.value
-            if selected_library:
-                try:
-                    # Use os.path.join and then convert to forward slashes
-                    library_path = '../' + os.path.join(path_to_gen_lib, selected_library).replace('\\', '/')
-                    data_storage.config_manager.update_config('map', 'LIBRARY', library_path)
-                    selected_file_display.value = f"{storage.dictionary["Selected_library"]}: {selected_library}"
-                    self.page.update()
-                except ValueError as err:
-                    print(f"{storage.dictionary["Error_setting_library_path"]}: {err}")
-
-        # genetic gate library dropdown
-        genetic_gate_libraries_dropdown = ft.Dropdown(
-            width=300,
-            height=35,
-            text_size=13,
-            content_padding=ft.padding.only(top=2, left=5, right=5, bottom=2),
-            border_color=ft.colors.BLUE_400,
-            focused_border_color=ft.colors.BLUE_ACCENT,
-            focused_border_width=2,
-            options=[
-                ft.dropdown.Option(
-                    genetic_gate_library,
-                    text_style=ft.TextStyle(
-                        size=13,
-                        weight=ft.FontWeight.W_500, 
-                    )
-                ) 
-                for genetic_gate_library in os.listdir(path_to_gen_lib)
-            ],
-            on_change=on_dropdown_change,
-            value=os.path.basename(data_storage.config_manager.get_config('map', 'LIBRARY')),
-        )
-        
-        #Generate Image in GUI for every activation curve
-
-        gglibrary_container = ft.Container(
-            content=ft.Column([
-            genetic_gate_libraries_dropdown,
-            selected_file_display  # Display the selected file
-        ]),
-        )
-
-        #Todo: get Diagrams from valid path
-        placeholder_path = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs", "figures_eight-state_det-var_2024-04-04_Monotonicity")
-
-        images = ft.GridView(
-        expand=1,
-        runs_count=5,
-        max_extent=150,
-        child_aspect_ratio=1.0,
-        spacing=5,
-        run_spacing=5,
-    )
-
-        for filename in os.listdir(placeholder_path):
-            images.controls.append(
-                ft.Image(
-                    src=os.path.join(placeholder_path, filename),
-                    width=200,
-                    height=200
-                )
-            )
-
-
-        def start_synth(e:ft.ControlEvent):
-
-            button = e.control
-
-            if button.text != storage.dictionary["Synthesis"]:
-                return
-            
-            
-            button.text = storage.dictionary["Running_syn&tm"]
-            button.update()
-
-            syn.start_synth()
-
-            button.text = storage.dictionary["Synthesis"]
-            button.update()
-
-            
+        input_expr = input_expr_builder.input_expr_builder(self.page)
+        input_info_button = input_expr_builder.info_input_builder(self.page)
+        truth_table, sensor_dropdowns, input_sensor_container = input_sensor_builder.truth_table_and_sensor_builder(self.page)
 
         #left side
         main_left_column = ft.Column(
-            [ft.Row([input_expr, #input for boolean function
-            ft.IconButton(icon=ft.Icons.INFO_OUTLINE_ROUNDED, on_click=lambda e: self.page.open(bool_info_window))]),
-            ft.Row([enter_and_choose_input_btn, #enter boolean expression and choose input sensors from dropdown
-            generate_table_btn]),  #button to generate truth table based on input
-            input_sensor_container,#the container for the input sensor selection
-            truth_table_container, #the container for the generated truth table
-            ft.Row([ft.TextButton(storage.dictionary["Synthesis"], on_click=start_synth), ft.IconButton(icon=ft.Icons.STOP, on_click=syn.kill_stop)]),
+            [ft.Row([input_expr,input_info_button]),
+            ft.Row([truth_table, sensor_dropdowns]),
+            input_sensor_container,
             ])
         
+        gglibrary_container, images = genetic_gate_library_builder.genetic_gate_library_builder(self.page)
 
         #right side
-        main_right_column = ft.Column([gglibrary_container, #ft.Text("Select a FILE: "),
+        main_right_column = ft.Column([gglibrary_container,
             images]
         )
 
-        #so that content doesn't overflow, but is scrollable
-        main_left_column.scroll = ft.ScrollMode.ALWAYS #to hide scrollbar, exchange ALWAYS for AUTO
+        main_left_column.scroll = ft.ScrollMode.ALWAYS
         main_right_column.scroll = ft.ScrollMode.ALWAYS
 
         main_left_column.expand = True
         main_right_column.expand = True
 
         return ft.Row([main_left_column, main_right_column])
-
-
 
 
 class ManualDesign(PageTab):
@@ -349,11 +84,11 @@ class Analysis(PageTab):
 
 class DesignGoal(PageTabs):
     """Class representing the flet.tabs related to the DesignGoal"""
-    def __init__(self):
+    def __init__(self, page):
         super().__init__()
 
         self.tabs = [
-            LogicCircuitSynth(),
+            LogicCircuitSynth(page),
             ManualDesign(),
             Analysis(),
         ]

@@ -1,7 +1,7 @@
 """Module for parsing gate library JSON files and extracting device information"""
 
 import json
-from .data_storage import storage  # Use relative import
+from .data_storage import storage
 
 def find_devices_by_primitive(json_path: str, 
                             primitives: list[str], 
@@ -11,7 +11,7 @@ def find_devices_by_primitive(json_path: str,
         # Try different encodings
         encodings = ['utf-8', 'utf-8-sig', 'latin-1']
         data = None
-        
+
         for encoding in encodings:
             try:
                 with open(json_path, 'r', encoding=encoding) as file:
@@ -21,7 +21,7 @@ def find_devices_by_primitive(json_path: str,
                 continue
             except json.JSONDecodeError:
                 continue
-                
+
         if data is None:
             raise ValueError("Could not read JSON file with any supported encoding")
 
@@ -36,9 +36,9 @@ def find_devices_by_primitive(json_path: str,
                     for field in fields_to_extract:
                         extracted[field] = device.get(field)
                     results.append(extracted)
-            
+
         return results
-            
+
     except FileNotFoundError:
         print(f"Error: Could not find file at {json_path}")
     except Exception as e:
