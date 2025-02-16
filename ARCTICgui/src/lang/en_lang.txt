@@ -16,6 +16,8 @@ unknown_value = unknown value
 Plasmid_View = Plasmid View
 Sequence_View = Sequence View
 Protocol_View = Protocol View
+Start_pipeline = Start Pipeline
+Pipeline_running = Pipeline running
 
 
 
@@ -46,7 +48,6 @@ Synthesis = Synthesis
 Running_syn&tm = Running syn&tm
 
 #Pipeline
-Pipeline = Pipeline
 Context = Context
 Logic_Synthesis = Logic Synthesis
 
