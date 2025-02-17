@@ -2,7 +2,6 @@
 PAGE_TITLE = ARTIC GUI
 Logic_Circuit_Synthesis = Logic Circuit Synthesis
 Enter_Boolean_Function = Enter Boolean Function
-Enter_the_boolean_function = Enter the boolean function with any variables of up to three.
 Information = Information
 Close = Close
 Output = Output
@@ -17,20 +16,18 @@ unknown_value = unknown value
 Plasmid_View = Plasmid View
 Sequence_View = Sequence View
 Protocol_View = Protocol View
+Start_pipeline = Start Pipeline
+Pipeline_running = Pipeline running
 
 
 
 #Boolean Logic Text
 Enter_bool = Enter the boolean function with any variables of up to three and the common operands:
 Truth_table = Truth Table
-Use_the_common_operands = Use the common operands:
+
 operant_list = AND (&), OR (|), NOT (~), XOR (^), Implication (~ a| b)
 operands_written_format = The operands can also be used in written format, such as And(a,b), Or(a,b), Not(a,b) and Xor(a,b).
-AND_logical_conjunction = - AND (&) - for logical conjunction
-OR_logical_conjunction = - OR (|) - for logical disjunction
-NOT_logical_conjunction = - NOT (~) - for logical negation
-XOR_logical_conjunction = - XOR (^) - for exclusive disjunction
-IMPL_logical_conjunction = - Implication (~a|b) - for logical implication
+
 Please_enter_valid_bool = Please enter a valid boolean expression.
 
 #Input sensors
@@ -51,7 +48,6 @@ Synthesis = Synthesis
 Running_syn&tm = Running syn&tm
 
 #Pipeline
-Pipeline = Pipeline
 Context = Context
 Logic_Synthesis = Logic Synthesis
 

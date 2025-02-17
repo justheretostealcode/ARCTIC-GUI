@@ -66,6 +66,9 @@ class Pipeline():
 
         self.data_storage.pipeline_is_running = False
 
+        e.control.text = st.dictionary["Start_pipeline"]
+        e.page.update()
+
 
     def stop_pipeline(self, e: ft.ControlEvent) -> None:
         """Method to stop the execution for a pipeline
@@ -88,8 +91,11 @@ class Pipeline():
                     ft.SnackBar(content=ft.Text("Pipeline already started."))
                 )
             return
-
+        
         self.data_storage.pipeline_is_running = True    
+        e.control.text = st.dictionary["Pipeline_running"]
+        e.page.update()
+
         pipline_thread = Thread(target=self._start_pipeline_thread, args=[e])
 
         try:
