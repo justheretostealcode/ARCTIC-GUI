@@ -16,7 +16,7 @@ def genetic_gate_library_builder(page: ft.Page) -> tuple[ft.GridView, ft.Contain
 
     path_to_gen_lib = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs")
 
-    selected_file_display = ft.Text(storage.dictionary["Select_a_library"], size=14, color=ft.colors.BLUE_700)
+    selected_file_display = ft.Text(storage.dictionary['Select_a_library'], size=14, color=ft.colors.BLUE_700)
 
     def on_dropdown_change(e:ft.ControlEvent) -> None:
         selected_library = e.control.value
@@ -25,11 +25,11 @@ def genetic_gate_library_builder(page: ft.Page) -> tuple[ft.GridView, ft.Contain
                 # Use os.path.join and then convert to forward slashes
                 library_path = '../' + os.path.join(path_to_gen_lib, selected_library).replace('\\', '/')
                 config_manager.update_config('map', 'LIBRARY', library_path)
-                selected_file_display.value = f"{storage.dictionary["Selected_library"]}: {selected_library}"
+                selected_file_display.value = f"{storage.dictionary['Selected_library']}: {selected_library}"
                 load_images()
                 page.update()
             except ValueError as err:
-                print(f"{storage.dictionary["Error_setting_library_path"]}: {err}")
+                print(f"{storage.dictionary['Error_setting_library_path']}: {err}")
 
     # genetic gate library dropdown
     genetic_gate_libraries_dropdown = ft.Dropdown(
