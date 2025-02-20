@@ -23,30 +23,35 @@ class LogicCircuitSynth(PageTab):
         Returns:
             ft.Container: Column with LogicCircuitSynth controls
         """
+        
+
 
         input_expr = input_expr_builder.input_expr_builder(self.page)
         input_info_button = input_expr_builder.info_input_builder(self.page)
-        truth_table, sensor_dropdowns, input_sensor_container = input_sensor_builder.truth_table_and_sensor_builder(self.page)
+        #truth_table, sensor_dropdowns, input_sensor_container = input_sensor_builder.truth_table_and_sensor_builder(self.page)
+        truth_table_btn, sensor_dropdowns_btn, input_sensor_container, truth_table_container, message_container = input_sensor_builder.truth_table_and_sensor_builder(self.page)
 
-        #left side
-        main_left_column = ft.Column(
-            [ft.Row([input_expr,input_info_button]),
-            ft.Row([truth_table, sensor_dropdowns]),
+        #right side
+        main_right_column = ft.Column(
+            [ft.Row([input_expr, input_info_button]),
+            ft.Row([truth_table_btn, sensor_dropdowns_btn]),
+            message_container,
             input_sensor_container,
+            truth_table_container,
             ])
         
         gglibrary_container, images = genetic_gate_library_builder.genetic_gate_library_builder(self.page)
 
-        #right side
-        main_right_column = ft.Column([gglibrary_container,
+        #left side
+        main_left_column = ft.Column([gglibrary_container,
             images]
         )
 
-        main_left_column.scroll = ft.ScrollMode.ALWAYS
         main_right_column.scroll = ft.ScrollMode.ALWAYS
+        main_left_column.scroll = ft.ScrollMode.ALWAYS
 
-        main_left_column.expand = True
         main_right_column.expand = True
+        main_left_column.expand = True
 
         return ft.Row([main_left_column, main_right_column])
 

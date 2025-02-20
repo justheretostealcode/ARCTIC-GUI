@@ -1,4 +1,10 @@
 """File for building"""
+# import sys
+# import os
+
+# # Append the path of the project root to sys.path
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from data.data_storage import storage, config_manager
 from data.json_parser import update_storage_with_devices
 import flet as ft
@@ -7,23 +13,52 @@ import pipcontrol.boolean_function as bf
 
 
 def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft.ElevatedButton, ft.Container]:
-    """Method to build the truthtable or sensor selection, depending on which button is selected
+    """
+    Constructs the user interface components for selecting sensors and generating a truth table based on a Boolean function.
+    This function creates two buttons (1st: initiating the display of the truth table, 2nd: selecting input sensors based on 
+    the Bool expr provided by the user) and three containers. The function checks the validity of the Boolean expression 
+    before any action is taken. If valid, on button click it updates either the truth table container (generate_table_btn) 
+    or the input sensors container (enter_and_choose_input_btn). If not valid, a separate container is used to display 
+    a respective error message.
 
     Args:
-        page (ft.Page): current page
+        page (ft.Page): The current Flet page object where the UI components will be displayed. This object provides
+                        context and methods for updating the UI.
 
     Returns:
-        tuple[ft.ElevatedButton, ft.ElevatedButton, ft.Container]: the inputsensor button, the truthtable button, the container, holding the value
+        tuple[ft.ElevatedButton, ft.ElevatedButton, ft.Container, ft.Container, ft.Container]: 
+            - 1st ElevatedButton is for selecting input sensors.
+            - 2nd ElevatedButton is for generating the truth table.
+            - 1st Container holds the input sensor selection UI or related messages.
+            - 2nd Container is dedicated to displaying the truth table.
+            - 3rd Container is used for displaying messages about the validity of the Bool expr or other errors.
+
+    The function ensures that any change in the Boolean expression's validity updates the message container immediately
+    and clears out previous outputs from both the input sensor and truth table containers, to ensure no conflicting information.
     """
 
     #Both buttons and container are build in the same method, because all three elements are interdependent
 
     input_sensor_container = ft.Container()
-    def show_truth_table(e:ft.ControlEvent) -> None:
+    input_sensor_container = ft.Container()
+    truth_table_container = ft.Container()  # Dedicated container for the truth table
+
+    def validate_expression():
         expr = storage.bool_func
         if not expr:
-            input_sensor_container.content = ft.Text(storage.dictionary["Please_enter_valid_bool"])
-            page.update()
+            message_container.content = ft.Text(storage.dictionary['Please_enter_valid_bool'])
+            input_sensor_container.content = ft.Container()
+            truth_table_container.content = ft.Container()
+        else:
+            message_container.content = ft.Container()  # Clear the error message if the expression is valid
+        page.update()
+
+        
+    def show_truth_table(e:ft.ControlEvent) -> None:
+        validate_expression()  # Validate the expression before attempting to display truth table
+        expr = storage.bool_func
+        if not expr:
+            #page.update()
             return
 
         try:
@@ -33,7 +68,7 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
 
             # Get variable names from first row
             headers = [str(col) for col in truth_table[0][:-1]]  # All but last column
-            headers.append(storage.dictionary["Output"])  # Last column is output
+            headers.append(storage.dictionary['Output'])  # Last column is output
 
             # Create DataTable
             table = ft.DataTable(
@@ -54,11 +89,11 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
                 ],
             )
 
-            input_sensor_container.content = ft.Container(content=table, padding=5)
+            truth_table_container.content = ft.Container(content=table, padding=5)
             page.update()
 
         except Exception as ex:
-            input_sensor_container.content = ft.Text(f"{storage.dictionary["Error"]}: {str(ex)}")
+            truth_table_container.content = ft.Text(f"{storage.dictionary['Error']}: {str(ex)}")
             page.update()
     
     def show_input_sensors_dropdown(e: ft.ControlEvent) -> None:
@@ -66,7 +101,7 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
         json_path = config_manager.get_config("map", "LIBRARY")
         if not json_path:
             page.show_snack_bar(
-                ft.SnackBar(content=ft.Text(storage.dictionary["Please_select_lib"]))
+                ft.SnackBar(content=ft.Text(storage.dictionary['Please_select_lib']))
             )
             return
 
@@ -77,19 +112,19 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
             
             if len(storage.input_devices) == 0:
                 page.show_snack_bar(
-                    ft.SnackBar(content=ft.Text(storage.dictionary["No_input_dev"]))
+                    ft.SnackBar(content=ft.Text(storage.dictionary['No_input_dev']))
                 )
                 return
             
             page.show_snack_bar(
                 ft.SnackBar(
-                    content=ft.Text(f"{storage.dictionary["Successfully_found"]} {len(storage.input_devices)} {storage.dictionary["input_devices"]}"),
+                    content=ft.Text(f"{storage.dictionary['Successfully_found']} {len(storage.input_devices)} {storage.dictionary['input_devices']}"),
                     bgcolor=ft.colors.GREEN_700,
                 )
             )
 
         except Exception as ex:
-            print(f"{storage.dictionary["Error_parsing_library"]}: {str(ex)}")
+            print(f"{storage.dictionary['Error_parsing_library']}: {str(ex)}")
 
             def close_dialog(e:ft.ControlEvent) -> None:
                 page.dialog.open = False
@@ -97,10 +132,10 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
             
             error_dialog = ft.AlertDialog(
                 modal=True,
-                title=ft.Text(storage.dictionary["Error"]),
-                content=ft.Text(f"{storage.dictionary["Error_parsing_library"]}: {str(ex)}"),
+                title=ft.Text(storage.dictionary['Error']),
+                content=ft.Text(f"{storage.dictionary['Error_parsing_library']}: {str(ex)}"),
                 actions=[
-                    ft.TextButton(storage.dictionary["OK"], on_click=close_dialog),
+                    ft.TextButton(storage.dictionary['OK'], on_click=close_dialog),
                 ],
                 actions_alignment=ft.MainAxisAlignment.END,
             )
@@ -110,6 +145,7 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
             return
 
         # Parse and evaluate the user input
+        validate_expression()  # Validate the expression before showing the dropdowns
         expr = storage.bool_func
         if expr:
             try:
@@ -145,13 +181,14 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
                 )
                 page.update()
             except Exception as ex:
-                input_sensor_container.content = ft.Text(f"{storage.dictionary["Error"]}: {str(ex)}")
+                input_sensor_container.content = ft.Text(f"{storage.dictionary['Error']}: {str(ex)}")
                 page.update()
         else:
-            input_sensor_container.content = ft.Text(storage.dictionary["Please_enter_valid_bool"])
-            page.update()
+            return
 
-    enter_and_choose_input_btn = ft.ElevatedButton(storage.dictionary["Choose_Input_Sensors"], on_click=show_input_sensors_dropdown)
-    generate_table_btn = ft.ElevatedButton(storage.dictionary["Truth_table"], on_click=show_truth_table)
+    message_container = ft.Container()
 
-    return (enter_and_choose_input_btn, generate_table_btn, input_sensor_container)
+    enter_and_choose_input_btn = ft.ElevatedButton(storage.dictionary['Choose_Input_Sensors'], on_click=show_input_sensors_dropdown)
+    generate_table_btn = ft.ElevatedButton(storage.dictionary['Truth_table'], on_click=show_truth_table)
+
+    return (enter_and_choose_input_btn, generate_table_btn, input_sensor_container, truth_table_container, message_container)
