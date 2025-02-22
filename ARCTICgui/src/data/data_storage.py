@@ -35,11 +35,19 @@ class ImageDB():
     def __getitem__(self, imgID:str)->str:
         img = self._images[imgID]
         if img.endswith('.json'):
+            path = img[:-4]+'jpeg'
             with open(img, 'r') as file:
-                path = img[:-4]+'jpeg'
-                image:Image = image_generator.logic_circuit.gen(file.read(), '{}')
-                image.save(path)
-                img = path
+                structure = file.read()
+            if 'result' in imgID:
+                ass = img[:-5]+'_assignment'+img[-5:]
+                with open(ass, 'r') as file:
+                    assignment = file.read()
+            else:
+                assignment = '{"identifierMap":{}}'
+            image:Image = image_generator.logic_circuit.gen(structure, assignment)
+            image.save(path)
+            img = path
+            self._images[imgID] = path
         return img
     def __setitem__(self, imgID:str, img:str)->None:
         self._images[imgID] = img

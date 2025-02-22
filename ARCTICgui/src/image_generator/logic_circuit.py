@@ -413,7 +413,7 @@ def gen(structure:str, assignment:str)->Image.Image:
     '''
     
     graph:dict[str,dict[str,str]] = json.loads(structure)['graph']
-    gateLibMap:dict[str,str] = json.loads(assignment)
+    gateLibMap:dict[str,str] = json.loads(assignment)['identifierMap']
     if graph['version'] == "1":
         # restructure nodes
         nodes:dict[str,  Node] = getNodes(graph)
@@ -435,7 +435,7 @@ def gen(structure:str, assignment:str)->Image.Image:
         def dev2col(dev:str)->tuple[int, int, int]:
             col = data_storage.storage.not_nor2_devices.get(dev, {'color':'FFFFFF'})['color']
             return col2col(col)
-        colorMap = {nodeID:dev2col('device_'+device) for nodeID, device in gateLibMap.items()}
+        colorMap = {nodeID:dev2col(device) for nodeID, device in gateLibMap.items()}
         # make img and draw objects with appropriate size
         return drawImage((width, hight), nodes, edges, colorMap, gateLibMap)
 
