@@ -21,8 +21,8 @@ def main():
     print("=== Active Simulator Settings ===")
     print(f"Current simulator: {cm.get_config('sim', 'SIM_PATH')}")
     
-    # Load settings for current simulator
-    settings = cm.load_active_simulator_settings()
+    # Reload settings for current simulator (only needed when switching simulators)
+    settings = cm.reload_simulator_settings()
     print("\nAll settings:")
     for key, value in settings.items():
         print(f"- {key}: {value}")
