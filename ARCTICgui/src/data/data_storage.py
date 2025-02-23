@@ -215,8 +215,10 @@ class ConfigManager:
 
         new_lines = []
         if config_name == 'simulator_settings':
-            # Special handling for simulator settings with sections
             current_section = None
+            added_new_values = set()  # Track which values we've handled
+            
+            # First pass - update existing values
             for line in lines:
                 if line.strip().startswith('[') and line.strip().endswith(']'):
                     current_section = line.strip()[1:-1]
@@ -225,15 +227,40 @@ class ConfigManager:
                     
                 if '=' in line and not line.strip().startswith('#'):
                     key = line.split('=')[0].strip()
-                    # For simulator settings, the key in memory includes the section
                     full_key = f"{current_section}.{key}" if current_section else key
                     if full_key in config:
                         # Preserve comments after the value
                         comment = line.split('#', 1)[1].strip() if '#' in line else ''
                         comment_str = f" # {comment}" if comment else ''
                         new_lines.append(f"{key} = {config[full_key]}{comment_str}\n")
+                        added_new_values.add(full_key)
                         continue
                 new_lines.append(line)
+            
+            # Second pass - add new values to appropriate sections
+            remaining_values = set(config.keys()) - added_new_values
+            if remaining_values:
+                for line_idx, line in enumerate(new_lines):
+                    if line.strip().startswith('[') and line.strip().endswith(']'):
+                        section = line.strip()[1:-1]
+                        # Find next section or end of file
+                        next_section_idx = len(new_lines)
+                        for i in range(line_idx + 1, len(new_lines)):
+                            if new_lines[i].strip().startswith('['):
+                                next_section_idx = i
+                                break
+                        
+                        # Add new values for this section
+                        section_values = [key for key in remaining_values 
+                                       if key.startswith(f"{section}.")]
+                        if section_values:
+                            insert_idx = next_section_idx
+                            for key in section_values:
+                                setting_name = key.split('.')[1]
+                                new_lines.insert(insert_idx, 
+                                               f"{setting_name} = {config[key]} # New parameter added by ARCTIC-GUI\n")
+                                remaining_values.remove(key)
+                                insert_idx += 1
         else:
             # Original handling for other config files
             for line in lines:
@@ -247,9 +274,14 @@ class ConfigManager:
         with open(config_path, 'w') as f:
             f.writelines(new_lines)
 
-    def get_config(self, config_name: str, key: str) -> str:
-        """Get current value for a config key"""
-        return self._current_configs.get(config_name, {}).get(key)
+    def get_config(self, config_name: str, key: str) -> str | None:
+        """Get current value for a config key
+        
+        Returns:
+            str | None: Value from config or None if not found
+        """
+        config = self._current_configs.get(config_name, {})
+        return config.get(key) if config else None
 
     def load_language_dictionary(self, path: str) -> dict[str, str]:
         """Load language pack
