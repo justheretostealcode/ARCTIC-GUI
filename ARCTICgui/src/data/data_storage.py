@@ -3,8 +3,14 @@ from dataclasses import dataclass, field
 from typing import Callable
 import os
 from PIL.Image import Image
-import image_generator
-import image_generator.logic_circuit
+
+try:
+    import image_generator
+    import image_generator.logic_circuit
+    IMAGE_GENERATOR_AVAILABLE = True
+except ImportError:
+    IMAGE_GENERATOR_AVAILABLE = False
+    print("Warning: image_generator module not available - some features will be disabled")
 
 @dataclass
 class DataStorage():
@@ -34,7 +40,7 @@ class ImageDB():
         self._hooks.append(hook)
     def __getitem__(self, imgID:str)->str:
         img = self._images[imgID]
-        if img.endswith('.json'):
+        if IMAGE_GENERATOR_AVAILABLE and img.endswith('.json'):
             with open(img, 'r') as file:
                 path = img[:-4]+'jpeg'
                 image:Image = image_generator.logic_circuit.gen(file.read(), {})
@@ -147,11 +153,93 @@ class ConfigManager:
         Returns:
             dict: dictionary holding the language
         """
+        try:
+            return self._load_config(path)
+        except (FileNotFoundError, TypeError):
+            print(f"Warning: Language file not found at {path}")
+            return {}
 
-        return self._load_config(path)
+    def get_available_simulators(self) -> list[str]:
+        """Get list of all available simulators from ARCTICsim directory
+        
+        Returns:
+            list[str]: List of simulator directory names
+        """
+        current_dir = os.path.dirname(os.path.dirname(__file__))
+        arctic_gui_dir = os.path.dirname(current_dir)
+        arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim')
+        
+        simulators = []
+        try:
+            for dir_name in os.listdir(arctic_sim_dir):
+                if dir_name.startswith('simulator_') and os.path.isdir(os.path.join(arctic_sim_dir, dir_name)):
+                    simulators.append(dir_name)
+        except FileNotFoundError:
+            print(f"Warning: ARCTICsim directory not found at {arctic_sim_dir}")
+            
+        return simulators
 
+    def load_active_simulator_settings(self) -> dict[str, str]:
+        """Load settings from the active simulator's settings_config.cfg and store them in config manager
+        
+        The settings are stored in _current_configs['simulator_settings'] and can be accessed
+        using get_config('simulator_settings', 'section.setting_name')
+        
+        Returns:
+            dict[str, str]: Dictionary of settings from the active simulator
+            
+        Example:
+            # Load settings when switching simulator
+            config_manager.load_active_simulator_settings()
+            
+            # Access settings anywhere in the program
+            threads = config_manager.get_config('simulator_settings', 'simulation.threads')
+        """
+        current_dir = os.path.dirname(os.path.dirname(__file__))
+        arctic_gui_dir = os.path.dirname(current_dir)
+        arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim')
+        
+        active_sim_path = self.get_config('sim', 'SIM_PATH')
+        if not active_sim_path:
+            return {}
+            
+        # Extract just the simulator directory name from the path
+        active_sim_name = os.path.basename(active_sim_path.replace('../ARCTICsim/', ''))
+        
+        settings_path = os.path.join(arctic_sim_dir, active_sim_name, 'settings_config.cfg')
+        
+        if not os.path.exists(settings_path):
+            print(f"Warning: settings_config.cfg not found at {settings_path}")
+            return {}
+            
+        settings = {}
+        with open(settings_path, 'r') as f:
+            current_section = None
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                if line.startswith('[') and line.endswith(']'):
+                    current_section = line[1:-1]
+                    continue
+                if '=' in line:
+                    key, value = line.split('=', 1)
+                    key = key.strip()
+                    value = value.split('#')[0].strip()  # Remove comments
+                    if current_section:
+                        key = f"{current_section}.{key}"
+                    settings[key] = value
+        
+        # Store the settings in _current_configs
+        self._current_configs['simulator_settings'] = settings
+                    
+        return settings
 
 config_manager = ConfigManager()
 del ConfigManager
 
-storage.dictionary = config_manager.load_language_dictionary(config_manager.get_config('gui', 'LANGUAGE_PATH'))
+try:
+    storage.dictionary = config_manager.load_language_dictionary(config_manager.get_config('gui', 'LANGUAGE_PATH'))
+except Exception as e:
+    print(f"Warning: Could not load language dictionary: {e}")
+    storage.dictionary = {}
