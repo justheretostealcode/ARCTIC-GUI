@@ -44,7 +44,7 @@ class ImageDB():
         img = self._images[imgID]
 
         if IMAGE_GENERATOR_AVAILABLE and img.endswith('.json'):
-          path = img[:-4]+'png'
+            path = img[:-4]+'png'
             with open(img, 'r') as file:
                 structure = file.read()
             if 'result' in imgID:
