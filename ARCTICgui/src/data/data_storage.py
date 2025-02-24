@@ -73,7 +73,7 @@ class ConfigManager:
     def __post_init__(self):
         self._load_configs()
 
-    def _load_config(self, path: str) -> None:
+    def _load_config(self, path: str) -> dict[str, str]:
         """Loads
 
         Args:
@@ -146,7 +146,7 @@ class ConfigManager:
         """Get current value for a config key"""
         return self._current_configs.get(config_name, {}).get(key)
 
-    def load_language_dictionary(self, path: str) -> dict:
+    def load_language_dictionary(self, path: str) -> dict[str, str]:
         """Load language pack
 
         Args:
