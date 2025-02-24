@@ -4,7 +4,15 @@ from typing import Callable
 import os
 from PIL.Image import Image
 from . import json_parser
-import image_generator.logic_circuit
+
+try:
+    import image_generator
+    import image_generator.logic_circuit
+    IMAGE_GENERATOR_AVAILABLE = True
+except ImportError:
+    IMAGE_GENERATOR_AVAILABLE = False
+    print("Warning: image_generator module not available - some features will be disabled")
+
 
 @dataclass
 class DataStorage():
@@ -34,8 +42,9 @@ class ImageDB():
         self._hooks.append(hook)
     def __getitem__(self, imgID:str)->str:
         img = self._images[imgID]
-        if img.endswith('.json'):
-            path = img[:-4]+'png'
+
+        if IMAGE_GENERATOR_AVAILABLE and img.endswith('.json'):
+          path = img[:-4]+'png'
             with open(img, 'r') as file:
                 structure = file.read()
             if 'result' in imgID:
@@ -88,6 +97,34 @@ class ConfigManager:
                     config_content[key.strip()] = value.strip()
         return config_content
 
+    def _load_sectioned_config(self, path: str) -> dict[str, str]:
+        """Load config file that supports sections
+        
+        Args:
+            path (str): path to config file
+            
+        Returns:
+            dict[str, str]: Dictionary with section.key format
+        """
+        settings = {}
+        with open(path, 'r') as f:
+            current_section = None
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                if line.startswith('[') and line.endswith(']'):
+                    current_section = line[1:-1]
+                    continue
+                if '=' in line:
+                    key, value = line.split('=', 1)
+                    key = key.strip()
+                    value = value.split('#')[0].strip()
+                    if current_section:
+                        key = f"{current_section}.{key}"
+                    settings[key] = value
+        return settings
+
     def _load_configs(self):
         """Load configurations from files"""
         config_files = {
@@ -99,16 +136,68 @@ class ConfigManager:
 
         current_dir = os.path.dirname(os.path.dirname(__file__))
         arctic_gui_dir = os.path.dirname(current_dir)
+        arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim')
 
+        # Load basic configs first
         for config_name, filename in config_files.items():
             path = os.path.join(arctic_gui_dir, filename)
             self._config_files[config_name] = path
 
             if os.path.exists(path):
                 self._current_configs[config_name] = self._load_config(path)
-
             else:
                 print(f"Warning: Config file not found at {path}")
+
+        # Then load simulator settings if SIM_PATH is set
+        active_sim_path = self.get_config('sim', 'SIM_PATH')
+        if active_sim_path:
+            active_sim_name = os.path.basename(active_sim_path.replace('../ARCTICsim/', ''))
+            settings_path = os.path.join(arctic_sim_dir, active_sim_name, 'settings_config.cfg')
+            
+            if os.path.exists(settings_path):
+                self._config_files['simulator_settings'] = settings_path
+                self._current_configs['simulator_settings'] = self._load_sectioned_config(settings_path)
+            else:
+                print(f"Warning: simulator settings not found at {settings_path}")
+
+    def reload_simulator_settings(self) -> dict[str, str]:
+        """Reload settings from the active simulator's settings_config.cfg
+        
+        Call this method when switching simulators to reload their settings.
+        The settings are stored in _current_configs['simulator_settings'] and can be accessed
+        using get_config('simulator_settings', 'section.setting_name')
+        
+        Returns:
+            dict[str, str]: Dictionary of settings from the active simulator
+            
+        Example:
+            # Reload settings when switching simulator
+            config_manager.reload_simulator_settings()
+            
+            # Access settings anywhere in the program
+            threads = config_manager.get_config('simulator_settings', 'simulation.threads')
+        """
+        current_dir = os.path.dirname(os.path.dirname(__file__))
+        arctic_gui_dir = os.path.dirname(current_dir)
+        arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim')
+        
+        active_sim_path = self.get_config('sim', 'SIM_PATH')
+        if not active_sim_path:
+            return {}
+            
+        # Extract just the simulator directory name from the path
+        active_sim_name = os.path.basename(active_sim_path.replace('../ARCTICsim/', ''))
+        settings_path = os.path.join(arctic_sim_dir, active_sim_name, 'settings_config.cfg')
+        
+        if not os.path.exists(settings_path):
+            print(f"Warning: settings_config.cfg not found at {settings_path}")
+            return {}
+            
+        self._config_files['simulator_settings'] = settings_path
+        
+        settings = self._load_sectioned_config(settings_path)
+        self._current_configs['simulator_settings'] = settings
+        return settings
 
     def update_config(self, config_name: str, key: str, value: str) -> None:
         """Update config value and write to file"""
@@ -120,10 +209,15 @@ class ConfigManager:
             value = value.replace('\\', '/')
 
         self._current_configs[config_name][key] = value
+
+        # For simulator settings, make sure we have the current path
+        if config_name == 'simulator_settings' and config_name not in self._config_files:
+            self.reload_simulator_settings()
+            
         self._write_config_to_file(config_name)
 
     def _write_config_to_file(self, config_name: str) -> None:
-        """Write current configuration to file"""
+        """Write current configuration to file, preserving comments and structure"""
         config_path = self._config_files[config_name]
         config = self._current_configs[config_name]
 
@@ -131,20 +225,74 @@ class ConfigManager:
             lines = f.readlines()
 
         new_lines = []
-        for line in lines:
-            if line.strip() and not line.strip().startswith('#'):
-                key = line.split('=')[0].strip()
-                if key in config:
-                    new_lines.append(f"{key}={config[key]}\n")
+        if config_name == 'simulator_settings':
+            current_section = None
+            added_new_values = set()  # Track which values we've handled
+            
+            # First pass - update existing values
+            for line in lines:
+                if line.strip().startswith('[') and line.strip().endswith(']'):
+                    current_section = line.strip()[1:-1]
+                    new_lines.append(line)
                     continue
-            new_lines.append(line)
+                    
+                if '=' in line and not line.strip().startswith('#'):
+                    key = line.split('=')[0].strip()
+                    full_key = f"{current_section}.{key}" if current_section else key
+                    if full_key in config:
+                        # Preserve comments after the value
+                        comment = line.split('#', 1)[1].strip() if '#' in line else ''
+                        comment_str = f" # {comment}" if comment else ''
+                        new_lines.append(f"{key} = {config[full_key]}{comment_str}\n")
+                        added_new_values.add(full_key)
+                        continue
+                new_lines.append(line)
+            
+            # Second pass - add new values to appropriate sections
+            remaining_values = set(config.keys()) - added_new_values
+            if remaining_values:
+                for line_idx, line in enumerate(new_lines):
+                    if line.strip().startswith('[') and line.strip().endswith(']'):
+                        section = line.strip()[1:-1]
+                        # Find next section or end of file
+                        next_section_idx = len(new_lines)
+                        for i in range(line_idx + 1, len(new_lines)):
+                            if new_lines[i].strip().startswith('['):
+                                next_section_idx = i
+                                break
+                        
+                        # Add new values for this section
+                        section_values = [key for key in remaining_values 
+                                       if key.startswith(f"{section}.")]
+                        if section_values:
+                            insert_idx = next_section_idx
+                            for key in section_values:
+                                setting_name = key.split('.')[1]
+                                new_lines.insert(insert_idx, 
+                                               f"{setting_name} = {config[key]} # New parameter added by ARCTIC-GUI\n")
+                                remaining_values.remove(key)
+                                insert_idx += 1
+        else:
+            # Original handling for other config files
+            for line in lines:
+                if line.strip() and not line.strip().startswith('#'):
+                    key = line.split('=')[0].strip()
+                    if key in config:
+                        new_lines.append(f"{key}={config[key]}\n")
+                        continue
+                new_lines.append(line)
 
         with open(config_path, 'w') as f:
             f.writelines(new_lines)
 
-    def get_config(self, config_name: str, key: str) -> str:
-        """Get current value for a config key"""
-        return self._current_configs.get(config_name, {}).get(key)
+    def get_config(self, config_name: str, key: str) -> str | None:
+        """Get current value for a config key
+        
+        Returns:
+            str | None: Value from config or None if not found
+        """
+        config = self._current_configs.get(config_name, {})
+        return config.get(key) if config else None
 
     def load_language_dictionary(self, path: str) -> dict[str, str]:
         """Load language pack
@@ -155,13 +303,41 @@ class ConfigManager:
         Returns:
             dict: dictionary holding the language
         """
+        try:
+            return self._load_config(path)
+        except (FileNotFoundError, TypeError):
+            print(f"Warning: Language file not found at {path}")
+            return {}
 
-        return self._load_config(path)
-
+    def get_available_simulators(self) -> list[str]:
+        """Get list of all available simulators from ARCTICsim directory
+        
+        Returns:
+            list[str]: List of simulator directory names
+        """
+        current_dir = os.path.dirname(os.path.dirname(__file__))
+        arctic_gui_dir = os.path.dirname(current_dir)
+        arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim')
+        
+        simulators = []
+        try:
+            for dir_name in os.listdir(arctic_sim_dir):
+                if dir_name.startswith('simulator_') and os.path.isdir(os.path.join(arctic_sim_dir, dir_name)):
+                    simulators.append(dir_name)
+        except FileNotFoundError:
+            print(f"Warning: ARCTICsim directory not found at {arctic_sim_dir}")
+            
+        return simulators
 
 config_manager = ConfigManager()
 del ConfigManager
 
-storage.dictionary = config_manager.load_language_dictionary(config_manager.get_config('gui', 'LANGUAGE_PATH'))
 
+try:
+    storage.dictionary = config_manager.load_language_dictionary(config_manager.get_config('gui', 'LANGUAGE_PATH'))
+except Exception as e:
+    print(f"Warning: Could not load language dictionary: {e}")
+    storage.dictionary = {}
+    
 json_parser.update_storage_with_devices(config_manager.get_config('map', 'LIBRARY')[1:])
+

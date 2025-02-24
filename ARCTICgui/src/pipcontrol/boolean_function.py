@@ -3,6 +3,19 @@ import sympy
 import re
 
 def generate_truth_table_from_expr(expr):
+    """
+    Generates a truth table for a given Boolean expression. This function standardizes the expression by converting
+    bitwise XOR operators to SymPy's 'Xor' function, parses it with SymPy, and then evaluates it across all possible
+    combinations of truth values for the variables involved.
+
+    Args:
+        expr (str): A Boolean expression containing logical operators and variables.
+
+    Returns:
+        list[list[int]]: A truth table as a list of lists. The first row is the header with variable names and the
+                          expression, followed by rows for each variable combination showing their truth values and
+                          the evaluation result.
+    """
     expr = re.sub(r'(\w+)\s*\^\s*(\w+)', r'Xor(\1, \2)', expr)
     # Parse the boolean expression
     expression = sympy.sympify(expr)
