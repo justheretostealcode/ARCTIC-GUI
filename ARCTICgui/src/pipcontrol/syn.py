@@ -78,7 +78,7 @@ def start(*,f:str|None=None, tt:str|None=None, mc:str=MAP_CONF, sync:str=SYN_CON
     
     _proc = None
     
-    return [fp[3:] for fp in new_files if fp not in old_files]
+    return [fp[3:] for fp in new_files if fp not in old_files and 'assignment' not in fp]
 
 def kill()->None:
     '''

@@ -1,7 +1,7 @@
 """Module for parsing gate library JSON files and extracting device information"""
 
 import json
-from .data_storage import storage
+from data import data_storage
 
 def find_devices_by_primitive(json_path: str, 
                             primitives: list[str], 
@@ -54,7 +54,7 @@ def update_storage_with_devices(json_path: str) -> None:
     )
     
     # Clear existing data
-    storage.clear_devices()
+    data_storage.storage.clear_devices()
     
     # Update storage with new data
     for device in devices:
@@ -68,12 +68,12 @@ def update_storage_with_devices(json_path: str) -> None:
         primitive_id = device.get('primitive_identifier')
         if isinstance(primitive_id, list):
             if 'INPUT' in primitive_id:
-                storage.input_devices[device_id] = device_info
+                data_storage.storage.input_devices[device_id] = device_info
 
             # Assuming OUTPUT_OR2 and OUTPUT_BUFFER are paired
             if any(x in primitive_id for x in ['OUTPUT_OR2', 'OUTPUT_BUFFER']):
-                storage.output_devices[device_id] = device_info
+                data_storage.storage.output_devices[device_id] = device_info
 
             # Assuming NOT and NOR2 are paired
             if any(x in primitive_id for x in ['NOT', 'NOR2']):
-                storage.not_nor2_devices[device_id] = device_info
+                data_storage.storage.not_nor2_devices[device_id] = device_info

@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 import os
 from PIL.Image import Image
+from . import json_parser
 
 try:
     import image_generator
@@ -11,6 +12,7 @@ try:
 except ImportError:
     IMAGE_GENERATOR_AVAILABLE = False
     print("Warning: image_generator module not available - some features will be disabled")
+
 
 @dataclass
 class DataStorage():
@@ -40,12 +42,21 @@ class ImageDB():
         self._hooks.append(hook)
     def __getitem__(self, imgID:str)->str:
         img = self._images[imgID]
+
         if IMAGE_GENERATOR_AVAILABLE and img.endswith('.json'):
+          path = img[:-4]+'png'
             with open(img, 'r') as file:
-                path = img[:-4]+'jpeg'
-                image:Image = image_generator.logic_circuit.gen(file.read(), {})
-                image.save(path)
-                img = path
+                structure = file.read()
+            if 'result' in imgID:
+                ass = img[:-5]+'_assignment'+img[-5:]
+                with open(ass, 'r') as file:
+                    assignment = file.read()
+            else:
+                assignment = '{"identifierMap":{}}'
+            image:Image = image_generator.logic_circuit.gen(structure, assignment)
+            image.save(path)
+            img = path
+            self._images[imgID] = path
         return img
     def __setitem__(self, imgID:str, img:str)->None:
         self._images[imgID] = img
@@ -321,8 +332,12 @@ class ConfigManager:
 config_manager = ConfigManager()
 del ConfigManager
 
+
 try:
     storage.dictionary = config_manager.load_language_dictionary(config_manager.get_config('gui', 'LANGUAGE_PATH'))
 except Exception as e:
     print(f"Warning: Could not load language dictionary: {e}")
     storage.dictionary = {}
+    
+json_parser.update_storage_with_devices(config_manager.get_config('map', 'LIBRARY')[1:])
+
