@@ -35,7 +35,7 @@ class ImageDB():
     def __getitem__(self, imgID:str)->str:
         img = self._images[imgID]
         if img.endswith('.json'):
-            path = img[:-4]+'jpeg'
+            path = img[:-4]+'png'
             with open(img, 'r') as file:
                 structure = file.read()
             if 'result' in imgID:

@@ -436,8 +436,13 @@ def gen(structure:str, assignment:str)->Image.Image:
             col = data_storage.storage.not_nor2_devices.get(dev, {'color':'FFFFFF'})['color']
             return col2col(col)
         colorMap = {nodeID:dev2col(device) for nodeID, device in gateLibMap.items()}
+        def dev2name(dev:str)->str:
+            if dev in data_storage.storage.input_devices:
+                return data_storage.storage.input_devices.get(dev, {'name':' '})['name']
+            return data_storage.storage.output_devices.get(dev, {'name':' '})['name']
+        labelMap = {nodeID:dev2name(device) for nodeID, device in gateLibMap.items()}
         # make img and draw objects with appropriate size
-        return drawImage((width, hight), nodes, edges, colorMap, gateLibMap)
+        return drawImage((width, hight), nodes, edges, colorMap, labelMap)
 
     raise Exception(f"unknown graph version '{graph['version']}'")
 
@@ -703,11 +708,11 @@ def drawImage(imgSize:tuple[int,int], nodes:list[Node], edges:dict[str,Edge], co
     return:
         the image as pli image object
     '''
-    img = Image.new('RGB', imgSize, (255, 255, 255))
+    img = Image.new('RGBA', imgSize, (0, 0, 0, 0))
     draw = Draw(img)
     # draw nodes
     for nodeID, node in nodes.items():
-        _draw(draw, node, SIZE, colorMap.get(nodeID, DEFCOLOR) , 'black', 'white', labelMap.get(nodeID, ''))
+        _draw(draw, node, SIZE, colorMap.get(nodeID, DEFCOLOR) , 'black', (0, 0, 0, 0), labelMap.get(nodeID, ''))
 
     # draw edges
     for edge in edges.values():
