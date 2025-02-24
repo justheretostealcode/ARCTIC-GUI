@@ -1,9 +1,11 @@
 """File to handle the logic for the pipeline"""
 from threading import Thread
 from sys import maxsize
-from data.data_storage import DataStorage, storage as st
+from data.data_storage import DataStorage, storage, config_manager
 import flet as ft
 import pipcontrol.syn as syn
+from pipcontrol.pipeline_steps.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep
+import os
 
 
 class Pipeline():
@@ -24,49 +26,93 @@ class Pipeline():
 
         syn.start_synth()
 
+    def _start_technology_mapping(self, circuit_structure_path):
+        print(circuit_structure_path)
+
+    def _start_simulation(self, circuit_structure_path, circuit_structure_assignment_path, path_to_simulator):
+
+        old_structure = config_manager.get_config('simulator_settings', 'required.structure')
+        old_assignment = config_manager.get_config('simulator_settings', 'required.assignment')
+
+        try:
+            config_manager.update_config('simulator_settings', 'required.structure', circuit_structure_path)
+            config_manager.update_config('simulator_settings', 'required.assignment', circuit_structure_assignment_path)
+            
+            absolute_path = os.path.abspath(path_to_simulator)
+            current_file_path =  os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+            absolute_path = os.path.join(current_file_path, "ARCTICsim", path_to_simulator.split("/")[2], "main.py")
+
+            os.system(absolute_path)
+
+
+            
+        except Exception as err:
+            pass
+
+        config_manager.update_config('simulator_settings', 'required.structure', old_structure)
+        config_manager.update_config('simulator_settings', 'required.assignment', old_assignment)
+
+        
+
     def _start_pipeline_thread(self, e:ft.ControlEvent) -> None:
         """Method to start a seperate thread for the pipeline to avoid stalling the primary thread with the UI"""
 
         #sort pipeline steps in order specified by the pipelinewidgets in widget_builder.py
-        sorted_pipeline_steps = sorted(self.data_storage.pipeline_steps_active.items(), key=lambda el: el[1][0] if (el[1][0] != -1) else maxsize)
+        
+        sorted_pipeline_steps = sorted(self.data_storage.pipeline_steps, key=lambda el: el.order if (el.order != -1) else maxsize)
+
+        #Case every step is active
+        every_step_is_active = True
 
         for step in sorted_pipeline_steps:
-            step_name = step[0]
-            step_is_active = step[1][1]
+            if not step.is_active:
+                every_step_is_active = False
 
-            if step_is_active:
+        if every_step_is_active:
+            try:
+                config_manager.update_config("syn", "SYNTHESIS_PROCEED_WITH_TM", "True")
+                config_manager.update_config("map", "STATISTICS", "FALSE") #mit anton besprechen
+                syn.start_synth()
 
-                match step_name:
+            except Exception as err:
+                raise SynthesisError(err) from err
 
-                    case "Context":
-                        pass
+        else:
+            config_manager.update_config("syn", "SYNTHESIS_PROCEED_WITH_TM", "False")
 
-                    case 'Logic Synthesis':
+            #Case not every step is active
+            for step in sorted_pipeline_steps:
 
+                if step.is_active:
+
+                    if isinstance(step, SynthesisStep):
                         try:
                             syn.start_synth()
 
                         except Exception as err:
                             raise SynthesisError(err) from err
 
-                    case 'Tech. Mapping':
-                        pass
+                    if isinstance(step, TechnologyMappingStep):
+                        try:
+                            self._start_technology_mapping(step.path_to_circuit_structure)
+                        
+                        except Exception as err:
+                            raise SynthesisError(err) from err
 
-                    case 'Simulation':
-                        pass
+                    if isinstance(step, SimulatorStep):
+                        try:
+                            self._start_simulation(step.path_to_circuit_structure, step.path_to_circuit_assignment, step.simulator_path)
+                        
+                        except Exception as err:
+                            raise SynthesisError(err) from err
 
-                    case 'Plasmid Creation':
-                        pass
-
-                    case 'Visualization':
-                        pass
-
-                    case _:
+                    else:
                         pass
 
         self.data_storage.pipeline_is_running = False
 
-        e.control.text = st.dictionary["Start_pipeline"]
+        e.control.text = storage.dictionary["Start_pipeline"]
         e.page.update()
 
 
@@ -93,7 +139,7 @@ class Pipeline():
             return
         
         self.data_storage.pipeline_is_running = True    
-        e.control.text = st.dictionary["Pipeline_running"]
+        e.control.text = storage.dictionary["Pipeline_running"]
         e.page.update()
 
         pipline_thread = Thread(target=self._start_pipeline_thread, args=[e])
@@ -113,5 +159,5 @@ class SynthesisError(Exception):
         super().__init__(str(err))
         self.error = err
 
-arctic_pipeline = Pipeline(st)
+arctic_pipeline = Pipeline(storage)
 del Pipeline

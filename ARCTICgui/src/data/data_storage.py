@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 import os
 from PIL.Image import Image
-from . import json_parser
+from data.dictionary import Dictionary
 
 try:
     import image_generator
@@ -19,12 +19,12 @@ class DataStorage():
     """class to store information persistent across the program"""
     bool_func: str = field(default='')
     last_result: list[str] = field(default_factory=list)
-    pipeline_steps_active: dict[str, any] = field(default_factory=dict)
+    pipeline_steps: list[any] = field(default_factory=dict)
     input_devices: dict[str, dict[str, any]] = field(default_factory=dict)
     output_devices: dict[str, dict[str, any]] = field(default_factory=dict)
     not_nor2_devices: dict[str, dict[str, any]] = field(default_factory=dict)
     pipeline_is_running: bool = field(default_factory=bool)
-    dictionary: dict[str, str] = field(default_factory=dict)
+    dictionary: Dictionary = field(default_factory=Dictionary)
 
     def clear_devices(self) -> None:
         """Clear all device dictionaries"""
@@ -44,7 +44,7 @@ class ImageDB():
         img = self._images[imgID]
 
         if IMAGE_GENERATOR_AVAILABLE and img.endswith('.json'):
-          path = img[:-4]+'png'
+            path = img[:-4]+'png'
             with open(img, 'r') as file:
                 structure = file.read()
             if 'result' in imgID:
@@ -294,8 +294,8 @@ class ConfigManager:
         config = self._current_configs.get(config_name, {})
         return config.get(key) if config else None
 
-    def load_language_dictionary(self, path: str) -> dict[str, str]:
-        """Load language pack
+    def load_language_dictionary(self) -> None:
+        """Load language pack into general storage
 
         Args:
             path (str): path to dictionary
@@ -304,9 +304,9 @@ class ConfigManager:
             dict: dictionary holding the language
         """
         try:
-            return self._load_config(path)
+            storage.dictionary = Dictionary(self._load_config(config_manager.get_config('gui', 'LANGUAGE_PATH')))
         except (FileNotFoundError, TypeError):
-            print(f"Warning: Language file not found at {path}")
+            print(f"Warning: Language file not found at {config_manager.get_config('gui', 'LANGUAGE_PATH')}")
             return {}
 
     def get_available_simulators(self) -> list[str]:
@@ -328,16 +328,19 @@ class ConfigManager:
             print(f"Warning: ARCTICsim directory not found at {arctic_sim_dir}")
             
         return simulators
+    
+    def get_path_to_simulator(self):
+        current_dir = os.path.dirname(os.path.dirname(__file__))
+        arctic_gui_dir = os.path.dirname(current_dir)
+        return os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim')
+    
 
 config_manager = ConfigManager()
 del ConfigManager
 
 
 try:
-    storage.dictionary = config_manager.load_language_dictionary(config_manager.get_config('gui', 'LANGUAGE_PATH'))
+    config_manager.load_language_dictionary()
 except Exception as e:
     print(f"Warning: Could not load language dictionary: {e}")
     storage.dictionary = {}
-    
-json_parser.update_storage_with_devices(config_manager.get_config('map', 'LIBRARY')[1:])
-
