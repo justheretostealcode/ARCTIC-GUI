@@ -36,6 +36,7 @@ storage = DataStorage()
 
 @dataclass
 class ImageDB():
+    """Class to store images created for the gui"""
     _images:dict[str, str] = field(default_factory=dict)
     _hooks:list[Callable[[str], None]]= field(default_factory=list)
     def register(self, hook:Callable[[], None])->None:
@@ -328,12 +329,7 @@ class ConfigManager:
             print(f"Warning: ARCTICsim directory not found at {arctic_sim_dir}")
             
         return simulators
-    
-    def get_path_to_simulator(self):
-        current_dir = os.path.dirname(os.path.dirname(__file__))
-        arctic_gui_dir = os.path.dirname(current_dir)
-        return os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim')
-    
+
 
 config_manager = ConfigManager()
 del ConfigManager

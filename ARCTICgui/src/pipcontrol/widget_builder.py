@@ -1,16 +1,17 @@
 """File to build the widgets for the pipeline"""
 import flet as ft
-from pipcontrol.widgets.pipeline_widget import PipelineWidget
+
 import masks
+from pipcontrol.pipeline_widget import PipelineWidget
 from data.data_storage import storage
-from pipcontrol.pipeline_steps.steps import TechnologyMappingStep, SimulatorStep, SynthesisStep
+from pipcontrol.steps import TechnologyMappingStep, SimulatorStep, SynthesisStep
 
 
 def widget_builder(page: ft.Page) -> ft.Stack:
     """Generates the widgets making up the pipeline
 
     Args:
-        page (ft.Page): 
+        page (ft.Page): The page in which the pipeline steps are implemented
 
     Returns:
         ft.Stack: Stack with Elements

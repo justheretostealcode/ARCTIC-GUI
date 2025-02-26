@@ -3,7 +3,7 @@ import flet as ft
 from custom_controls.container import PipelineContainer
 from custom_controls.divider import StandardDivider
 from data.data_storage import storage, config_manager
-from pipcontrol.pipeline_steps.steps import Step, SimulatorStep, SynthesisStep, TechnologyMappingStep
+from pipcontrol.steps import Step, SimulatorStep, SynthesisStep, TechnologyMappingStep
 from masks import IOType
 
 class PipelineWidget(PipelineContainer):
@@ -18,17 +18,22 @@ class PipelineWidget(PipelineContainer):
         
 
     def content_builder(self) -> ft.Container:
+        """_summary_
+
+        Returns:
+            ft.Container: Single Widget containing all settings for a pipeline step
+        """
         
-        #Add title
         title = ft.Text(self.title)
 
         #Add on/off switch
-        def on_switch_change(e: ft.ControlEvent):
+        def on_switch_change(e: ft.ControlEvent) -> None:
             self.step.is_active = e.control.value
 
-            #If switch gets switched check if alternative input fields are required
+            #If switch gets switched check if alternative input fields are required by other steps
             for step in storage.pipeline_steps:
                 step.update_alternative_textfield()
+            
             e.page.update()
 
         switch_row = ft.Row()
@@ -36,13 +41,12 @@ class PipelineWidget(PipelineContainer):
         on_off_switch_description = ft.Text(value=storage.dictionary["On_Off_switch_description"])
         switch = ft.Switch(
             value=True,
-            on_change= on_switch_change,
-            key="ha"
+            on_change= on_switch_change
         )
 
         switch_row.controls = [on_off_switch_description,switch]
 
-        #Add step defined input if previous step is not active
+        #Control to hold additional settings if previous steps are inactive
         alternative_input = self.step.get_alternative_textfield()
 
        
@@ -72,7 +76,7 @@ class PipelineWidget(PipelineContainer):
                             )
                         return options
 
-                    def on_dropdown_change(e: ft.ControlEvent):
+                    def on_dropdown_change(e: ft.ControlEvent) -> None:
 
                         #set new path in arctic
                         newpath = f"../ARCTICsim/{e.control.value}"
