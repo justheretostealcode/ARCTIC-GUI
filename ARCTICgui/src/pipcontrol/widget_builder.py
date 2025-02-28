@@ -1,27 +1,31 @@
 """File to build the widgets for the pipeline"""
 import flet as ft
-from custom_controls import container
+
+import masks
+from pipcontrol.pipeline_widget import PipelineWidget
+from data.data_storage import storage
+from pipcontrol.steps import TechnologyMappingStep, SimulatorStep, SynthesisStep
 
 
 def widget_builder(page: ft.Page) -> ft.Stack:
     """Generates the widgets making up the pipeline
 
     Args:
-        page (ft.Page): 
+        page (ft.Page): The page in which the pipeline steps are implemented
 
     Returns:
         ft.Stack: Stack with Elements
     """
+    syn_step = SynthesisStep(1, masks.synthesis_settings, masks.synthesis_mask)
+    tech_map_step = TechnologyMappingStep(2, masks.technology_mapping_settings, masks.technology_mapping_mask)
+    sim_step = SimulatorStep(3, masks.default_simulator_settings, masks.default_simulator_mask)
 
-    #Names for the widgets should not be changed, since the name is used to identify widgets inside Pipeline
-    widget1 = container.PipelineContainer(page, "Context", 10, 90, 1)
-    widget2 = container.PipelineContainer(page, "Logic Synthesis", 160, 90, 2)
-    widget3 = container.PipelineContainer(page, "Tech. Mapping", 310, 10, 3)
+    storage.pipeline_steps = [syn_step, tech_map_step, sim_step]
 
-    widget4 = container.PipelineContainer(page, "Simulation", 310, 160, 4)
-    widget5 = container.PipelineContainer(page, "Plasmid Creation", 460, 10, 5)
-    widget6 = container.PipelineContainer(page, "Visualization", 460, 160, 6)
+    widget1 = PipelineWidget(page, syn_step, storage.dictionary["Logic_Synthesis"], 10, 10)
+    widget2 = PipelineWidget(page, tech_map_step, storage.dictionary["Technology_mapping"], 200, 10)
+    widget3 = PipelineWidget(page, sim_step, storage.dictionary["Simulation"], 400, 10)
 
     stack = ft.Stack()
-    stack.controls = [widget1, widget2, widget3, widget4, widget5, widget6]
+    stack.controls = [widget1, widget2, widget3]
     return stack

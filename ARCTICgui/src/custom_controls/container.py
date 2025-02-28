@@ -19,27 +19,9 @@ class PipelineContainer(ft.Container):
         self.top = top
         self.border_radius=10
         self.title = title
-        self.content = self.content_builder()
-        self.width = int(page.width / 9)
-        self.height = int(page.height / 9)
+        self.width = int(page.width / 7)
+        self.height = int(page.height /3)
         self.border_radius = 10
         self.border = ft.border.all(4, ft.Colors.BLACK)
         self.bgcolor = ft.Colors.BLUE
         self.order = order
-
-
-    def content_builder(self) -> ft.Container:
-        """Generic method to build the content for the Pipeline container"""
-        def on_switch_change(e):      
-            storage.pipeline_steps_active[self.title] = (self.order, switch.value)
-
-        switch = ft.Switch(
-            value=False,
-            on_change= on_switch_change
-        )
-
-        inner = ft.Container(
-                content=ft.Column([ft.Text(self.title), switch]),
-            )
-
-        return inner
