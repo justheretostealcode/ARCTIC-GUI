@@ -49,10 +49,9 @@ class SynthesisStep(Step):
         for key, value in storage.dictionary.items():
             if value == e.control.label:
                 config_manager.update_config("syn", key, e.control.value.strip())
-
+    
     def get_alternative_textfield(self) -> ft.Column:
         return self.input_column
-    
 
 
 class TechnologyMappingStep(Step):

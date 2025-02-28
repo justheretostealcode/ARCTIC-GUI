@@ -111,21 +111,19 @@ class PipelineWidget(PipelineContainer):
                         content = ft.TextField(label=storage.dictionary[setting], on_change= self.step.on_setting_changed,
                                            value=config_manager.get_config('sim', setting))
                         contents.append(content)
-
                     
                     if isinstance(self.step, SynthesisStep):
                         content = ft.TextField(label=storage.dictionary[setting], on_change= self.step.on_setting_changed,
                                            value=config_manager.get_config('syn', setting))
                         contents.append(content)
-
                     
                     if isinstance(self.step, TechnologyMappingStep):
                         content = ft.TextField(label=storage.dictionary[setting], on_change= self.step.on_setting_changed,
                                            value=config_manager.get_config('map', setting))
                         contents.append(content)
-
                         
                     
+
             
         #special case for simulator Add simulator specific arguments
         if isinstance(self.step, SimulatorStep):
@@ -135,7 +133,5 @@ class PipelineWidget(PipelineContainer):
         content_column = ft.Column(contents)
         content_column.scroll = True
         inner = ft.Container(content=content_column)
-        print(" ")
-        print(contents)
 
         return inner
