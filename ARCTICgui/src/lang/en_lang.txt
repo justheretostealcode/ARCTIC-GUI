@@ -18,10 +18,7 @@ Sequence_View = Sequence View
 Protocol_View = Protocol View
 Start_pipeline = Start Pipeline
 Pipeline_running = Pipeline running
-Technology_mapping = Technology mapping
-Simulation = Simulation
-alternative_input = alternative input
-On_Off_switch_description = Step is active
+
 
 
 #Boolean Logic Text
@@ -49,39 +46,9 @@ Selected_library = Selected library
 #Synthesis
 Synthesis = Synthesis
 Running_syn&tm = Running syn&tm
+
+#Pipeline
 Context = Context
 Logic_Synthesis = Logic Synthesis
-OUTPUT_DIR = Output directory
-SYN_LIMIT_THREAD_NUM = Thread number
-SYNTHESIS_MODE = Synthesis Mode
-SYNTHESIS_DEPTH = Synthesis Depth
-SYNTHESIS_WEIGHT = Synthesis Weight
-SYNTHESIS_WEIGHT_RELAXATION = Weight Relaxation
-SYNTHESIS_LIMIT_STRUCTURES_NUM = Max structure number
-SYNTHESIS_PROCEED_WITH_TM = Proceed with Technology mapping
-
-#Technology Mapping
-LIBRARY = Library
-COMPACT_LIBRARY = Compact Library
-SEARCH_ALGORITHM = Search Algoithm 
-OPTIMIZATION_TYPE = Optimization type
-STATISTICS=Statistics
-BAB-SEARCH_STRATEGY=BAB search strategy
-BAB-TYPE=BAB Type
-BAB-VISUALIZE=BAB visualize
-BAB-STATISTICS=BAB statistics
-BAB-FAST=BAB FAST
-path_to_circuit_structure = Path to circuit structures
-
-#Simulation
-SIMULATOR = Simulator
-PYTHON_BINARY = PYTHON BINARY
-SIM_LIMIT_THREADS_NUM = Thread Limit
-SIM_PATH = Simulation Path
-SIM_SCRIPT = Simulation Script
-SIM_INIT_ARGS = Init Args
-SIM_ARGS=SIM Args
-path_to_circuit_assignment = Path to circuit assignment
-
 
 
