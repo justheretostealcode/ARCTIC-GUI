@@ -42,12 +42,17 @@ class SynthesisStep(Step):
     def __init__(self, order:int = -1, settings: dict = {},
         mask: dict = {}, input_type:IOType = IOType.NOTHING, output_type: IOType = IOType.NOTHING):
         super().__init__(order, settings, mask, input_type, output_type)
+        self.input_column = ft.Column()
 
 
     def on_setting_changed(self,e: ft.ControlEvent) -> None:
         for key, value in storage.dictionary.items():
             if value == e.control.label:
                 config_manager.update_config("syn", key, e.control.value.strip())
+
+    def get_alternative_textfield(self) -> ft.Column:
+        return self.input_column
+    
 
 
 class TechnologyMappingStep(Step):
