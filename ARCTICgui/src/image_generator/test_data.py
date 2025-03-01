@@ -109,15 +109,17 @@ structure = '''
 '''
 assignment = '''
 {
-  "a": "input_3",
-  "b": "input_1",
-  "c": "input_2",
-  "NOT_0": "P1_PsrA",
-  "NOT_2": "P1_IcaR",
-  "NOT_4": "P1_PhlF",
-  "NOR2_1": "P1_QacR",
-  "NOR2_3": "P1_HKCI",
-  "O": "output_1"
+  "identifierMap":{
+    "a": "device_aTc",
+    "b": "device_xyl",
+    "c": "device_IPTG",
+    "NOT_0": "device_P1_PsrA",
+    "NOT_2": "device_P1_IcaR",
+    "NOT_4": "device_P1_PhlF",
+    "NOR2_1": "device_P1_QacR",
+    "NOR2_3": "device_P1_HKCI",
+    "O": "device_YFP"
+  }
 }
 '''
 plasmid = '''
