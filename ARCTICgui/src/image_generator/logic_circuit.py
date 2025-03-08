@@ -730,6 +730,12 @@ def drawImage(imgSize:tuple[int,int], nodes:list[Node], edges:dict[str,Edge], co
 # $ python3 -i ARCTICgui/src/
 # >>> from image_generator import logic_circuit; logic_circuit.main()
 
-def main():
+def main(path = None):
     from . import test_data
-    gen(test_data.structure, test_data.assignment).show()
+    from data import json_parser
+    import os
+    json_parser.update_storage_with_devices(data_storage.config_manager.get_config('map', 'LIBRARY')[1:])
+    img = gen(test_data.structure, test_data.assignment)
+    if path is not None and os.path.isdir(os.path.join(*os.path.split(path)[:-1])):
+        img.save(path)
+    img.show()
