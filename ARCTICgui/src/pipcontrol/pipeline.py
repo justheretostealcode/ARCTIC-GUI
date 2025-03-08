@@ -1,5 +1,6 @@
 """File to handle the logic for the pipeline"""
 from threading import Thread
+import sys
 from sys import maxsize
 from data.data_storage import DataStorage, storage, config_manager
 import flet as ft
@@ -45,7 +46,8 @@ class Pipeline():
         try:
             config_manager.update_config('simulator_settings', 'required.structure', circuit_structure_path)
             config_manager.update_config('simulator_settings', 'required.assignment', circuit_structure_assignment_path)
-            call(["python", path_to_simulator])
+            
+            call([sys.executable, path_to_simulator])
 
 
         except Exception as err:

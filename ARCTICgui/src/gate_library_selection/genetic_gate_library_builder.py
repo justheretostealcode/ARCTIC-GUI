@@ -34,7 +34,6 @@ def genetic_gate_library_builder(page: ft.Page) -> tuple[ft.GridView, ft.Contain
     # genetic gate library dropdown
     genetic_gate_libraries_dropdown = ft.Dropdown(
         width=300,
-        height=35,
         text_size=13,
         content_padding=ft.padding.only(top=2, left=5, right=5, bottom=2),
         border_color=ft.colors.BLUE_400,
