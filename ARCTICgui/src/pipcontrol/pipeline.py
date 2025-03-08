@@ -6,6 +6,7 @@ import flet as ft
 import pipcontrol.syn as syn
 from pipcontrol.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreationStep
 import os
+from subprocess import call
 
 
 class Pipeline():
@@ -44,9 +45,7 @@ class Pipeline():
         try:
             config_manager.update_config('simulator_settings', 'required.structure', circuit_structure_path)
             config_manager.update_config('simulator_settings', 'required.assignment', circuit_structure_assignment_path)
-            from subprocess import call
             call(["python", path_to_simulator])
-            #os.system(path_to_simulator)
 
 
         except Exception as err:
@@ -57,7 +56,13 @@ class Pipeline():
 
 
     def _start_plasmidCreation(self, circuit_structure_path: str, circuit_structure_assignment_path: str, path_to_simulator: str) -> None:
+        """Method to start the plasmid creation alone
 
+        Args:
+            circuit_structure_path (str): path to the simulated structure
+            circuit_structure_assignment_path (str): path to the simulated structure-assignment
+            path_to_simulator (str): path to the choosen simulator
+        """
         self._start_simulation(circuit_structure_path, circuit_structure_assignment_path, path_to_simulator)
 
         
@@ -73,15 +78,15 @@ class Pipeline():
         every_step_is_active = True
 
         plasmid_creation_is_active = False
-        plasmid_step = None
+        plasmid_simulator_step = None
 
         for step in sorted_pipeline_steps:
 
-            if not step.is_active and isinstance(step, PlasmidCreationStep) == False:
+            if not step.is_active and not isinstance(step, PlasmidCreationStep):
                 every_step_is_active = False
             
             if isinstance(step, SimulatorStep):
-                plasmid_step = step
+                plasmid_simulator_step = step
 
             if isinstance(step, PlasmidCreationStep) and step.is_active:
                 plasmid_creation_is_active = True
@@ -92,12 +97,12 @@ class Pipeline():
                 config_manager.update_config("syn", "SYNTHESIS_PROCEED_WITH_TM", "true")
                 syn.start_synth()
 
-                if plasmid_creation_is_active and plasmid_step:
+                if plasmid_creation_is_active and plasmid_simulator_step:
                     print("Staraartast")
                     current_dir = os.path.dirname(os.path.dirname(__file__))
                     arctic_gui_dir = os.path.dirname(current_dir)
-                    arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim', plasmid_step.simulator_path, 'main.py')
-                    self._start_simulation(plasmid_step.path_to_circuit_structure, plasmid_step.path_to_circuit_assignment, arctic_sim_dir)
+                    arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim', plasmid_simulator_step.simulator_path, 'main.py')
+                    self._start_simulation(plasmid_simulator_step.path_to_circuit_structure, plasmid_simulator_step.path_to_circuit_assignment, arctic_sim_dir)
 
             except Exception as err:
                 print("something went wrong")
@@ -123,6 +128,12 @@ class Pipeline():
                         current_dir = os.path.dirname(os.path.dirname(__file__))
                         arctic_gui_dir = os.path.dirname(current_dir)
                         arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim', step.simulator_path, 'main.py')
+                        self._start_simulation(step.path_to_circuit_structure, step.path_to_circuit_assignment, arctic_sim_dir)
+
+                    if isinstance(step, PlasmidCreationStep):
+                        current_dir = os.path.dirname(os.path.dirname(__file__))
+                        arctic_gui_dir = os.path.dirname(current_dir)
+                        arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim', plasmid_simulator_step.simulator_path, 'main.py')
                         self._start_simulation(step.path_to_circuit_structure, step.path_to_circuit_assignment, arctic_sim_dir)
 
                     else:

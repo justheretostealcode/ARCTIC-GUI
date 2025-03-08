@@ -83,3 +83,5 @@ SIM_SCRIPT = Simulation Script
 SIM_INIT_ARGS = Init Args
 SIM_ARGS=SIM Args
 path_to_circuit_assignment = Path to circuit assignment
+ Assignment_Path = Assignment
+Structure_Path = Structure

@@ -3,7 +3,7 @@ import flet as ft
 from custom_controls.container import PipelineContainer
 from custom_controls.divider import StandardDivider
 from data.data_storage import storage, config_manager
-from pipcontrol.steps import Step, SimulatorStep, SynthesisStep, TechnologyMappingStep
+from pipcontrol.steps import Step, SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreationStep
 from masks import IOType
 
 class PipelineWidget(PipelineContainer):
@@ -121,10 +121,13 @@ class PipelineWidget(PipelineContainer):
                         content = ft.TextField(label=storage.dictionary[setting], on_change= self.step.on_setting_changed,
                                            value=config_manager.get_config('map', setting))
                         contents.append(content)
+                    
+                    if isinstance(self.step, PlasmidCreationStep):
+                        content = ft.TextField(label=storage.dictionary[setting], on_change= self.step.on_setting_changed,
+                                           value=config_manager.get_config('map', setting))
+                        contents.append(content)
                         
                     
-
-            
         #special case for simulator Add simulator specific arguments
         if isinstance(self.step, SimulatorStep):
             contents.append(StandardDivider())

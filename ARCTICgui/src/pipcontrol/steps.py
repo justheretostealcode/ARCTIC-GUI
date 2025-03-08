@@ -98,7 +98,7 @@ class SimulatorStep(Step):
         super().__init__(order, settings, mask, input_type, output_type)
         self.path_to_circuit_structure = config_manager.get_config('simulator_settings', 'required.structure')
         self.path_to_circuit_assignment = config_manager.get_config('simulator_settings', 'required.assignment')
-        self.simulator_path = ""
+        self.simulator_path = config_manager.get_config('sim', 'SIM_PATH')
 
 
     def on_setting_changed(self,e: ft.ControlEvent, sim_specific: bool = False) -> None:
@@ -149,10 +149,42 @@ class PlasmidCreationStep(Step):
         mask: dict = {}, input_type:IOType = IOType.NOTHING, output_type: IOType = IOType.NOTHING):
         super().__init__(order, settings, mask, input_type, output_type)
         self.input_column = ft.Column()
+        self.path_to_circuit_structure = ""
+        self.path_to_circuit_assignment = ""
 
 
     def on_setting_changed(self,e: ft.ControlEvent) -> None:
         pass
-    
+
+
     def get_alternative_textfield(self) -> ft.Column:
         return self.input_column
+    
+
+    def update_alternative_textfield(self) -> bool:
+        self.input_column.controls.clear()
+        prev_step_active = False
+
+        for prev_step in storage.pipeline_steps:
+            if  self.order - prev_step.order == 1 and prev_step.is_active: 
+                prev_step_active = True
+        
+        def on_path_to_circuit_structure_change(e: ft.ControlEvent) -> None:
+            self.path_to_circuit_structure = e.control.value
+        
+        def on_path_to_circuit_assignment_change(e: ft.ControlEvent) -> None:
+            self.path_to_circuit_assignment = e.control.value
+
+
+        if not prev_step_active:
+            self.input_column.controls.append( ft.Column(controls=[
+                ft.TextField(label=storage.dictionary["path_to_circuit_structure"], 
+                             value=self.path_to_circuit_structure, on_change=on_path_to_circuit_structure_change),
+
+                ft.TextField(label=storage.dictionary["path_to_circuit_assignment"], 
+                             value=self.path_to_circuit_assignment, on_change=on_path_to_circuit_assignment_change),
+
+                StandardDivider()
+                ]))
+        
+        self.input_column.update()
