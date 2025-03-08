@@ -4,7 +4,7 @@ from sys import maxsize
 from data.data_storage import DataStorage, storage, config_manager
 import flet as ft
 import pipcontrol.syn as syn
-from pipcontrol.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep
+from pipcontrol.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreation
 import os
 
 
@@ -67,16 +67,18 @@ class Pipeline():
         every_step_is_active = True
 
         for step in sorted_pipeline_steps:
-            if not step.is_active:
+            if not step.is_active and isinstance(step, PlasmidCreation) == False:
                 every_step_is_active = False
+                continue
 
         if every_step_is_active:
+            print("act")
             try:
-                config_manager.update_config("syn", "SYNTHESIS_PROCEED_WITH_TM", "True")
+                config_manager.update_config("syn", "SYNTHESIS_PROCEED_WITH_TM", "true")
                 syn.start_synth()
 
             except Exception as err:
-                raise SynthesisError(err) from err
+                print("something went wrong")
 
         #Case not every step is active
         else:

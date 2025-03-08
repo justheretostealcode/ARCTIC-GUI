@@ -19,7 +19,7 @@ class PipelineContainer(ft.Container):
         self.top = top
         self.border_radius=10
         self.title = title
-        self.width = int(page.width / 7)
+        self.width = int(page.width / 8)
         self.height = int(page.height /3)
         self.border_radius = 10
         self.border = ft.border.all(4, ft.Colors.BLACK)

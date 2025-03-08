@@ -141,3 +141,18 @@ class SimulatorStep(Step):
                 ]))
         
         self.input_column.update()
+
+
+class PlasmidCreation(Step):
+    """Class representing a Synthesis Step"""
+    def __init__(self, order:int = -1, settings: dict = {},
+        mask: dict = {}, input_type:IOType = IOType.NOTHING, output_type: IOType = IOType.NOTHING):
+        super().__init__(order, settings, mask, input_type, output_type)
+        self.input_column = ft.Column()
+
+
+    def on_setting_changed(self,e: ft.ControlEvent) -> None:
+        pass
+    
+    def get_alternative_textfield(self) -> ft.Column:
+        return self.input_column

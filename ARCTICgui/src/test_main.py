@@ -7,8 +7,8 @@ from image_generator import logic_circuit
 
 class Test(unittest.TestCase):
 
-    def test_generate_truth_table_From_expr(self) -> None:
-        
+    def test_generate_truth_table_from_expr(self) -> None:
+        """Test the correct truth table generation"""
         #Test and operator
         result = boolean_function.generate_truth_table_from_expr("a&b")
         a_and_b = [['a', 'b', 'a&b'], [0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 1]]
@@ -24,11 +24,11 @@ class Test(unittest.TestCase):
         not_a = [['c', "~c"], [0, 1], [1, 0]]
         self.assertEqual(result, not_a)
 
-        #Gewuenschtes verhalten fuer XOR operator einfuegen
+        #Test XOR
         result = boolean_function.generate_truth_table_from_expr("c^a")
         c_xor_a = [['c', 'a', 'c^a'], [0, 0, 0], [0, 1, 1], [1, 0, 1], [1, 1, 0]]
         self.assertEqual(result, c_xor_a)
-        
+
         #Test broken Inputs
         self.assertRaises(Exception, boolean_function.generate_truth_table_from_expr, "a b")
         self.assertRaises(Exception, boolean_function.generate_truth_table_from_expr, "a,b")
@@ -94,5 +94,5 @@ class Test(unittest.TestCase):
             'out':{'type':'OUTPUT', 'sources':['nor1'], 'targets':[]},
         }), [['a', 'b'], ['nor1'], ['out']])
 
-if __name__ == "__main__":
+if __name__ == "__main__":""
     unittest.main()
