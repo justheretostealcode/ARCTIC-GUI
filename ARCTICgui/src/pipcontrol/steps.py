@@ -143,7 +143,7 @@ class SimulatorStep(Step):
         self.input_column.update()
 
 
-class PlasmidCreation(Step):
+class PlasmidCreationStep(Step):
     """Class representing a Synthesis Step"""
     def __init__(self, order:int = -1, settings: dict = {},
         mask: dict = {}, input_type:IOType = IOType.NOTHING, output_type: IOType = IOType.NOTHING):

@@ -60,6 +60,7 @@ technology_mapping_mask = {
     "BAB-STATISTICS" : False,
     "BAB-FAST" : False,
 }
+
 default_simulator_settings = {
     "SIMULATOR" : IOType.SIMULATOR,
     "PYTHON_BINARY":IOType.PATH,
@@ -77,4 +78,23 @@ default_simulator_mask = {
     "SIM_INIT_ARGS":True,
     "SIM_PATH":True,
     "SIM_ARGS":False
+}
+
+plasmid_settings = {
+    "SIMULATOR" : IOType.SIMULATOR,
+    "PYTHON_BINARY":IOType.PATH,
+    "SIM_LIMIT_THREADS_NUM":IOType.NUMBER,
+    "SIM_PATH":IOType.PATH,
+    "SIM_SCRIPT":IOType.PATH,
+    "SIM_INIT_ARGS":IOType.TEXT,
+    "SIM_ARGS":IOType.TEXT,
+}
+
+plasmid_mask = {
+    "PYTHON_BINARY":True,
+    "SIM_LIMIT_THREADS_NUM":True,
+    "SIM_SCRIPT":True,
+    "SIM_INIT_ARGS":True,
+    "SIM_PATH":True,
+    "SIM_ARGS":True
 }

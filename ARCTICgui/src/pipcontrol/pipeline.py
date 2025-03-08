@@ -4,7 +4,7 @@ from sys import maxsize
 from data.data_storage import DataStorage, storage, config_manager
 import flet as ft
 import pipcontrol.syn as syn
-from pipcontrol.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreation
+from pipcontrol.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreationStep
 import os
 
 
@@ -44,8 +44,9 @@ class Pipeline():
         try:
             config_manager.update_config('simulator_settings', 'required.structure', circuit_structure_path)
             config_manager.update_config('simulator_settings', 'required.assignment', circuit_structure_assignment_path)
-            
-            os.system(path_to_simulator)
+            from subprocess import call
+            call(["python", path_to_simulator])
+            #os.system(path_to_simulator)
 
 
         except Exception as err:
@@ -53,6 +54,11 @@ class Pipeline():
 
         config_manager.update_config('simulator_settings', 'required.structure', old_structure)
         config_manager.update_config('simulator_settings', 'required.assignment', old_assignment)
+
+
+    def _start_plasmidCreation(self, circuit_structure_path: str, circuit_structure_assignment_path: str, path_to_simulator: str) -> None:
+
+        self._start_simulation(circuit_structure_path, circuit_structure_assignment_path, path_to_simulator)
 
         
 
@@ -63,22 +69,39 @@ class Pipeline():
         
         sorted_pipeline_steps = sorted(self.data_storage.pipeline_steps, key=lambda el: el.order if (el.order != -1) else maxsize)
 
-        #Case every step is active
+        #Case every step (apart from plasmid creation step) is active
         every_step_is_active = True
 
+        plasmid_creation_is_active = False
+        plasmid_step = None
+
         for step in sorted_pipeline_steps:
-            if not step.is_active and isinstance(step, PlasmidCreation) == False:
+
+            if not step.is_active and isinstance(step, PlasmidCreationStep) == False:
                 every_step_is_active = False
-                continue
+            
+            if isinstance(step, SimulatorStep):
+                plasmid_step = step
+
+            if isinstance(step, PlasmidCreationStep) and step.is_active:
+                plasmid_creation_is_active = True
+
 
         if every_step_is_active:
-            print("act")
             try:
                 config_manager.update_config("syn", "SYNTHESIS_PROCEED_WITH_TM", "true")
                 syn.start_synth()
 
+                if plasmid_creation_is_active and plasmid_step:
+                    print("Staraartast")
+                    current_dir = os.path.dirname(os.path.dirname(__file__))
+                    arctic_gui_dir = os.path.dirname(current_dir)
+                    arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim', plasmid_step.simulator_path, 'main.py')
+                    self._start_simulation(plasmid_step.path_to_circuit_structure, plasmid_step.path_to_circuit_assignment, arctic_sim_dir)
+
             except Exception as err:
                 print("something went wrong")
+            
 
         #Case not every step is active
         else:

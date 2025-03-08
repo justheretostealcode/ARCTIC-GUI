@@ -4,7 +4,7 @@ import flet as ft
 import masks
 from pipcontrol.pipeline_widget import PipelineWidget
 from data.data_storage import storage
-from pipcontrol.steps import TechnologyMappingStep, SimulatorStep, SynthesisStep, PlasmidCreation
+from pipcontrol.steps import TechnologyMappingStep, SimulatorStep, SynthesisStep, PlasmidCreationStep
 
 
 def widget_builder(page: ft.Page) -> ft.Stack:
@@ -19,7 +19,7 @@ def widget_builder(page: ft.Page) -> ft.Stack:
     syn_step = SynthesisStep(1, masks.synthesis_settings, masks.synthesis_mask)
     tech_map_step = TechnologyMappingStep(2, masks.technology_mapping_settings, masks.technology_mapping_mask)
     sim_step = SimulatorStep(3, masks.default_simulator_settings, masks.default_simulator_mask)
-    plasmid_step = PlasmidCreation(4, {}, {})
+    plasmid_step = PlasmidCreationStep(4, masks.plasmid_settings, masks.plasmid_mask)
 
     storage.pipeline_steps = [syn_step, tech_map_step, sim_step, plasmid_step]
 
