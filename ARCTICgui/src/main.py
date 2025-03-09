@@ -13,10 +13,15 @@ from custom_controls.appbar import GUIAppBar
 
 from data.data_storage import config_manager
 import sys
-
-config_manager.update_config('sim', 'PYTHON_BINARY', sys.executable)
-
 import flet as ft
+
+PYTHON_PATH = sys.executable
+
+if sys.platform == "win32":
+    PYTHON_PATH = PYTHON_PATH.replace("\\", "\\\\")
+
+config_manager.update_config('sim', 'PYTHON_BINARY', PYTHON_PATH)
+
 
 def main(page: ft.Page) -> None:
     """Entry point for the Flet program
