@@ -11,6 +11,11 @@ from data.data_storage import storage, config_manager
 from custom_controls.container import PageContainer
 from custom_controls.appbar import GUIAppBar
 
+from data.data_storage import config_manager
+import sys
+
+config_manager.update_config('sim', 'PYTHON_BINARY', sys.executable)
+
 import flet as ft
 
 def main(page: ft.Page) -> None:
