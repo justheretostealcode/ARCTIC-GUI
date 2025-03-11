@@ -62,6 +62,11 @@ class PipelineWidget(PipelineContainer):
 
                 case IOType.SIMULATOR: 
                     simulators = config_manager.get_available_simulators()
+                    
+                    selected_sim = None
+                    for simulator in simulators:
+                        if simulator in self.step.simulator_path:
+                            selected_sim = simulator
 
                     def get_options():
                         options = []
@@ -100,6 +105,7 @@ class PipelineWidget(PipelineContainer):
                     dd = ft.Dropdown(
                         label=storage.dictionary["SIMULATOR"],
                         options=get_options(),
+                        value=selected_sim,
                         on_change=on_dropdown_change
                     )
                     content = dd

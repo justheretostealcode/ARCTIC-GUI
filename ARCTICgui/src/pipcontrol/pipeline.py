@@ -1,13 +1,11 @@
 """File to handle the logic for the pipeline"""
 from threading import Thread
-import sys
 from sys import maxsize
-from data.data_storage import DataStorage, storage, config_manager
+from data.data_storage import DataStorage, storage, config_manager, images
 import flet as ft
 import pipcontrol.syn as syn
 from pipcontrol.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreationStep
-import os
-from subprocess import call
+from pipcontrol import sim
 
 
 class Pipeline():
@@ -31,7 +29,7 @@ class Pipeline():
         #Currently not implemented to execute the technology mapping alone
         pass
 
-    def _start_simulation(self, circuit_structure_path: str, circuit_structure_assignment_path: str, path_to_simulator: str) -> None:
+    def _start_simulation(self, circuit_structure_path: str, circuit_structure_assignment_path: str) -> None:
         """Method to start the simulation alone
 
         Args:
@@ -39,25 +37,11 @@ class Pipeline():
             circuit_structure_assignment_path (str): path to the simulated structure-assignment
             path_to_simulator (str): path to the choosen simulator
         """
-
-        old_structure = config_manager.get_config('simulator_settings', 'required.structure')
-        old_assignment = config_manager.get_config('simulator_settings', 'required.assignment')
-
-        try:
-            config_manager.update_config('simulator_settings', 'required.structure', circuit_structure_path)
-            config_manager.update_config('simulator_settings', 'required.assignment', circuit_structure_assignment_path)
-            
-            call([sys.executable, path_to_simulator])
+        
+        sim.start(circuit_structure_path, circuit_structure_assignment_path)
 
 
-        except Exception as err:
-            print(err)
-
-        config_manager.update_config('simulator_settings', 'required.structure', old_structure)
-        config_manager.update_config('simulator_settings', 'required.assignment', old_assignment)
-
-
-    def _start_plasmidCreation(self, circuit_structure_path: str, circuit_structure_assignment_path: str, path_to_simulator: str) -> None:
+    def _start_plasmidCreation(self, circuit_structure_path: str = None, circuit_structure_assignment_path: str = "") -> None:
         """Method to start the plasmid creation alone
 
         Args:
@@ -65,8 +49,14 @@ class Pipeline():
             circuit_structure_assignment_path (str): path to the simulated structure-assignment
             path_to_simulator (str): path to the choosen simulator
         """
-        self._start_simulation(circuit_structure_path, circuit_structure_assignment_path, path_to_simulator)
 
+        if circuit_structure_path == None or circuit_structure_assignment_path == None:
+            for path in images.ids():
+                if path.startswith("result"):
+                    anotherpath = images[path]
+                    structure = anotherpath.replace(".png", ".json")
+                    assignemnt = anotherpath.replace(".png", "_assignment.json")
+                    self._start_simulation(structure, assignemnt)
         
 
     def _start_pipeline_thread(self, e:ft.ControlEvent) -> None:
@@ -100,14 +90,11 @@ class Pipeline():
                 syn.start_synth()
 
                 if plasmid_creation_is_active and plasmid_simulator_step:
-                    print("Staraartast")
-                    current_dir = os.path.dirname(os.path.dirname(__file__))
-                    arctic_gui_dir = os.path.dirname(current_dir)
-                    arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim', plasmid_simulator_step.simulator_path, 'main.py')
-                    self._start_simulation(plasmid_simulator_step.path_to_circuit_structure, plasmid_simulator_step.path_to_circuit_assignment, arctic_sim_dir)
+                    self._start_plasmidCreation()
+                    
 
             except Exception as err:
-                print("something went wrong")
+                print(err)
             
 
         #Case not every step is active
@@ -125,18 +112,11 @@ class Pipeline():
                     if isinstance(step, TechnologyMappingStep):
                         self._start_technology_mapping(step.path_to_circuit_structure)
                         
-
                     if isinstance(step, SimulatorStep):
-                        current_dir = os.path.dirname(os.path.dirname(__file__))
-                        arctic_gui_dir = os.path.dirname(current_dir)
-                        arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim', step.simulator_path, 'main.py')
-                        self._start_simulation(step.path_to_circuit_structure, step.path_to_circuit_assignment, arctic_sim_dir)
+                        self._start_simulation(step.path_to_circuit_structure, step.path_to_circuit_assignment)
 
                     if isinstance(step, PlasmidCreationStep):
-                        current_dir = os.path.dirname(os.path.dirname(__file__))
-                        arctic_gui_dir = os.path.dirname(current_dir)
-                        arctic_sim_dir = os.path.join(os.path.dirname(arctic_gui_dir), 'ARCTICsim', plasmid_simulator_step.simulator_path, 'main.py')
-                        self._start_simulation(step.path_to_circuit_structure, step.path_to_circuit_assignment, arctic_sim_dir)
+                        self._start_plasmidCreation(step.path_to_circuit_structure, step.path_to_circuit_assignment)
 
                     else:
                         pass

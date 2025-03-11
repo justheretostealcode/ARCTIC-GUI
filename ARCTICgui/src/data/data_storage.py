@@ -48,7 +48,7 @@ class ImageDB():
             path = img[:-4]+'png'
             with open(img, 'r') as file:
                 structure = file.read()
-            if 'result' in imgID:
+            if imgID.startswith('result'):
                 ass = img[:-5]+'_assignment'+img[-5:]
                 with open(ass, 'r') as file:
                     assignment = file.read()
