@@ -21,7 +21,7 @@ Pipeline_running = Pipeline running
 Technology_mapping = Technology mapping
 Simulation = Simulation
 alternative_input = alternative input
-On_Off_switch_description = active
+On_Off_switch_description = Active
 Plasmid_creation = Plasmid creation
 
 

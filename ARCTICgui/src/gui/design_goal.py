@@ -94,6 +94,7 @@ class DesignGoal(PageTabs):
 
         self.tabs = [
             LogicCircuitSynth(page),
-            ManualDesign(),
-            Analysis(),
+            #Not Implemented yet
+            #ManualDesign(),
+            #Analysis(),
         ]

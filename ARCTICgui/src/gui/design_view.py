@@ -116,7 +116,8 @@ class DesignView(PageTabs):
 
         self.tabs = [
             CombinedDesignView(),
-            PlasmidView(),
-            SequenceView(),
-            ProtocolView()
+            #Not Implemented yet
+            #PlasmidView(),
+            #SequenceView(),
+            #ProtocolView()
         ]

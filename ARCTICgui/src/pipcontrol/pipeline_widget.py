@@ -24,7 +24,8 @@ class PipelineWidget(PipelineContainer):
             ft.Container: Single Widget containing all settings for a pipeline step
         """
         
-        title = ft.Text(self.title)
+        title_text = ft.Text(value=self.title)
+        title_row = ft.Row(alignment=ft.MainAxisAlignment.CENTER, controls=[title_text])
 
         #Add on/off switch
         def on_switch_change(e: ft.ControlEvent) -> None:
@@ -36,7 +37,8 @@ class PipelineWidget(PipelineContainer):
             
             e.page.update()
 
-        switch_row = ft.Row()
+        switch_row = ft.Row(alignment=ft.MainAxisAlignment.CENTER)
+        
 
         on_off_switch_description = ft.Text(value=storage.dictionary["On_Off_switch_description"])
         switch = ft.Switch(
@@ -50,7 +52,7 @@ class PipelineWidget(PipelineContainer):
         alternative_input = self.step.get_alternative_textfield()
 
        
-        contents = [title,StandardDivider(), switch_row, StandardDivider(), alternative_input]
+        contents = [title_row,StandardDivider(), switch_row, StandardDivider(), alternative_input]
 
         #Add other step/specific option
         for setting, IOtype  in self.step.settings.items():

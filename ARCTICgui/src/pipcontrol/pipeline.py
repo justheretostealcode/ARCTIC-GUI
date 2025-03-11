@@ -29,16 +29,15 @@ class Pipeline():
         #Currently not implemented to execute the technology mapping alone
         pass
 
-    def _start_simulation(self, circuit_structure_path: str, circuit_structure_assignment_path: str) -> None:
+    def _start_simulation(self, circuit_structure_path: str, circuit_structure_assignment_path: str) -> list[str]:
         """Method to start the simulation alone
 
         Args:
             circuit_structure_path (str): path to the simulated structure
             circuit_structure_assignment_path (str): path to the simulated structure-assignment
-            path_to_simulator (str): path to the choosen simulator
         """
         
-        sim.start(circuit_structure_path, circuit_structure_assignment_path)
+        return sim.start(circuit_structure_path, circuit_structure_assignment_path)
 
 
     def _start_plasmidCreation(self, circuit_structure_path: str = None, circuit_structure_assignment_path: str = "") -> None:
@@ -47,16 +46,18 @@ class Pipeline():
         Args:
             circuit_structure_path (str): path to the simulated structure
             circuit_structure_assignment_path (str): path to the simulated structure-assignment
-            path_to_simulator (str): path to the choosen simulator
         """
-
-        if circuit_structure_path == None or circuit_structure_assignment_path == None:
+        result = None
+        if circuit_structure_path or circuit_structure_assignment_path:
             for path in images.ids():
                 if path.startswith("result"):
                     anotherpath = images[path]
                     structure = anotherpath.replace(".png", ".json")
                     assignemnt = anotherpath.replace(".png", "_assignment.json")
-                    self._start_simulation(structure, assignemnt)
+                    result = self._start_simulation(structure, assignemnt)
+        
+        else:
+            result = self._start_simulation(circuit_structure_path, circuit_structure_assignment_path)
         
 
     def _start_pipeline_thread(self, e:ft.ControlEvent) -> None:

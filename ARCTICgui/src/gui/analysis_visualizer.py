@@ -61,7 +61,9 @@ class AnalysisVisualizer(PageTabs):
         super().__init__()
 
         self.tabs = [
-            TransientBehaviour(),
+            
             SteadyStateBehaviour(),
-            HazardAnalysis()
+            #Not Implemented yet
+            #HazardAnalysis()
+            #TransientBehaviour(),
         ]
