@@ -36,6 +36,7 @@ class PipelineWidget(PipelineContainer):
             for step in storage.pipeline_steps:
                 step.update_alternative_textfield()
             
+            self.activate(e.control.value)
             e.page.update()
 
         switch_row = ft.Row(alignment=ft.MainAxisAlignment.CENTER)

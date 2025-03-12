@@ -23,7 +23,7 @@ def widget_builder(page: ft.Page) -> ft.Stack:
 
     storage.pipeline_steps = [syn_step, tech_map_step, sim_step, plasmid_step]
 
-    pipeline_spacing = 160
+    pipeline_spacing = 180
     start_spacing = 5
     widget1 = PipelineWidget(page, syn_step, storage.dictionary["Logic_Synthesis"], start_spacing, 10)
     widget2 = PipelineWidget(page, tech_map_step, storage.dictionary["Technology_mapping"], start_spacing + 1 *pipeline_spacing, 10)

@@ -19,9 +19,21 @@ class PipelineContainer(ft.Container):
         self.top = top
         self.border_radius=10
         self.title = title
-        self.width = int(page.width / 8)
+        self.width = int(page.width / 7.5)
         self.height = int(page.height /3)
         self.border_radius = 10
-        self.border = ft.border.all(4, ft.Colors.BLACK)
-        self.bgcolor = ft.Colors.BLUE
+        
+        self.bgcolor = ft.Colors.GREY_500
         self.order = order
+        self.inactive_border_color = ft.Colors.GREY_800
+        self.active_border_color = "#34608D"
+
+        self.border = ft.border.all(3, self.active_border_color)
+
+    def activate(self, is_active):
+        
+        if is_active:
+            self.border = ft.border.all(3, self.active_border_color)
+        
+        else:
+            self.border = ft.border.all(3, self.inactive_border_color)
