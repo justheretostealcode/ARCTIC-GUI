@@ -29,26 +29,28 @@ class CombinedDesignView(PageTab):
         
         self.LogicCircuit = ft.Image(
             src=os.path.join('ARCTICgui', 'empty.png'),
-            width=200,
-            height=200,
+            width=300,
+            height=80
         )
         self.Selections=ft.Dropdown(
-            on_change=self.on_click
+            on_change=self.on_click,
+            height=50
         )
+
 
         plasmid_container = plasmid_widget_builder()
 
-        image_column = ft.Column(controls=  [self.LogicCircuit, plasmid_container])
+        images = ft.Column(expand=True, alignment=ft.MainAxisAlignment.CENTER)
+        images.controls.append(self.LogicCircuit)
+        images.controls.append(plasmid_container)
 
         controls = [
             self.Selections,
-            self.LogicCircuit,
-            image_column
+            images
         ]
 
-        
-        output_column = ft.Column(controls=controls)
-        output_column.scroll = ft.ScrollMode.AUTO
+
+        output_column = ft.Column(controls=controls, alignment=ft.MainAxisAlignment.CENTER)
 
         return output_column
     
