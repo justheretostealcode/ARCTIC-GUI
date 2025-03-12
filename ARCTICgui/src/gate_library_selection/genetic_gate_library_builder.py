@@ -2,7 +2,7 @@
 import os
 import flet as ft
 from data.data_storage import storage, config_manager
-
+from custom_controls.text import StandardText
 
 def genetic_gate_library_builder(page: ft.Page) -> tuple[ft.GridView, ft.Container]:
     """Method to build the gate library dropdown menu and the 
@@ -16,7 +16,7 @@ def genetic_gate_library_builder(page: ft.Page) -> tuple[ft.GridView, ft.Contain
 
     path_to_gen_lib = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs")
 
-    selected_file_display = ft.Text(storage.dictionary['Select_a_library'], size=14, color=ft.colors.BLUE_700)
+    selected_file_display = StandardText(storage.dictionary['Select_a_library'])
 
     def on_dropdown_change(e:ft.ControlEvent) -> None:
         selected_library = e.control.value

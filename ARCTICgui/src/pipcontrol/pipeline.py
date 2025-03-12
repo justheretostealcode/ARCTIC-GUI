@@ -7,6 +7,7 @@ import pipcontrol.syn as syn
 from pipcontrol.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreationStep
 from pipcontrol import sim
 from score.score_widget import score_widget_update
+from custom_controls.text import StandardText
 
 
 class Pipeline():
@@ -154,7 +155,7 @@ class Pipeline():
 
         if self.data_storage.pipeline_is_running:
             e.page.show_snack_bar(
-                    ft.SnackBar(content=ft.Text("Pipeline already started."))
+                    ft.SnackBar(content=StandardText("Pipeline already started."))
                 )
             return
         
@@ -169,7 +170,7 @@ class Pipeline():
 
         except Exception:
             e.page.show_snack_bar(
-                    ft.SnackBar(content=ft.Text("Error During pipeline execution."))
+                    ft.SnackBar(content=StandardText("Error During pipeline execution."))
                 )
 
 

@@ -5,6 +5,7 @@ from custom_controls.divider import StandardDivider
 from data.data_storage import storage, config_manager
 from pipcontrol.steps import Step, SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreationStep
 from masks import IOType
+from custom_controls.text import StandardText
 
 class PipelineWidget(PipelineContainer):
     """Custom flet.Container class for the tiles making up the pipeline"""
@@ -24,7 +25,7 @@ class PipelineWidget(PipelineContainer):
             ft.Container: Single Widget containing all settings for a pipeline step
         """
         
-        title_text = ft.Text(value=self.title)
+        title_text = StandardText(value=self.title)
         title_row = ft.Row(alignment=ft.MainAxisAlignment.CENTER, controls=[title_text])
 
         #Add on/off switch
@@ -40,7 +41,7 @@ class PipelineWidget(PipelineContainer):
         switch_row = ft.Row(alignment=ft.MainAxisAlignment.CENTER)
         
 
-        on_off_switch_description = ft.Text(value=storage.dictionary["On_Off_switch_description"])
+        on_off_switch_description = StandardText(value=storage.dictionary["On_Off_switch_description"])
         switch = ft.Switch(
             value=True,
             on_change= on_switch_change
@@ -76,7 +77,7 @@ class PipelineWidget(PipelineContainer):
                             options.append(
                                 ft.dropdown.Option(
                                     key=simulator,
-                                    content=ft.Text(
+                                    content=StandardText(
                                         value=simulator,
                                     ),
                                 )

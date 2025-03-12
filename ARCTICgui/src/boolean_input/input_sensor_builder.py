@@ -10,6 +10,7 @@ from data.json_parser import update_storage_with_devices
 import flet as ft
 import sympy
 import pipcontrol.boolean_function as bf
+from custom_controls.text import StandardText
 
 
 def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft.ElevatedButton, ft.Container]:
@@ -46,7 +47,7 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
     def validate_expression():
         expr = storage.bool_func
         if not expr:
-            message_container.content = ft.Text(storage.dictionary['Please_enter_valid_bool'])
+            message_container.content = StandardText(storage.dictionary['Please_enter_valid_bool'])
             input_sensor_container.content = ft.Container()
             truth_table_container.content = ft.Container()
         else:
@@ -73,13 +74,13 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
             # Create DataTable
             table = ft.DataTable(
                 column_spacing=15, 
-                columns=[ft.DataColumn(ft.Text(header, size=14, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER)) for header in headers],
+                columns=[ft.DataColumn(StandardText(header, size=14, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER)) for header in headers],
                 rows=[
                     ft.DataRow(
                         cells=[
                             ft.DataCell(
                                 ft.Container(
-                                    ft.Text(str(int(cell)), size=14, text_align=ft.TextAlign.CENTER),
+                                    StandardText(str(int(cell)), size=14, text_align=ft.TextAlign.CENTER),
                                     alignment=ft.alignment.center,
                                     bgcolor=ft.colors.SURFACE_VARIANT if i == len(row) - 1 else None  # Gray background for the last column (function result)
                                 )
@@ -93,7 +94,7 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
             page.update()
 
         except Exception as ex:
-            truth_table_container.content = ft.Text(f"{storage.dictionary['Error']}: {str(ex)}")
+            truth_table_container.content = StandardText(f"{storage.dictionary['Error']}: {str(ex)}")
             page.update()
     
     def show_input_sensors_dropdown(e: ft.ControlEvent) -> None:
@@ -101,7 +102,7 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
         json_path = config_manager.get_config("map", "LIBRARY")
         if not json_path:
             page.show_snack_bar(
-                ft.SnackBar(content=ft.Text(storage.dictionary['Please_select_lib']))
+                ft.SnackBar(content=StandardText(storage.dictionary['Please_select_lib']))
             )
             return
 
@@ -112,13 +113,13 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
             
             if len(storage.input_devices) == 0:
                 page.show_snack_bar(
-                    ft.SnackBar(content=ft.Text(storage.dictionary['No_input_dev']))
+                    ft.SnackBar(content=StandardText(storage.dictionary['No_input_dev']))
                 )
                 return
             
             page.show_snack_bar(
                 ft.SnackBar(
-                    content=ft.Text(f"{storage.dictionary['Successfully_found']} {len(storage.input_devices)} {storage.dictionary['input_devices']}"),
+                    content=StandardText(f"{storage.dictionary['Successfully_found']} {len(storage.input_devices)} {storage.dictionary['input_devices']}"),
                     bgcolor=ft.colors.GREEN_700,
                 )
             )
@@ -132,8 +133,8 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
             
             error_dialog = ft.AlertDialog(
                 modal=True,
-                title=ft.Text(storage.dictionary['Error']),
-                content=ft.Text(f"{storage.dictionary['Error_parsing_library']}: {str(ex)}"),
+                title=StandardText(storage.dictionary['Error']),
+                content=StandardText(f"{storage.dictionary['Error_parsing_library']}: {str(ex)}"),
                 actions=[
                     ft.TextButton(storage.dictionary['OK'], on_click=close_dialog),
                 ],
@@ -181,7 +182,7 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
                 )
                 page.update()
             except Exception as ex:
-                input_sensor_container.content = ft.Text(f"{storage.dictionary['Error']}: {str(ex)}")
+                input_sensor_container.content = StandardText(f"{storage.dictionary['Error']}: {str(ex)}")
                 page.update()
         else:
             return

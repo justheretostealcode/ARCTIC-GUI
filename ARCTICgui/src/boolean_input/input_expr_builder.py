@@ -1,6 +1,7 @@
 """File responsible for building the boolean expression textfield and the info button"""
 import flet as ft
 from data.data_storage import storage
+from custom_controls.text import StandardText
 
 
 def input_expr_builder(page: ft.Page) -> ft.TextField:
@@ -50,8 +51,8 @@ def info_input_builder(page: ft.Page) -> ft.IconButton:
 
     bool_info_window = ft.AlertDialog(
         modal=True,
-        title=ft.Text(storage.dictionary["Information"]),
-        content = ft.Text(storage.dictionary["Enter_bool"] + "\n" 
+        title=StandardText(storage.dictionary["Information"]),
+        content = StandardText(storage.dictionary["Enter_bool"] + "\n" 
                           + storage.dictionary["operant_list"]  + ". \n" 
                           +  storage.dictionary["operands_written_format"]),
         actions=[
