@@ -6,12 +6,12 @@ import os
 import json
 import matplotlib.pyplot as plt
 
-import set_path
-import parasbolv as psv
+import image_generator.plasmid.paraSBOLv.scripts.set_path
+import image_generator.plasmid.paraSBOLv.parasbolv.parasbolv as psv
 
-from plasmid_utils import parse_gene_info, generate_connections_from_plasmid_data, log
-from plasmid_connection_router import ConnectionRouter
-from plasmid_drawer import draw_constructs, draw_connections
+from image_generator.plasmid.paraSBOLv.scripts.plasmid_utils import parse_gene_info, generate_connections_from_plasmid_data, log
+from image_generator.plasmid.paraSBOLv.scripts.plasmid_connection_router import ConnectionRouter
+from image_generator.plasmid.paraSBOLv.scripts.plasmid_drawer import draw_constructs, draw_connections
 
 def create_plasmid_diagram(plasmid_data, output_path="plasmid_diagram.png", 
                            show=False, save_pdf=False, vertical_gap=200, dpi=300):
@@ -131,11 +131,11 @@ def parse_input_data(data_str, data_type):
     
     return None
 
-def create_diagram_from_strings(plasmid_str, output_path="plasmid_diagram.png", 
-                              show=False, save_pdf=False):
+def create_diagram_from_strings(plasmid_str, output_path="plasmid_diagram.png",
+                              show=False, save_pdf=False, plasmid_input_type='python'):
     """Create a plasmid diagram from string representations of data"""
     # Parse input data
-    plasmid_data = parse_input_data(plasmid_str, 'python')
+    plasmid_data = parse_input_data(plasmid_str, plasmid_input_type)
     
     # Create the diagram
     if plasmid_data:

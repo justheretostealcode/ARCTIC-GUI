@@ -7,6 +7,7 @@ import pipcontrol.syn as syn
 from pipcontrol.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreationStep
 from pipcontrol import sim
 from score.score_widget import score_widget_update
+from score.plasmid_widget import plasmid_widget_update
 from custom_controls.texts import StandardText, ErrorText
 from custom_controls.snackbars import ErrorSnackBar, InfoSnackBar
 
@@ -38,6 +39,7 @@ class Pipeline():
         """
         result = sim.start(circuit_structure_path, circuit_structure_assignment_path)
         storage.score_json_path = result[0]
+        storage.plasmid_json_path = result[1]
         score_widget_update()
         return result
 
@@ -61,6 +63,10 @@ class Pipeline():
         
         else:
             result = self._start_simulation(circuit_structure_path, circuit_structure_assignment_path)
+
+        plasmid_widget_update()
+
+        
 
 
     def _start_pipeline_thread(self, e:ft.ControlEvent) -> None:
@@ -171,7 +177,7 @@ class Pipeline():
 
         if self.data_storage.pipeline_is_running:
             e.page.show_snack_bar(
-                    InfoSnackbar(content=StandardText("Pipeline already started."))
+                    InfoSnackBar(content=StandardText("Pipeline already started."))
                 )
             return
         

@@ -26,6 +26,7 @@ class DataStorage():
     pipeline_is_running: bool = field(default_factory=bool)
     dictionary: Dictionary = field(default_factory=Dictionary)
     score_json_path: str = field(default='')
+    plasmid_json_path: str = field(default='')
 
     def clear_devices(self) -> None:
         """Clear all device dictionaries"""

@@ -2,8 +2,8 @@
 Connection routing algorithms for plasmid diagrams.
 Handles routing of connections between elements.
 """
-from plasmid_utils import check_segments_overlap, get_element_color, log
-from plasmid_crossings_minimizer import optimize_connection_order
+from image_generator.plasmid.paraSBOLv.scripts.plasmid_utils import check_segments_overlap, get_element_color, log
+from image_generator.plasmid.paraSBOLv.scripts.plasmid_crossings_minimizer import optimize_connection_order
 
 class ConnectionRouter:
     """Routes connections between genetic elements in plasmid diagrams"""

@@ -6,6 +6,7 @@ from custom_controls.tabs import PageTabs
 from custom_controls.tab import PageTab
 from data import data_storage
 from data.data_storage import storage
+from score.plasmid_widget import plasmid_widget_builder
 
 
 class CombinedDesignView(PageTab):
@@ -25,6 +26,7 @@ class CombinedDesignView(PageTab):
             ft.Column: Column with CombinedDesignView controls
         """
         
+        
         self.LogicCircuit = ft.Image(
             src=os.path.join('ARCTICgui', 'empty.png'),
             width=200,
@@ -33,11 +35,23 @@ class CombinedDesignView(PageTab):
         self.Selections=ft.Dropdown(
             on_change=self.on_click
         )
+
+        plasmid_container = plasmid_widget_builder()
+
+        image_column = ft.Column(controls=  [self.LogicCircuit, plasmid_container])
+
         controls = [
             self.Selections,
             self.LogicCircuit,
+            image_column
         ]
-        return ft.Column(controls=controls)
+
+        
+        output_column = ft.Column(controls=controls)
+        output_column.scroll = ft.ScrollMode.AUTO
+
+        return output_column
+    
     def dataUpdate(self):
         self.Selections.options.clear()
         tmp=data_storage.images.ids()

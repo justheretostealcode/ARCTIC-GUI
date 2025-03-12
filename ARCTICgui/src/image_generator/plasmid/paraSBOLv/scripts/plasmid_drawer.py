@@ -2,9 +2,9 @@
 Drawing utilities for plasmid visualization.
 Contains functions for drawing constructs and connections.
 """
-import parasbolv as psv
-from plasmid_utils import parse_gene_info, create_gene_constructs, log
-from plasmid_connection_router import ConnectionRouter
+import image_generator.plasmid.paraSBOLv.parasbolv.parasbolv as psv
+from image_generator.plasmid.paraSBOLv.scripts.plasmid_utils import parse_gene_info, create_gene_constructs, log
+from image_generator.plasmid.paraSBOLv.scripts.plasmid_connection_router import ConnectionRouter
 
 def calculate_line_width(ax, base_width=1.5):
     """
@@ -77,7 +77,7 @@ def draw_constructs(ax, row_data, row_index, start_y, spacing):
         label_v_align = 'bottom' if row_index == 0 else 'top'
         
         # Use device name or CDS target as the element name
-        from plasmid_utils import get_device_label
+        from image_generator.plasmid.paraSBOLv.scripts.plasmid_utils  import get_device_label
         element_name = get_device_label(gene_info)
         
         # Position at center of construct
