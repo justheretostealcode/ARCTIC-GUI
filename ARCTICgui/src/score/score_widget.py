@@ -1,5 +1,6 @@
-import flet as ft
+"""File with method to build score widget"""
 import json
+import flet as ft
 from data.data_storage import storage
 
 
@@ -9,10 +10,10 @@ score_column = ft.Column(controls= [content_row], alignment=ft.MainAxisAlignment
 def score_widget_builder() -> ft.Column:
     """Builds the score widget"""
     if storage.score_json_path != "":
-        
+
         score_list = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
 
-        with open(storage.score_json_path) as f:
+        with open(storage.score_json_path, encoding="utf-8") as f:
             score_dict = json.load(f)
             for partial_score in score_dict:
                 score_list.controls.append(
