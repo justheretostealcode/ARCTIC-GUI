@@ -8,8 +8,8 @@ from pipcontrol.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep
 from pipcontrol import sim
 from score.score_widget import score_widget_update
 from score.plasmid_widget import plasmid_widget_update
-from custom_controls.texts import StandardText, ErrorText
-from custom_controls.snackbars import ErrorSnackBar, InfoSnackBar
+from custom_controls.texts import StandardText, ErrorText, WarningText
+from custom_controls.snackbars import ErrorSnackBar, InfoSnackBar, WarningSnackBar
 
 
 class Pipeline():
@@ -37,6 +37,7 @@ class Pipeline():
             circuit_structure_path (str): path to the simulated structure
             circuit_structure_assignment_path (str): path to the simulated structure-assignment
         """
+            
         result = sim.start(circuit_structure_path, circuit_structure_assignment_path)
         storage.score_json_path = result[0]
         storage.plasmid_json_path = result[1]
@@ -71,6 +72,12 @@ class Pipeline():
 
     def _start_pipeline_thread(self, e:ft.ControlEvent) -> None:
         """Method to start a seperate thread for the pipeline to avoid stalling the primary thread with the UI"""
+
+        #Warning if not 3 input vars
+        if storage.number_of_input_variables != 3:
+            e.page.show_snack_bar(
+                    WarningSnackBar(content=WarningText(f"{storage.dictionary['Warning_not_3_inputs']}")),
+                )
 
         #sort pipeline steps in order specified by the pipelinewidgets in widget_builder.py
         sorted_pipeline_steps = sorted(self.data_storage.pipeline_steps, key=lambda el: el.order if (el.order != -1) else maxsize)

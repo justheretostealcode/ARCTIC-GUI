@@ -29,6 +29,7 @@ Placeholder_score = No score available
 Feature_not_implented = The current Pipeline feature can't be executed alone
 turn_all_on = Make sure Logic_Synthesis, Technology Mapping and Simulation are all turned on
 No_input_provided = Please provide a boolean function
+Warning_not_3_inputs = Warning: the ARCTIC tool only works properly with 3 input variables
 #Boolean Logic Text
 Enter_bool = Enter the boolean function with any variables of up to three and the common operands:
 Truth_table = Truth Table

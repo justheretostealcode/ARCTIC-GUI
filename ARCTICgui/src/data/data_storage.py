@@ -27,6 +27,7 @@ class DataStorage():
     dictionary: Dictionary = field(default_factory=Dictionary)
     score_json_path: str = field(default='')
     plasmid_json_path: str = field(default='')
+    number_of_input_variables: bool = field(default_factory=int)
 
     def clear_devices(self) -> None:
         """Clear all device dictionaries"""

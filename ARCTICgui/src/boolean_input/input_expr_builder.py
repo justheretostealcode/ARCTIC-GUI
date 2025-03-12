@@ -1,5 +1,6 @@
 """File responsible for building the boolean expression textfield and the info button"""
 import flet as ft
+import sympy
 from data.data_storage import storage
 from custom_controls.texts import StandardText
 
@@ -23,6 +24,15 @@ def input_expr_builder(page: ft.Page) -> ft.TextField:
     """
     def textbox_changed(e:ft.ControlEvent) -> None:
         storage.bool_func = e.control.value.strip()
+
+        try:
+            expression = sympy.sympify(e.control.value.strip())         
+            variables = sorted(expression.atoms(sympy.Symbol), key=lambda x: str(x))
+            storage.number_of_input_variables = len(variables)
+
+        except Exception:
+            pass
+        
 
     input_expr = ft.TextField(
         label=storage.dictionary["Enter_Boolean_Function"],
