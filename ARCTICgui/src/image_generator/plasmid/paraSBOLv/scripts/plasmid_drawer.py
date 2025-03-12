@@ -110,6 +110,42 @@ def draw_constructs(ax, row_data, row_index, start_y, spacing):
                 width = 40
             elif glyph_type == 'Promoter':
                 width = 15
+                
+                # Try to get the promoter source from gene info
+                promoter_source = gene_info.get('promoter_source', '')
+                
+                # Get the corresponding input sensor name if this is an input promoter
+                # Input promoters typically have single letter names (a, b, c)
+                promoter_label = None
+                
+                # Import storage to access selected input sensors
+                from data.data_storage import storage
+                
+                if len(promoter_source) == 1 and promoter_source.isalpha():
+                    # This is an input promoter, use the selected input sensor name
+                    if hasattr(storage, 'selected_input_sensors') and promoter_source in storage.selected_input_sensors:
+                        promoter_label = storage.selected_input_sensors[promoter_source]
+                    else:
+                        promoter_label = f"Input {promoter_source.upper()}"
+                
+                # Add label only if we have one
+                if promoter_label:
+                    # Increase the y-offset to position labels higher above the promoter
+                    # to avoid overlapping with the plasmid arrow
+                    promoter_label_y_offset = 15  # Increased from 8 to 15 for better clearance
+                    
+                    # Add label text
+                    ax.text(
+                        part_x + width/2,  # Center over promoter
+                        part_y + promoter_label_y_offset,  # Higher position above the promoter
+                        promoter_label,
+                        fontsize=7,        # Slightly smaller font
+                        color=(0.3, 0.3, 0.3),  # Darker gray color
+                        ha='center',
+                        va='bottom',       # Align from bottom
+                        bbox=dict(facecolor='white', alpha=0.7, pad=1, edgecolor='none')  # Add a semi-transparent white background
+                    )
+                
             elif glyph_type == 'Terminator':
                 width = 10
             elif glyph_type == 'RibosomeEntrySite':

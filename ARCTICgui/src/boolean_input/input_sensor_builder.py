@@ -44,6 +44,10 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
     input_sensor_container = ft.Container()
     truth_table_container = ft.Container()  # Dedicated container for the truth table
 
+    # Create a dictionary to store the selected input sensors
+    # This will map variable name -> selected sensor name
+    selected_inputs = {}
+
     def validate_expression():
         expr = storage.bool_func
         if not expr:
@@ -147,6 +151,10 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
                 expression = sympy.sympify(expr)
                 variables = sorted(expression.atoms(sympy.Symbol), key=lambda x: str(x))
                 dropdowns = []
+                
+                # Clear previously selected inputs
+                selected_inputs.clear()
+                
                 for var in variables:
                     # Create dropdown options from actual input devices
                     options = [
@@ -165,6 +173,8 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
                         text_size=14,
                         content_padding=ft.padding.only(left=10, right=20),
                         border_radius=5,
+                        # Add on_change handler to store the selection
+                        on_change=lambda e, v=str(var): update_selected_input(v, e.control.value)
                     )
                     
                     dropdowns.append(dropdown)
@@ -180,6 +190,18 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
                 page.update()
         else:
             return
+
+    def update_selected_input(variable, selected_device_id):
+        """Updates the selected input sensor for a variable"""
+        if selected_device_id:
+            # Store the selected device name for this variable
+            device_info = storage.input_devices.get(selected_device_id, {})
+            device_name = device_info.get('name', selected_device_id)
+            selected_inputs[variable] = device_name
+            # Also store in storage for access by other components
+            if not hasattr(storage, 'selected_input_sensors'):
+                storage.selected_input_sensors = {}
+            storage.selected_input_sensors = selected_inputs.copy()
 
     message_container = ft.Container()
 
