@@ -27,7 +27,7 @@ Placeholder_score = No score available
 
 #Errors
 Feature_not_implented = The current Pipeline feature can't be executed alone
-turn_all_on = Make sure Logic_Synthesis, Technology Mapping and Simulation are turn all on
+turn_all_on = Make sure Logic_Synthesis, Technology Mapping and Simulation are all turned on
 No_input_provided = Please provide a boolean function
 #Boolean Logic Text
 Enter_bool = Enter the boolean function with any variables of up to three and the common operands:
@@ -68,7 +68,7 @@ SYNTHESIS_PROCEED_WITH_TM = Proceed with Technology mapping
 #Technology Mapping
 LIBRARY = Library
 COMPACT_LIBRARY = Compact Library
-SEARCH_ALGORITHM = Search Algoithm 
+SEARCH_ALGORITHM = Search Algorithm 
 OPTIMIZATION_TYPE = Optimization type
 STATISTICS=Statistics
 BAB-SEARCH_STRATEGY=BAB search strategy
@@ -87,5 +87,5 @@ SIM_SCRIPT = Simulation Script
 SIM_INIT_ARGS = Init Args
 SIM_ARGS=SIM Args
 path_to_circuit_assignment = Path to circuit assignment
- Assignment_Path = Assignment
+Assignment_Path = Assignment
 Structure_Path = Structure
