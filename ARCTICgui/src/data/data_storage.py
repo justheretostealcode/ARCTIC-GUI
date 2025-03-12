@@ -25,6 +25,7 @@ class DataStorage():
     not_nor2_devices: dict[str, dict[str, any]] = field(default_factory=dict)
     pipeline_is_running: bool = field(default_factory=bool)
     dictionary: Dictionary = field(default_factory=Dictionary)
+    score_json_path: str = field(default='')
 
     def clear_devices(self) -> None:
         """Clear all device dictionaries"""

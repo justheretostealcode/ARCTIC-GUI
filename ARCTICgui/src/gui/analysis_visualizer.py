@@ -3,7 +3,7 @@ import flet as ft
 from custom_controls.tab import PageTab
 from custom_controls.tabs import PageTabs
 from data.data_storage import storage
-
+from score.score_widget import score_widget_builder
 class TransientBehaviour(PageTab):
     """Class representing the Container related to the TransientBehaviour"""
     def __init__(self) -> None:
@@ -35,7 +35,7 @@ class SteadyStateBehaviour(PageTab):
         Returns:
             ft.Column: Column with SteadyStateBehaviour controls
         """
-        return ft.Placeholder(color=ft.Colors.random())
+        return score_widget_builder()
 
 
 class HazardAnalysis(PageTab):

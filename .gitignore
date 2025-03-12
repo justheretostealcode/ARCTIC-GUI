@@ -7,3 +7,6 @@ ARCTICgui/energy-eval-variants
 ARCTICsyn/arctic.log
 venv/
 .vscode/
+ARCTICgui/syn.config
+ARCTICgui/map.config
+ARCTICgui/sim.config

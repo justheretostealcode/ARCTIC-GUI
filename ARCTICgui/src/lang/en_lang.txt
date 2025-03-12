@@ -23,7 +23,7 @@ Simulation = Simulation
 alternative_input = alternative input
 On_Off_switch_description = Active
 Plasmid_creation = Plasmid creation
-
+Placeholder_score = No score available
 
 #Boolean Logic Text
 Enter_bool = Enter the boolean function with any variables of up to three and the common operands:

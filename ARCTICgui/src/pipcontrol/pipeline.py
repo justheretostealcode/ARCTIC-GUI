@@ -6,6 +6,7 @@ import flet as ft
 import pipcontrol.syn as syn
 from pipcontrol.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreationStep
 from pipcontrol import sim
+from score.score_widget import score_widget_update
 
 
 class Pipeline():
@@ -36,28 +37,35 @@ class Pipeline():
             circuit_structure_path (str): path to the simulated structure
             circuit_structure_assignment_path (str): path to the simulated structure-assignment
         """
-        
-        return sim.start(circuit_structure_path, circuit_structure_assignment_path)
+        result = sim.start(circuit_structure_path, circuit_structure_assignment_path)
+        storage.score_json_path = result[0]
+        score_widget_update()
+        return result
 
 
-    def _start_plasmidCreation(self, circuit_structure_path: str = None, circuit_structure_assignment_path: str = "") -> None:
+    def _start_plasmidCreation(self, circuit_structure_path: str = None, circuit_structure_assignment_path: str = None) -> None:
         """Method to start the plasmid creation alone
 
         Args:
             circuit_structure_path (str): path to the simulated structure
             circuit_structure_assignment_path (str): path to the simulated structure-assignment
         """
+
         result = None
-        if circuit_structure_path or circuit_structure_assignment_path:
-            for path in images.ids():
-                if path.startswith("result"):
-                    anotherpath = images[path]
+        if not circuit_structure_path or not circuit_structure_assignment_path:
+            for id in images.ids():
+                if id.startswith("result"):
+                    anotherpath = images[id]
                     structure = anotherpath.replace(".png", ".json")
                     assignemnt = anotherpath.replace(".png", "_assignment.json")
                     result = self._start_simulation(structure, assignemnt)
         
         else:
             result = self._start_simulation(circuit_structure_path, circuit_structure_assignment_path)
+
+            
+
+        
         
 
     def _start_pipeline_thread(self, e:ft.ControlEvent) -> None:
