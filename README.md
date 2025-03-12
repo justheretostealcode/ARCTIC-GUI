@@ -8,21 +8,21 @@ git clone https://github.com/justheretostealcode/ARCTIC-GUI.git
 
 2. ### Install Python and Java
 
-Java version 11 is tested, higher versions may not work.
+Java version 11 has been tested; higher versions may not work.
 
-Either get an Java installer from [orecal](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html) or manually install Java from [openjkd](https://jdk.java.net/archive).
+Either get an Java installer from [Oracle](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html) or manually install Java from [OpenJDK](https://jdk.java.net/archive).
 
-#### Manually Java install 
+#### Manual Java Installation
 
 1. download jdk11.0.2 from [here](https://jdk.java.net/archive).
 
-2. unzip the downloded file
+2. unzip the downloaded file
 
 3. move the folder to a permanent location
 
 4. add the path to the bin folder in that folder to the PATH environment variable.
 
-   - on Windows: `setx PATH "%PATH%;<path to bin filder>"`
+   - on Windows: `setx PATH "%PATH%;<path to bin folder>"`
    - on Linux: `echo -e "\\nexport PATH='$PATH:<path to bin filder>'" >> ~/.bashrc`
    - on MacOS: `echo "<path to bin filder>" | sudo tee /etc/paths.d/JDK`
 
@@ -49,7 +49,7 @@ python -m pip install numpy==1.26.4 flet==0.26.4 scipy sympy Autograd matplotlib
 
 If you use the GUI and want to use the same Python installation for the GUI as for the simulation you don't have to do this step.
 
-This has to be an absolute path to an Python executable.
+This must be an absolute path to a Python executable.
 
 ```toml
 PYTHON_BINARY=<<Path to your Python binary>>
@@ -61,7 +61,7 @@ PYTHON_BINARY=<<Path to your Python binary>>
 python ARCTICgui/src/main.py
 ```
 
-oder
+or
 
 ```shell
 flet run ARCTICgui/src/main.py
@@ -69,11 +69,11 @@ flet run ARCTICgui/src/main.py
 
 # ARCTICgui
 
-The Arctic GUI has it's own config files for map, sim and syn. Additionally there is a gui conficg file.
+The Arctic GUI has its own config files for map, sim and syn. Additionally, there is a GUI config file.
 
 - **LANGUAGE_PATH** path to the language file
-- **START_WIDTH** window width at startup in pixel
-- **START_HEIGHT** window height at startup pixel
+- **START_WIDTH** window width at startup in pixels
+- **START_HEIGHT** window height at startup pixels
 
 
 
@@ -229,7 +229,7 @@ The lowest label `0` assigns most crosstalk to only one non-cognate TF while the
 
 The circuit simulation alone can be tested for a given fixed assignment and structure, i.e. outside of a circuit synthesis loop. This is especially useful to verify results and/or obtain more information about a specific simulation, like output histograms etc.
 
-This is demonstrated on the None Equilibrium Simulator in `./ARCTICsim/simulator_nonequilibrium/`
+This is demonstrated using the Equilibrium Simulator in `./ARCTICsim/simulator_nonequilibrium/`
 
 ```sh
 $ cd ./ARCTICsim/simulator_nonequilibrium/
