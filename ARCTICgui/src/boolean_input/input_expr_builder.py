@@ -1,7 +1,7 @@
 """File responsible for building the boolean expression textfield and the info button"""
 import flet as ft
 from data.data_storage import storage
-from custom_controls.text import StandardText
+from custom_controls.texts import StandardText
 
 
 def input_expr_builder(page: ft.Page) -> ft.TextField:

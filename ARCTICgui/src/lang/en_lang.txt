@@ -25,6 +25,10 @@ On_Off_switch_description = Active
 Plasmid_creation = Plasmid creation
 Placeholder_score = No score available
 
+#Errors
+Feature_not_implented = The current Pipeline feature can't be executed alone
+turn_all_on = Make sure Logic_Synthesis, Technology Mapping and Simulation are turn all on
+No_input_provided = Please provide a boolean function
 #Boolean Logic Text
 Enter_bool = Enter the boolean function with any variables of up to three and the common operands:
 Truth_table = Truth Table

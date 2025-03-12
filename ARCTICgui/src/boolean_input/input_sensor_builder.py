@@ -10,7 +10,7 @@ from data.json_parser import update_storage_with_devices
 import flet as ft
 import sympy
 import pipcontrol.boolean_function as bf
-from custom_controls.text import StandardText
+from custom_controls.texts import StandardText
 
 
 def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft.ElevatedButton, ft.Container]:
@@ -116,13 +116,7 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
                     ft.SnackBar(content=StandardText(storage.dictionary['No_input_dev']))
                 )
                 return
-            
-            page.show_snack_bar(
-                ft.SnackBar(
-                    content=StandardText(f"{storage.dictionary['Successfully_found']} {len(storage.input_devices)} {storage.dictionary['input_devices']}"),
-                    bgcolor=ft.colors.GREEN_700,
-                )
-            )
+
 
         except Exception as ex:
             print(f"{storage.dictionary['Error_parsing_library']}: {str(ex)}")

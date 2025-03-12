@@ -2,7 +2,7 @@
 import json
 import flet as ft
 from data.data_storage import storage
-from custom_controls.text import StandardText
+from custom_controls.texts import StandardText
 
 
 content_row = ft.Row(alignment=ft.MainAxisAlignment.CENTER)

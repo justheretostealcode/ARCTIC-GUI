@@ -7,7 +7,8 @@ import pipcontrol.syn as syn
 from pipcontrol.steps import SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreationStep
 from pipcontrol import sim
 from score.score_widget import score_widget_update
-from custom_controls.text import StandardText
+from custom_controls.texts import StandardText, ErrorText
+from custom_controls.snackbars import ErrorSnackBar, InfoSnackBar
 
 
 class Pipeline():
@@ -18,18 +19,15 @@ class Pipeline():
         self.data_storage.pipeline_is_running = False
 
 
-    def _start_synth(self, e:ft.ControlEvent) -> None:
+    def _start_synth(self) -> None:
         """Method to start the synthesis
-
-        Args:
-            e (ft.ControlEvent): Event that triggers the pipeline start
         """
         syn.start_synth()
 
 
     def _start_technology_mapping(self, circuit_structure_path: str) -> None:
         #Currently not implemented to execute the technology mapping alone
-        pass
+        raise NotImplementedError(storage.dictionary["Technology_mapping"])
 
     def _start_simulation(self, circuit_structure_path: str, circuit_structure_assignment_path: str) -> list[str]:
         """Method to start the simulation alone
@@ -64,16 +62,11 @@ class Pipeline():
         else:
             result = self._start_simulation(circuit_structure_path, circuit_structure_assignment_path)
 
-            
-
-        
-        
 
     def _start_pipeline_thread(self, e:ft.ControlEvent) -> None:
         """Method to start a seperate thread for the pipeline to avoid stalling the primary thread with the UI"""
 
         #sort pipeline steps in order specified by the pipelinewidgets in widget_builder.py
-        
         sorted_pipeline_steps = sorted(self.data_storage.pipeline_steps, key=lambda el: el.order if (el.order != -1) else maxsize)
 
         #Case every step (apart from plasmid creation step) is active
@@ -83,7 +76,7 @@ class Pipeline():
         plasmid_simulator_step = None
 
         for step in sorted_pipeline_steps:
-
+            
             if not step.is_active and not isinstance(step, PlasmidCreationStep):
                 every_step_is_active = False
             
@@ -96,12 +89,20 @@ class Pipeline():
 
         if every_step_is_active:
             try:
+
+                if storage.bool_func == '':
+                    raise FileNotFoundError
+                
                 config_manager.update_config("syn", "SYNTHESIS_PROCEED_WITH_TM", "true")
                 syn.start_synth()
 
                 if plasmid_creation_is_active and plasmid_simulator_step:
                     self._start_plasmidCreation()
                     
+            except FileNotFoundError:
+                e.page.show_snack_bar(
+                    ErrorSnackBar(content=ErrorText(f"{storage.dictionary['No_input_provided']}")),
+                )
 
             except Exception as err:
                 print(err)
@@ -109,27 +110,42 @@ class Pipeline():
 
         #Case not every step is active
         else:
-            config_manager.update_config("syn", "SYNTHESIS_PROCEED_WITH_TM", "False")
-            
-            for step in sorted_pipeline_steps:
 
-                if step.is_active:
+            try:
+                config_manager.update_config("syn", "SYNTHESIS_PROCEED_WITH_TM", "False")
+                
+                for step in sorted_pipeline_steps:
 
-                    if isinstance(step, SynthesisStep):
-                        syn.start_synth()
+                    if step.is_active:
+
+                        if isinstance(step, SynthesisStep):
+                            self._start_synth()
 
 
-                    if isinstance(step, TechnologyMappingStep):
-                        self._start_technology_mapping(step.path_to_circuit_structure)
-                        
-                    if isinstance(step, SimulatorStep):
-                        self._start_simulation(step.path_to_circuit_structure, step.path_to_circuit_assignment)
+                        if isinstance(step, TechnologyMappingStep):
+                            self._start_technology_mapping(step.path_to_circuit_structure)
+                            
+                        if isinstance(step, SimulatorStep):
+                            self._start_simulation(step.path_to_circuit_structure, step.path_to_circuit_assignment)
 
-                    if isinstance(step, PlasmidCreationStep):
-                        self._start_plasmidCreation(step.path_to_circuit_structure, step.path_to_circuit_assignment)
+                        if isinstance(step, PlasmidCreationStep):
+                            self._start_plasmidCreation(step.path_to_circuit_structure, step.path_to_circuit_assignment)
 
-                    else:
-                        pass
+                        else:
+                            pass
+
+            except NotImplementedError as err:
+                e.page.show_snack_bar(
+                    ErrorSnackBar(content=ErrorText(f"{storage.dictionary['Feature_not_implented']}: {err}. {storage.dictionary['turn_all_on']}")),
+                )
+
+            except FileNotFoundError as err:
+                e.page.show_snack_bar(
+                    ErrorSnackBar(content=ErrorText(f"{err}"))
+                )
+
+
+        
 
         self.data_storage.pipeline_is_running = False
 
@@ -155,7 +171,7 @@ class Pipeline():
 
         if self.data_storage.pipeline_is_running:
             e.page.show_snack_bar(
-                    ft.SnackBar(content=StandardText("Pipeline already started."))
+                    InfoSnackbar(content=StandardText("Pipeline already started."))
                 )
             return
         
@@ -170,7 +186,7 @@ class Pipeline():
 
         except Exception:
             e.page.show_snack_bar(
-                    ft.SnackBar(content=StandardText("Error During pipeline execution."))
+                    ErrorSnackBar(content=StandardText("Error During pipeline execution."))
                 )
 
 

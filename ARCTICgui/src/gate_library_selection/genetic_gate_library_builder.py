@@ -2,7 +2,7 @@
 import os
 import flet as ft
 from data.data_storage import storage, config_manager
-from custom_controls.text import StandardText
+from custom_controls.texts import StandardText
 
 def genetic_gate_library_builder(page: ft.Page) -> tuple[ft.GridView, ft.Container]:
     """Method to build the gate library dropdown menu and the 

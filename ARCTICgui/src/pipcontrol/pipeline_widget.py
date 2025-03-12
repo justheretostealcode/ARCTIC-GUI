@@ -5,7 +5,7 @@ from custom_controls.divider import StandardDivider
 from data.data_storage import storage, config_manager
 from pipcontrol.steps import Step, SimulatorStep, SynthesisStep, TechnologyMappingStep, PlasmidCreationStep
 from masks import IOType
-from custom_controls.text import StandardText
+from custom_controls.texts import StandardText
 
 class PipelineWidget(PipelineContainer):
     """Custom flet.Container class for the tiles making up the pipeline"""
