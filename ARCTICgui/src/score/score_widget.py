@@ -6,7 +6,7 @@ from data.data_storage import storage
 content_row = ft.Row(alignment=ft.MainAxisAlignment.CENTER)
 score_column = ft.Column(controls= [content_row], alignment=ft.MainAxisAlignment.CENTER)
 
-def score_widget_builder() -> ft.Column:    
+def score_widget_builder() -> ft.Column:
     """Builds the score widget"""
     if storage.score_json_path != "":
         
