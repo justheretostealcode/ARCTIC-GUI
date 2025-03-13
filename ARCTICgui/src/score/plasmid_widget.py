@@ -17,11 +17,23 @@ image = ft.Image(width=img_width, height=img_height)
 def plasmid_widget_builder() -> ft.Column:
     """Builds the plasmid widget"""
     
-    image.src=os.path.join('ARCTICgui', 'empty.png')
+    # Get absolute paths
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(current_dir))
+    empty_img_path = os.path.join(project_root, 'empty.png')
+    
+    # Check if empty.png exists
+    if not os.path.exists(empty_img_path):
+        print(f"Warning: Empty image not found at {empty_img_path}")
+        empty_img_path = os.path.join(os.path.dirname(project_root), 'empty.png')
+    
+    # Use absolute path
+    image.src = empty_img_path
     
     if storage.plasmid_json_path != "":
-        store_path = "plasmid_diagram.png"
-        create_diagram_from_strings(storage.plasmid_json_path,show=False, output_path=store_path, plasmid_input_type = 'json')
+        # Save plasmid diagram to project root using absolute path
+        store_path = os.path.join(project_root, "plasmid_diagram.png")
+        create_diagram_from_strings(storage.plasmid_json_path, show=False, output_path=store_path, plasmid_input_type='json')
     
         image.src = store_path
 

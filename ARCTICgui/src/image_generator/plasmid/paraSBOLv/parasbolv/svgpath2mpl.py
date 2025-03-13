@@ -42,7 +42,8 @@ Path specification at <https://www.w3.org/TR/SVG/paths.html>.
 #from __future__ import division, print_function
 from math import sin, cos, sqrt, degrees, radians, acos
 import re
-
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib.path import Path
 import matplotlib.transforms as transforms
 import numpy as np

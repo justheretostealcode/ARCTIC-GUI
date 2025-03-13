@@ -18,6 +18,8 @@ import xml.etree.ElementTree as ET
 import re
 from math import cos, sin, pi, sqrt
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.font_manager as font_manager

@@ -14,7 +14,12 @@ def genetic_gate_library_builder(page: ft.Page) -> tuple[ft.GridView, ft.Contain
         tuple[ft.GridView, ft.Container]: _description_
     """
 
-    path_to_gen_lib = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs")
+    # Define project root path
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(current_dir))
+    arctic_sim_dir = os.path.join(os.path.dirname(project_root), 'ARCTICsim')
+    
+    path_to_gen_lib = os.path.join(arctic_sim_dir, "simulator_nonequilibrium", "data", "gate_libs")
 
     selected_file_display = StandardText(storage.dictionary['Select_a_library'])
 
@@ -30,6 +35,13 @@ def genetic_gate_library_builder(page: ft.Page) -> tuple[ft.GridView, ft.Contain
                 page.update()
             except ValueError as err:
                 print(f"{storage.dictionary['Error_setting_library_path']}: {err}")
+
+        # Get list of libraries if directory exists
+    available_libraries = []
+    if os.path.exists(path_to_gen_lib):
+        available_libraries = os.listdir(path_to_gen_lib)
+    else:
+        print(f"Warning: Gate libraries directory not found at {path_to_gen_lib}")
 
     # genetic gate library dropdown
     genetic_gate_libraries_dropdown = ft.Dropdown(
@@ -63,11 +75,24 @@ def genetic_gate_library_builder(page: ft.Page) -> tuple[ft.GridView, ft.Contain
         )
 
     def load_images() -> None:
-        placeholder_path = os.path.join("ARCTICsim", "simulator_nonequilibrium", "data", "gate_libs", "figures_eight-state_det-var_2024-04-04_Monotonicity")
+        # Clear previous images
+        images.controls.clear()
+        
+        ## A BIG TODO is to fix for the case where other simulateros are implied. Now the nonequilibrium simulator's path is hardcoded
+        # We also didn't manage to come to the unified way to handle paths so that it would work with all operating systems so thats a big L
+        # But i hope i'll get the chance to fix it before the joint meeting
+        placeholder_path = os.path.join(arctic_sim_dir, "simulator_nonequilibrium", "data", "gate_libs", "figures_eight-state_det-var_2024-04-04_Monotonicity")
+        
+        if not os.path.exists(placeholder_path):
+            print(f"Warning: Images directory not found at {placeholder_path}")
+            return
+        
         for filename in os.listdir(placeholder_path):
+            # Get absolute path for image
+            image_path = os.path.abspath(os.path.join(placeholder_path, filename))
             images.controls.append(
                 ft.Image(
-                    src=os.path.join(placeholder_path, filename),
+                    src=image_path,
                     width=200,
                     height=200
                 )

@@ -49,6 +49,8 @@ class ImageDB():
         img = self._images[imgID]
 
         if IMAGE_GENERATOR_AVAILABLE and img.endswith('.json'):
+            if not os.path.isabs(img): # Make sure the path is absolute
+                img = os.path.abspath(img)
             path = img[:-4]+'png'
             with open(img, 'r') as file:
                 structure = file.read()
@@ -62,8 +64,14 @@ class ImageDB():
             image.save(path)
             img = path
             self._images[imgID] = path
+        if not os.path.isabs(img): # Absolute path for Mac compatibility
+            img = os.path.abspath(img)
+            self._images[imgID] = img
         return img
     def __setitem__(self, imgID:str, img:str)->None:
+        # Store absolute path for Mac compatibility
+        if not os.path.isabs(img):
+            img = os.path.abspath(img)
         self._images[imgID] = img
     def __delitem__(self, imgID:str)->str:
         del self._images[imgID]

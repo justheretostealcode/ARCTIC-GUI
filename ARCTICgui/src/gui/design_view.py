@@ -26,9 +26,13 @@ class CombinedDesignView(PageTab):
             ft.Column: Column with CombinedDesignView controls
         """
         
-
+        # Get absolute path to empty.png image
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        empty_image_path = os.path.join(project_root, 'empty.png')
+        
         self.LogicCircuit = ft.Image(
-            src=os.path.join('ARCTICgui', 'empty.png'),
+            src=empty_image_path,
             width=300,
             height=80
         )
