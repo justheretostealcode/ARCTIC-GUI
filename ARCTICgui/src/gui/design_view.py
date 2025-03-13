@@ -16,7 +16,7 @@ class CombinedDesignView(PageTab):
 
         data_storage.images.register(self.dataUpdate)
 
-        self.text= storage.dictionary["Hazard_Analysis"]
+        self.text= storage.dictionary["Combined_View"]
         self.content = self.content_builder()
 
     def content_builder(self) -> ft.Column:
@@ -26,7 +26,7 @@ class CombinedDesignView(PageTab):
             ft.Column: Column with CombinedDesignView controls
         """
         
-        
+
         self.LogicCircuit = ft.Image(
             src=os.path.join('ARCTICgui', 'empty.png'),
             width=300,

@@ -24,6 +24,7 @@ alternative_input = alternative input
 On_Off_switch_description = Active
 Plasmid_creation = Plasmid creation
 Placeholder_score = No score available
+Combined_View = Combined View
 
 #Errors
 Feature_not_implented = The current Pipeline feature can't be executed alone
