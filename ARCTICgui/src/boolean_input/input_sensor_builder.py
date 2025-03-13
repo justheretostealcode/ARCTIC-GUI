@@ -78,13 +78,13 @@ def truth_table_and_sensor_builder(page: ft.Page) -> tuple[ft.ElevatedButton, ft
             # Create DataTable
             table = ft.DataTable(
                 column_spacing=15, 
-                columns=[ft.DataColumn(StandardText(header, size=14, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER)) for header in headers],
+                columns=[ft.DataColumn(ft.Text(header, size=14, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER)) for header in headers],
                 rows=[
                     ft.DataRow(
                         cells=[
                             ft.DataCell(
                                 ft.Container(
-                                    StandardText(str(int(cell)), size=14, text_align=ft.TextAlign.CENTER),
+                                    ft.Text(str(int(cell)), size=14, text_align=ft.TextAlign.CENTER),
                                     alignment=ft.alignment.center,
                                     bgcolor=ft.colors.SURFACE_VARIANT if i == len(row) - 1 else None  # Gray background for the last column (function result)
                                 )
