@@ -42,7 +42,7 @@ Either get an Java installer from [Oracle](https://www.oracle.com/java/technolog
 - pillow
 
 ```sh
-python -m pip install numpy==1.26.4 flet==0.26.4 scipy sympy Autograd matplotlib Cython Deprecated GvGen POT seaborn pillow
+python -m pip install numpy==1.26.4 flet==0.25.1 scipy sympy Autograd matplotlib Cython Deprecated GvGen POT seaborn pillow
 ```
 
 4. ### Set the path to the Python binary in `ARCTICsyn/sim.config`
@@ -255,3 +255,14 @@ Arguments can be set by arguments or the config file `./ARCTICsim/simulator_none
 | -m MODE, --mode MODE                                     | The mode of simulation. "det": Deterministic, "samp": sampling based |
 | -n N_SAMPLES, --n_samples N_SAMPLES                      | The number of samples to use                                 |
 | -q QUICK, --quick QUICK                                  | Whether to use a quick mode for SensorPromoter which is only successful if all input values to the sensor promoter are equal |
+
+
+# Credits 
+
+This project provides a graphical user interface (GUI) for ARCTIC, a tool for genetic circuit synthesis. 
+The GUI was developed by our team of five contributors (Alexandros Diallo, L. Antoinette Engelbrecht-Schnür, Sooraj Rathore, Anton Traband, Ivan Zharov). 
+We acknowledge the original "ARCTIC synthesizer and simulator" project from Erik Kubaczka his team for their work on genetic synthesis.
+
+This project makes use of paraSBOLv, a tool for standard-compliant genetic design visualization, developed by Biocompute Lab. If you use this project in your research or development, please consider citing the original paraSBOLv paper:
+`Clark C.J., Scott-Brown J. & Gorochowski T.E. "paraSBOLv: a foundation for standard-compliant genetic design visualisation tools", Synthetic Biology, 2021` doi:[10.1093/synbio/ysab022](https://dx.doi.org/10.1093/synbio/ysab022)
+We express our gratitude to the Biocompute Lab for their work on paraSBOLv.
