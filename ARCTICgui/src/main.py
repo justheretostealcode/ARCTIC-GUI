@@ -1,7 +1,5 @@
 """program entry point"""
 
-import os
-import sys
 import flet as ft
 
 from pipcontrol import syn
@@ -11,15 +9,6 @@ from gui.pipeline_view import GDAPipeline
 from gui.analysis_visualizer import AnalysisVisualizer
 from data.data_storage import storage, config_manager
 from custom_controls.container import PageContainer
-
-
-PYTHON_PATH = sys.executable
-
-if sys.platform == "win32":
-    PYTHON_PATH = PYTHON_PATH.replace("\\", "\\\\")
-
-if not os.path.isabs(config_manager.get_config('sim', 'PYTHON_BINARY')):
-    config_manager.update_config('sim', 'PYTHON_BINARY', PYTHON_PATH)
 
 
 def main(page: ft.Page) -> None:

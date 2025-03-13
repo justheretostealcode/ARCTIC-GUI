@@ -47,8 +47,6 @@ python -m pip install numpy==1.26.4 flet==0.26.4 scipy sympy Autograd matplotlib
 
 4. ### Set the path to the Python binary in `ARCTICsyn/sim.config`
 
-If you use the GUI and want to use the same Python installation for the GUI as for the simulation you don't have to do this step.
-
 This must be an absolute path to a Python executable.
 
 ```toml
