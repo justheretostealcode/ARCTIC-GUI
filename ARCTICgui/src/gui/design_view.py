@@ -6,7 +6,7 @@ from custom_controls.tabs import PageTabs
 from custom_controls.tab import PageTab
 from data import data_storage
 from data.data_storage import storage
-from score.plasmid_widget import plasmid_widget_builder
+from score.plasmid_widget import plasmid_widget_builder, plasmid_widget_update
 
 
 class CombinedDesignView(PageTab):
@@ -45,6 +45,7 @@ class CombinedDesignView(PageTab):
         plasmid_container = plasmid_widget_builder()
 
         images = ft.Column(expand=True, alignment=ft.MainAxisAlignment.CENTER)
+        
         images.controls.append(self.LogicCircuit)
         images.controls.append(plasmid_container)
 
@@ -53,8 +54,8 @@ class CombinedDesignView(PageTab):
             images
         ]
 
-
         output_column = ft.Column(controls=controls, alignment=ft.MainAxisAlignment.CENTER)
+        output_column.scroll = ft.ScrollMode.AUTO
 
         return output_column
     
@@ -71,11 +72,17 @@ class CombinedDesignView(PageTab):
     def on_click(self, _):
         if self.Selections.value == '':
             self.LogicCircuit.src = os.path.join('ARCTICgui', 'empty.png')
+            plasmid_widget_update(turn_off = True)
         elif self.Selections.value not in data_storage.images.ids():
             raise Exception(f'{storage.dictionary["unknown_value"]}: "{self.Selections.value}"') # should be imposable
         else:
             ipf = data_storage.images[self.Selections.value]
             self.LogicCircuit.src = ipf
+
+            if "relax" in self.Selections.value:
+                plasmid_widget_update()
+            else:
+                plasmid_widget_update(turn_off = True)
         self.LogicCircuit.update()
 
 class PlasmidView(PageTab):

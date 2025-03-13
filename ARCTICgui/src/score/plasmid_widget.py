@@ -14,9 +14,8 @@ image = ft.Image(width=img_width, height=img_height)
 
 
 
-def plasmid_widget_builder() -> ft.Column:
+def plasmid_widget_builder(turn_off:bool = False) -> ft.Column:
     """Builds the plasmid widget"""
-    
     # Get absolute paths
     current_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(os.path.dirname(current_dir))
@@ -30,7 +29,7 @@ def plasmid_widget_builder() -> ft.Column:
     # Use absolute path
     image.src = empty_img_path
     
-    if storage.plasmid_json_path != "":
+    if storage.plasmid_json_path != "" and not turn_off:
         # Save plasmid diagram to project root using absolute path
         store_path = os.path.join(project_root, "plasmid_diagram.png")
         create_diagram_from_strings(storage.plasmid_json_path, show=False, output_path=store_path, plasmid_input_type='json')
@@ -40,7 +39,7 @@ def plasmid_widget_builder() -> ft.Column:
     return image
 
 
-def plasmid_widget_update() -> None:
+def plasmid_widget_update(turn_off:bool = False) -> None:
     """Updates the plasmid widget"""
-    plasmid_widget_builder()
+    plasmid_widget_builder(turn_off)
     image.update()
