@@ -6,7 +6,7 @@
 git clone https://github.com/justheretostealcode/ARCTIC-GUI.git
 ```
 
-2. ### Install Python and Java
+1. ### Install Python and Java
 
 Java version 11 has been tested; higher versions may not work.
 
@@ -45,7 +45,7 @@ Either get an Java installer from [Oracle](https://www.oracle.com/java/technolog
 python -m pip install numpy==1.26.4 flet==0.25.1 scipy sympy Autograd matplotlib Cython Deprecated GvGen POT seaborn pillow
 ```
 
-4. ### Set the path to the Python binary in `ARCTICsyn/sim.config`
+1. ### Set the path to the Python binary in `ARCTICsyn/sim.config`
 
 This must be an absolute path to a Python executable.
 
@@ -53,7 +53,7 @@ This must be an absolute path to a Python executable.
 PYTHON_BINARY=<<Path to your Python binary>>
 ```
 
-5. ### Run the GUI for Arctic
+1. ### Run the GUI for Arctic
 
 ```shell
 python ARCTICgui/src/main.py
@@ -118,8 +118,6 @@ cd ./ARCTICsyn
 cd ./ARCTICsyn
 ./gradlew simulationTestbench --args="<argument list>"
 ```
-
-|-|--|
 
 | argument name          | description                            |
 | ---------------------- | -------------------------------------- |
@@ -257,12 +255,46 @@ Arguments can be set by arguments or the config file `./ARCTICsim/simulator_none
 | -q QUICK, --quick QUICK                                  | Whether to use a quick mode for SensorPromoter which is only successful if all input values to the sensor promoter are equal |
 
 
-# Credits 
+# Authors
+This project provides a graphical user interface (GUI) for ARCTIC, a tool for genetic logic circuit synthesis. 
+The GUI was developed by (alphabetical order)
+- **Alexandros Diallo**
+- **L. Antoinette Engelbrecht-Schnür**
+- **Sooraj Rathore**
+- **Anton Traband**
+- **Ivan Zharov**
 
-This project provides a graphical user interface (GUI) for ARCTIC, a tool for genetic circuit synthesis. 
-The GUI was developed by our team of five contributors (Alexandros Diallo, L. Antoinette Engelbrecht-Schnür, Sooraj Rathore, Anton Traband, Ivan Zharov). 
-We acknowledge the original "ARCTIC synthesizer and simulator" project from Erik Kubaczka his team for their work on genetic synthesis.
+following the design of Erik Kubaczka ([GitHub](https://github.com/ERIK-KE)) and under the supervision of Erik Kubaczka.
+
+# Credits 
+This GUI provides an interface to the [**ARCTIC** **Synthesizer** and **Simulator**](https://gitlab.rs.e-technik.tu-darmstadt.de/arctic/arctic) developed by the [Self-Organizing Systems](https://www.bcs.tu-darmstadt.de/welcome/index.en.jsp) and [Computer Systems](https://www.rs.tu-darmstadt.de/en/about-us/news) labs at [Technical University of Darmstadt](https://www.bcs.tu-darmstadt.de/welcome/index.en.jsp), Germany, especially by Nicolai Engelmann, Erik Kubaczka, and Tobias Schwarz (alphabetical order). 
+
+[`(1) Schladt, T.; Engelmann, N.; Kubaczka, E.; Hochberger, C.; Koeppl, H. Automated Design of Robust Genetic Circuits: Structural Variants and Parameter Uncertainty. ACS Synth. Biol. 2021, 10 (12), 3316–3329. https://doi.org/10.1021/acssynbio.1c00193.`](https://doi.org/10.1021/acssynbio.1c00193)
+[`(2) Engelmann, N.; Schwarz, T.; Kubaczka, E.; Hochberger, C.; Koeppl, H. Context-Aware Technology Mapping in Genetic Design Automation. ACS Synth. Biol. 2023, 12 (2), 446–459. https://doi.org/10.1021/acssynbio.2c00361.`](https://doi.org/10.1021/acssynbio.2c00361)
+[`(3) Kubaczka, E.; Gehri, M.; Marlhens, J. J. M.; Schwarz, T.; Molderings, M.; Engelmann, N.; Garcia, H. G.; Hochberger, C.; Koeppl, H. Energy Aware Technology Mapping of Genetic Logic Circuits. ACS Synth. Biol. 2024, 13 (10), 3295–3311. https://doi.org/10.1021/acssynbio.4c00395.`](https://doi.org/10.1021/acssynbio.4c00395)
+
 
 This project makes use of paraSBOLv, a tool for standard-compliant genetic design visualization, developed by Biocompute Lab. If you use this project in your research or development, please consider citing the original paraSBOLv paper:
 `Clark C.J., Scott-Brown J. & Gorochowski T.E. "paraSBOLv: a foundation for standard-compliant genetic design visualisation tools", Synthetic Biology, 2021` doi:[10.1093/synbio/ysab022](https://dx.doi.org/10.1093/synbio/ysab022)
 We express our gratitude to the Biocompute Lab for their work on paraSBOLv.
+
+
+# How to Cite
+If you use ARCTIC, please cite the paper matching the functionality you use:
+[`(1) Schladt, T.; Engelmann, N.; Kubaczka, E.; Hochberger, C.; Koeppl, H. Automated Design of Robust Genetic Circuits: Structural Variants and Parameter Uncertainty. ACS Synth. Biol. 2021, 10 (12), 3316–3329. https://doi.org/10.1021/acssynbio.1c00193.`](https://doi.org/10.1021/acssynbio.1c00193)
+[`(2) Engelmann, N.; Schwarz, T.; Kubaczka, E.; Hochberger, C.; Koeppl, H. Context-Aware Technology Mapping in Genetic Design Automation. ACS Synth. Biol. 2023, 12 (2), 446–459. https://doi.org/10.1021/acssynbio.2c00361.`](https://doi.org/10.1021/acssynbio.2c00361)
+[`(3) Kubaczka, E.; Gehri, M.; Marlhens, J. J. M.; Schwarz, T.; Molderings, M.; Engelmann, N.; Garcia, H. G.; Hochberger, C.; Koeppl, H. Energy Aware Technology Mapping of Genetic Logic Circuits. ACS Synth. Biol. 2024, 13 (10), 3295–3311. https://doi.org/10.1021/acssynbio.4c00395.`](https://doi.org/10.1021/acssynbio.4c00395)
+
+For the usage of the GUI version, please additionally cite
+`Alexandros Diallo, L. Antoinette Engelbrecht-Schnür, Sooraj Rathore, Anton Traband, Ivan Zharov, Erik Kubaczka, Christian Hochberger, Heinz Koeppl (2025). ARCTIC GUI: A Graphical User Interface for the GDA Technology Mapping Framework ARCTIC`
+
+or as bibtex
+```bibtex
+@misc{cellsepi,
+  author    = {Diallo, Alexandros and Engelbrecht-Schnür, L. Antoinette and Rathore, Sooraj and Traband, Anton and Zharov, Ivan and Kubaczka, Erik and Hochberger, Christian and Koeppl, Heinz},   
+  title     = {ARCTIC GUI: A Graphical User Interface for the GDA Technology Mapping Framework ARCTIC},  
+  year      = {2025},  
+  publisher = {GitHub},  
+  url       = {https://github.com/ERIK-KE/ARCTIC-GUI}  
+}
+```
