@@ -296,7 +296,7 @@ Alexandros Diallo, L. Antoinette Engelbrecht-Schnür, Sooraj Rathore, Anton Trab
 
 or as bibtex
 ```bibtex
-@misc{cellsepi,
+@misc{arctic-gui,
   author    = {Diallo, Alexandros and Engelbrecht-Schnür, L. Antoinette and Rathore, Sooraj and Traband, Anton and Zharov, Ivan and Kubaczka, Erik and Hochberger, Christian and Koeppl, Heinz},   
   title     = {ARCTIC GUI: A Graphical User Interface for the GDA Technology Mapping Framework ARCTIC},  
   year      = {2025},  
