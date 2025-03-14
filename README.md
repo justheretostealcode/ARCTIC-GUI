@@ -281,12 +281,18 @@ We express our gratitude to the Biocompute Lab for their work on paraSBOLv.
 
 # How to Cite
 If you use ARCTIC, please cite the paper matching the functionality you use:
+
 [`(1) Schladt, T.; Engelmann, N.; Kubaczka, E.; Hochberger, C.; Koeppl, H. Automated Design of Robust Genetic Circuits: Structural Variants and Parameter Uncertainty. ACS Synth. Biol. 2021, 10 (12), 3316–3329. https://doi.org/10.1021/acssynbio.1c00193.`](https://doi.org/10.1021/acssynbio.1c00193)
+
 [`(2) Engelmann, N.; Schwarz, T.; Kubaczka, E.; Hochberger, C.; Koeppl, H. Context-Aware Technology Mapping in Genetic Design Automation. ACS Synth. Biol. 2023, 12 (2), 446–459. https://doi.org/10.1021/acssynbio.2c00361.`](https://doi.org/10.1021/acssynbio.2c00361)
+
 [`(3) Kubaczka, E.; Gehri, M.; Marlhens, J. J. M.; Schwarz, T.; Molderings, M.; Engelmann, N.; Garcia, H. G.; Hochberger, C.; Koeppl, H. Energy Aware Technology Mapping of Genetic Logic Circuits. ACS Synth. Biol. 2024, 13 (10), 3295–3311. https://doi.org/10.1021/acssynbio.4c00395.`](https://doi.org/10.1021/acssynbio.4c00395)
 
-For the usage of the GUI version, please additionally cite
-`Alexandros Diallo, L. Antoinette Engelbrecht-Schnür, Sooraj Rathore, Anton Traband, Ivan Zharov, Erik Kubaczka, Christian Hochberger, Heinz Koeppl (2025). ARCTIC GUI: A Graphical User Interface for the GDA Technology Mapping Framework ARCTIC`
+
+For the usage of the GUI version, please additionally cite:
+```
+Alexandros Diallo, L. Antoinette Engelbrecht-Schnür, Sooraj Rathore, Anton Traband, Ivan Zharov, Erik Kubaczka, Christian Hochberger, Heinz Koeppl (2025). ARCTIC GUI: A Graphical User Interface for the GDA Technology Mapping Framework ARCTIC
+```
 
 or as bibtex
 ```bibtex
